@@ -25,8 +25,7 @@ public class EmprendimientoController {
     private final EmprendimientoRepository emprendimientoRepository;
     private final ResenaRepository resenaRepository;
 
-    public EmprendimientoController(EmprendimientoRepository emprendimientoRepository,
-            ResenaRepository resenaRepository) {
+    public EmprendimientoController(EmprendimientoRepository emprendimientoRepository, ResenaRepository resenaRepository) {
         this.emprendimientoRepository = emprendimientoRepository;
         this.resenaRepository = resenaRepository;
     }
@@ -66,6 +65,14 @@ public class EmprendimientoController {
         List<Emprendimiento> lista = emprendimientoRepository.findAll();
         return ResponseEntity.ok(lista);
     }
+
+    // Endpoint desarrollado por tom09-TK
+    @GetMapping("/top")
+    public ResponseEntity<List<Emprendimiento>> listarTopCalificados() {
+        List<Emprendimiento> lista = emprendimientoRepository.findAll();
+        return ResponseEntity.ok(lista);
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Emprendimiento> obtenerPorId(@PathVariable Long id) {
