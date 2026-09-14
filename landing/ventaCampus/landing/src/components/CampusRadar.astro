@@ -1,0 +1,1518 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<section class="section radar-section" id="radar">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag accent">
+        <Icon name="compass" size={14} color="var(--color-accent-hover)" />
+        <span>Geolocalización Interna UTP Piura</span>
+      </div>
+      <h2 class="section-title">
+        Encuentra al vendedor en segundos, <br />
+        <span class="highlight-text">por Torre y Piso exacto</span>
+      </h2>
+      <p class="section-desc">
+        Entre cambio de clases o en tus 15 minutos de receso, cada minuto cuenta. No recorras todo el campus adivinando: selecciona dónde estás y mira quién está disponible a pasos de ti.
+      </p>
+    </div>
+
+    <div class="radar-interactive-board">
+      <!-- Selector de Torre / Zona del Campus -->
+      <div class="tower-selector-bar">
+        <div class="selector-label">
+          <Icon name="building" size={18} color="var(--color-primary)" />
+          <span>Zona del Campus:</span>
+        </div>
+        <div class="tower-buttons" id="tower-buttons">
+          <button type="button" class="tower-btn active" data-tower="torre-a">
+            <span class="tower-btn-title">Torre A</span>
+            <span class="tower-tag">Aulas 101 - 504 • 5 Pisos</span>
+          </button>
+          <button type="button" class="tower-btn" data-tower="torre-b">
+            <span class="tower-btn-title">Torre B</span>
+            <span class="tower-tag">Ingenierías & Labs • 4 Pisos</span>
+          </button>
+          <button type="button" class="tower-btn" data-tower="patio">
+            <span class="tower-btn-title">Patio & Cafetería</span>
+            <span class="tower-tag">Área Libre & Pérgolas</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="radar-content-grid">
+        <!-- Columna Izquierda: Representación Arquitectónica Animada y Vistosa -->
+        <div class="campus-schematic-card">
+          <div class="schematic-header">
+            <div class="schematic-title-group">
+              <span class="radar-live-beacon">
+                <span class="beacon-core"></span>
+                <span class="beacon-ring"></span>
+              </span>
+              <strong id="schematic-tower-name">Torre A — Radar en Vivo</strong>
+            </div>
+            <div class="schematic-interactive-tip">
+              <span class="click-cue-pulse"></span>
+              <span>Toca un piso del edificio</span>
+            </div>
+          </div>
+
+          <!-- Contenedor Visual: Edificio SVG de Alta Visibilidad + Selector -->
+          <div class="building-visual-container">
+            <!-- SVG Arquitectónico Iluminado y Dinámico -->
+            <div class="building-svg-wrapper">
+              <svg
+                id="campus-building-svg"
+                class="building-vector"
+                viewBox="0 0 360 460"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                role="img"
+                aria-label="Simulador interactivo del edificio del campus UTP Piura con pisos iluminados"
+              >
+                <defs>
+                  <!-- Filtro de Resplandor Neón para el Piso Activo -->
+                  <filter id="activeNeonGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#FF441F" flood-opacity="0.65" />
+                    <feDropShadow dx="0" dy="3" stdDeviation="8" flood-color="#FF441F" flood-opacity="0.35" />
+                  </filter>
+
+                  <!-- Filtro Sombra Suave Pisos Inactivos -->
+                  <filter id="cardSoftShadow" x="-10%" y="-10%" width="120%" height="125%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0F172A" flood-opacity="0.08" />
+                  </filter>
+
+                  <!-- Gradiente Piso Activo Súper Vistoso -->
+                  <linearGradient id="activeFloorVibrant" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#FF441F" stop-opacity="0.28" />
+                    <stop offset="50%" stop-color="#FF7A00" stop-opacity="0.18" />
+                    <stop offset="100%" stop-color="#FF441F" stop-opacity="0.28" />
+                  </linearGradient>
+
+                  <!-- Haz de Láser Escáner del Radar -->
+                  <linearGradient id="scannerBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#FF441F" stop-opacity="0" />
+                    <stop offset="50%" stop-color="#FF441F" stop-opacity="0.85" />
+                    <stop offset="100%" stop-color="#FF7A00" stop-opacity="0" />
+                  </linearGradient>
+
+                  <!-- Gradiente Vidrio Ventanas Modernas -->
+                  <linearGradient id="windowGlassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95" />
+                    <stop offset="100%" stop-color="#EDF2F7" stop-opacity="0.6" />
+                  </linearGradient>
+
+                  <!-- Gradiente Cabina de Ascensor -->
+                  <linearGradient id="elevatorGlowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#1E293B" />
+                    <stop offset="100%" stop-color="#0F172A" />
+                  </linearGradient>
+                </defs>
+
+                <!-- Fondo Contenedor Arquitectónico -->
+                <rect width="360" height="460" rx="16" fill="#F8FAFC" />
+                <rect x="1" y="1" width="358" height="458" rx="15" stroke="#E2E8F0" stroke-width="1.5" />
+
+                <!-- Grilla sutil de fondo para estilo plano/blueprint -->
+                <line x1="20" y1="0" x2="20" y2="460" stroke="#F1F5F9" stroke-width="1" />
+                <line x1="80" y1="0" x2="80" y2="460" stroke="#F1F5F9" stroke-width="1" />
+                <line x1="140" y1="0" x2="140" y2="460" stroke="#F1F5F9" stroke-width="1" />
+                <line x1="200" y1="0" x2="200" y2="460" stroke="#F1F5F9" stroke-width="1" />
+                <line x1="260" y1="0" x2="260" y2="460" stroke="#F1F5F9" stroke-width="1" />
+                <line x1="320" y1="0" x2="320" y2="460" stroke="#F1F5F9" stroke-width="1" />
+
+                <!-- Azotea / Corona Arquitectónica UTP -->
+                <g class="building-crown-group">
+                  <!-- Baranda superior -->
+                  <line x1="80" y1="36" x2="310" y2="36" stroke="#94A3B8" stroke-width="2" />
+                  <line x1="110" y1="26" x2="110" y2="36" stroke="#94A3B8" stroke-width="1.5" />
+                  <line x1="160" y1="26" x2="160" y2="36" stroke="#94A3B8" stroke-width="1.5" />
+                  <line x1="210" y1="26" x2="210" y2="36" stroke="#94A3B8" stroke-width="1.5" />
+                  <line x1="260" y1="26" x2="260" y2="36" stroke="#94A3B8" stroke-width="1.5" />
+
+                  <!-- Antena con pulsaciones visibles de radar -->
+                  <line x1="285" y1="12" x2="285" y2="36" stroke="#64748B" stroke-width="2.5" />
+                  <circle cx="285" cy="12" r="3.5" fill="#FF441F" />
+                  <circle cx="285" cy="12" r="8" stroke="#FF441F" stroke-width="1.5" class="antenna-radar-wave" />
+                  <circle cx="285" cy="12" r="14" stroke="#FF7A00" stroke-width="1" class="antenna-radar-wave-delayed" />
+
+                  <!-- Friso institucional UTP -->
+                  <rect x="76" y="40" width="240" height="20" rx="4" fill="#C8102E" />
+                  <text x="196" y="54" font-family="'Outfit', sans-serif" font-size="9.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="2.5">
+                    CAMPUS UTP PIURA
+                  </text>
+                </g>
+
+                <!-- Columna de Ascensor Panorámico con Iluminación LED -->
+                <g class="elevator-shaft-group">
+                  <rect x="18" y="66" width="46" height="345" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1.5" />
+                  <!-- Riel central acanalado -->
+                  <line x1="41" y1="70" x2="41" y2="406" stroke="#475569" stroke-width="2" stroke-dasharray="4 3" />
+
+                  <!-- Cabina de Ascensor Móvil Animada -->
+                  <g id="svg-elevator-cab" class="vibrant-elevator-cab" transform="translate(0, 0)">
+                    <rect x="22" y="200" width="38" height="52" rx="5" fill="url(#elevatorGlowGrad)" stroke="#00C1B2" stroke-width="2.2" />
+                    <!-- Ventanal frontal de cristal -->
+                    <rect x="26" y="204" width="30" height="28" rx="3" fill="rgba(0, 193, 178, 0.22)" stroke="rgba(0, 193, 178, 0.4)" stroke-width="1" />
+                    <!-- Pasajero silueta sutil -->
+                    <circle cx="41" cy="216" r="4.5" fill="#FFFFFF" opacity="0.85" />
+                    <path d="M34 230 C34 223, 48 223, 48 230" fill="#FFFFFF" opacity="0.85" />
+                    <!-- Display Digital LED del Piso -->
+                    <rect x="27" y="235" width="28" height="13" rx="2" fill="#020617" />
+                    <text id="svg-elevator-floor-display" x="41" y="245" font-family="'Outfit', sans-serif" font-size="9" font-weight="900" fill="#00C1B2" text-anchor="middle" letter-spacing="1">
+                      P3
+                    </text>
+                  </g>
+                </g>
+
+                <!-- GRUPOS INTERACTIVOS DE CADA PISO DEL EDIFICIO -->
+                <g class="building-floors-container" id="svg-building-floors">
+                  <!-- PISO 5 -->
+                  <g class="svg-floor-card" data-floor="5" tabindex="0" role="button" aria-label="Explorar Piso 5">
+                    <rect class="floor-base-rect" x="72" y="68" width="248" height="62" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" filter="url(#cardSoftShadow)" />
+                    <rect class="floor-highlight-rect" x="72" y="68" width="248" height="62" rx="8" fill="url(#activeFloorVibrant)" opacity="0" />
+                    <!-- Haz de escaneo -->
+                    <rect class="floor-scan-beam" x="72" y="68" width="20" height="62" fill="url(#scannerBeamGrad)" opacity="0" />
+
+                    <!-- Badge Nivel -->
+                    <rect class="floor-level-pill" x="82" y="80" width="34" height="24" rx="6" fill="#F1F5F9" />
+                    <text class="floor-level-label" x="99" y="96" font-family="'Outfit', sans-serif" font-size="12" font-weight="800" fill="#1E293B" text-anchor="middle">P5</text>
+
+                    <!-- Ventanales estilizados -->
+                    <rect x="124" y="77" width="36" height="30" rx="3" fill="url(#windowGlassGrad)" stroke="#E2E8F0" />
+                    <rect x="168" y="77" width="36" height="30" rx="3" fill="url(#windowGlassGrad)" stroke="#E2E8F0" />
+                    <rect x="212" y="77" width="36" height="30" rx="3" fill="url(#windowGlassGrad)" stroke="#E2E8F0" />
+
+                    <!-- Nombre del Piso -->
+                    <text class="floor-title-label" x="124" y="120" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#64748B">
+                      Aulas Superiores (1 Activo)
+                    </text>
+
+                    <!-- Beacon Radar de Vendedor Activo -->
+                    <g class="floor-vendor-beacon" transform="translate(280, 84)">
+                      <circle cx="10" cy="10" r="12" fill="rgba(0, 193, 178, 0.25)" class="beacon-pulse-circle" />
+                      <circle cx="10" cy="10" r="5.5" fill="#00C1B2" stroke="#FFFFFF" stroke-width="1.5" />
+                    </g>
+                  </g>
+
+                  <!-- PISO 4 -->
+                  <g class="svg-floor-card" data-floor="4" tabindex="0" role="button" aria-label="Explorar Piso 4">
+                    <rect class="floor-base-rect" x="72" y="136" width="248" height="62" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" filter="url(#cardSoftShadow)" />
+                    <rect class="floor-highlight-rect" x="72" y="136" width="248" height="62" rx="8" fill="url(#activeFloorVibrant)" opacity="0" />
+                    <rect class="floor-scan-beam" x="72" y="136" width="20" height="62" fill="url(#scannerBeamGrad)" opacity="0" />
+
+                    <!-- Badge Nivel -->
+                    <rect class="floor-level-pill" x="82" y="148" width="34" height="24" rx="6" fill="#F1F5F9" />
+                    <text class="floor-level-label" x="99" y="164" font-family="'Outfit', sans-serif" font-size="12" font-weight="800" fill="#1E293B" text-anchor="middle">P4</text>
+
+                    <!-- Ventanales de laboratorios de software -->
+                    <rect x="124" y="145" width="36" height="30" rx="3" fill="url(#windowGlassGrad)" stroke="#E2E8F0" />
+                    <rect x="168" y="145" width="36" height="30" rx="3" fill="url(#windowGlassGrad)" stroke="#E2E8F0" />
+                    <rect x="212" y="145" width="36" height="30" rx="3" fill="url(#windowGlassGrad)" stroke="#E2E8F0" />
+
+                    <!-- Siluetas de computadoras -->
+                    <rect x="137" y="156" width="10" height="7" rx="1" fill="#94A3B8" opacity="0.6" />
+                    <rect x="181" y="156" width="10" height="7" rx="1" fill="#94A3B8" opacity="0.6" />
+                    <rect x="225" y="156" width="10" height="7" rx="1" fill="#94A3B8" opacity="0.6" />
+
+                    <!-- Nombre del Piso -->
+                    <text class="floor-title-label" x="124" y="188" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#94A3B8">
+                      Laboratorios de Sistemas
+                    </text>
+
+                    <!-- Indicador Inactivo -->
+                    <circle cx="290" cy="158" r="4.5" fill="#CBD5E1" />
+                  </g>
+
+                  <!-- PISO 3 (Activo y Destacado con Máximo Brillo) -->
+                  <g class="svg-floor-card active" data-floor="3" tabindex="0" role="button" aria-label="Explorar Piso 3">
+                    <rect class="floor-base-rect" x="72" y="204" width="248" height="62" rx="8" fill="#FFFFFF" stroke="#FF441F" stroke-width="2.5" filter="url(#activeNeonGlow)" />
+                    <rect class="floor-highlight-rect" x="72" y="204" width="248" height="62" rx="8" fill="url(#activeFloorVibrant)" opacity="1" />
+                    <rect class="floor-scan-beam active-scanning" x="72" y="204" width="35" height="62" fill="url(#scannerBeamGrad)" opacity="0.9" />
+
+                    <!-- Badge Nivel Brillante -->
+                    <rect class="floor-level-pill active" x="82" y="216" width="34" height="24" rx="6" fill="#FF441F" />
+                    <text class="floor-level-label" x="99" y="232" font-family="'Outfit', sans-serif" font-size="12" font-weight="900" fill="#FFFFFF" text-anchor="middle">P3</text>
+
+                    <!-- Ventanales Iluminados -->
+                    <rect x="124" y="213" width="36" height="30" rx="3" fill="#FFF5F2" stroke="#FF441F" stroke-width="1.2" />
+                    <rect x="168" y="213" width="36" height="30" rx="3" fill="#FFF5F2" stroke="#FF441F" stroke-width="1.2" />
+                    <rect x="212" y="213" width="36" height="30" rx="3" fill="#FFF5F2" stroke="#FF441F" stroke-width="1.2" />
+
+                    <!-- Icono mesa/banca de estudio -->
+                    <line x1="131" y1="230" x2="153" y2="230" stroke="#FF441F" stroke-width="2.2" stroke-linecap="round" />
+                    <line x1="175" y1="230" x2="197" y2="230" stroke="#FF441F" stroke-width="2.2" stroke-linecap="round" />
+
+                    <!-- Nombre del Piso Activo -->
+                    <text class="floor-title-label active" x="124" y="256" font-family="'Plus Jakarta Sans', sans-serif" font-size="9.5" font-weight="800" fill="#FF441F">
+                      Zona de Bancas & Estudio (2 Activos)
+                    </text>
+
+                    <!-- Beacon Radar de Alta Visibilidad -->
+                    <g class="floor-vendor-beacon active" transform="translate(276, 218)">
+                      <circle cx="12" cy="12" r="14" fill="rgba(255, 68, 31, 0.35)" class="beacon-pulse-circle-fast" />
+                      <circle cx="12" cy="12" r="22" stroke="#FF441F" stroke-width="1.5" class="beacon-expanding-ring" />
+                      <circle cx="12" cy="12" r="6" fill="#FF441F" stroke="#FFFFFF" stroke-width="2" />
+                    </g>
+                  </g>
+
+                  <!-- PISO 2 -->
+                  <g class="svg-floor-card" data-floor="2" tabindex="0" role="button" aria-label="Explorar Piso 2">
+                    <rect class="floor-base-rect" x="72" y="272" width="248" height="62" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" filter="url(#cardSoftShadow)" />
+                    <rect class="floor-highlight-rect" x="72" y="272" width="248" height="62" rx="8" fill="url(#activeFloorVibrant)" opacity="0" />
+                    <rect class="floor-scan-beam" x="72" y="272" width="20" height="62" fill="url(#scannerBeamGrad)" opacity="0" />
+
+                    <!-- Badge Nivel -->
+                    <rect class="floor-level-pill" x="82" y="284" width="34" height="24" rx="6" fill="#F1F5F9" />
+                    <text class="floor-level-label" x="99" y="300" font-family="'Outfit', sans-serif" font-size="12" font-weight="800" fill="#1E293B" text-anchor="middle">P2</text>
+
+                    <!-- Ventanales -->
+                    <rect x="124" y="281" width="36" height="30" rx="3" fill="url(#windowGlassGrad)" stroke="#E2E8F0" />
+                    <rect x="168" y="281" width="36" height="30" rx="3" fill="url(#windowGlassGrad)" stroke="#E2E8F0" />
+                    <rect x="212" y="281" width="36" height="30" rx="3" fill="url(#windowGlassGrad)" stroke="#E2E8F0" />
+
+                    <!-- Nombre del Piso -->
+                    <text class="floor-title-label" x="124" y="324" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#64748B">
+                      Aulas Generales (1 Activo)
+                    </text>
+
+                    <!-- Beacon Radar de Vendedor Activo -->
+                    <g class="floor-vendor-beacon" transform="translate(280, 288)">
+                      <circle cx="10" cy="10" r="12" fill="rgba(0, 193, 178, 0.25)" class="beacon-pulse-circle" />
+                      <circle cx="10" cy="10" r="5.5" fill="#00C1B2" stroke="#FFFFFF" stroke-width="1.5" />
+                    </g>
+                  </g>
+
+                  <!-- PISO 1 (Lobby / Planta Baja) -->
+                  <g class="svg-floor-card" data-floor="1" tabindex="0" role="button" aria-label="Explorar Piso 1">
+                    <rect class="floor-base-rect" x="72" y="340" width="248" height="68" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" filter="url(#cardSoftShadow)" />
+                    <rect class="floor-highlight-rect" x="72" y="340" width="248" height="68" rx="8" fill="url(#activeFloorVibrant)" opacity="0" />
+                    <rect class="floor-scan-beam" x="72" y="340" width="20" height="68" fill="url(#scannerBeamGrad)" opacity="0" />
+
+                    <!-- Badge Nivel -->
+                    <rect class="floor-level-pill" x="82" y="356" width="34" height="24" rx="6" fill="#F1F5F9" />
+                    <text class="floor-level-label" x="99" y="372" font-family="'Outfit', sans-serif" font-size="12" font-weight="800" fill="#1E293B" text-anchor="middle">P1</text>
+
+                    <!-- Entrada Principal Acristalada -->
+                    <rect x="150" y="348" width="70" height="46" rx="4" fill="url(#windowGlassGrad)" stroke="#CBD5E1" />
+                    <!-- Puertas de Acceso -->
+                    <line x1="185" y1="348" x2="185" y2="394" stroke="#94A3B8" stroke-width="1.5" />
+                    <rect x="156" y="358" width="22" height="28" fill="rgba(0, 193, 178, 0.12)" />
+                    <rect x="192" y="358" width="22" height="28" fill="rgba(0, 193, 178, 0.12)" />
+
+                    <!-- Columnas de entrada -->
+                    <rect x="132" y="346" width="9" height="52" fill="#E2E8F0" />
+                    <rect x="232" y="346" width="9" height="52" fill="#E2E8F0" />
+
+                    <!-- Nombre del Piso -->
+                    <text class="floor-title-label" x="82" y="398" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#64748B">
+                      Hall Principal & Jardín (3 Activos)
+                    </text>
+
+                    <!-- Beacon Radar de Vendedor Activo -->
+                    <g class="floor-vendor-beacon" transform="translate(280, 356)">
+                      <circle cx="10" cy="10" r="12" fill="rgba(0, 193, 178, 0.25)" class="beacon-pulse-circle" />
+                      <circle cx="10" cy="10" r="5.5" fill="#00C1B2" stroke="#FFFFFF" stroke-width="1.5" />
+                    </g>
+                  </g>
+                </g>
+
+                <!-- Suelo / Entorno Paisajístico del Campus -->
+                <g class="campus-ground-landscape">
+                  <rect x="8" y="416" width="344" height="14" rx="3" fill="#475569" />
+                  <line x1="12" y1="422" x2="348" y2="422" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="8 6" />
+
+                  <!-- Palmera Piurana Derecha con Brillo -->
+                  <g transform="translate(324, 372)">
+                    <path d="M12 44 Q 9 24 16 8" stroke="#78350F" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                    <path d="M16 8 Q 28 4 34 12" stroke="#15803D" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                    <path d="M16 8 Q 20 -4 28 -2" stroke="#16A34A" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                    <path d="M16 8 Q 6 -6 4 2" stroke="#15803D" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                    <path d="M16 8 Q 2 12 -4 18" stroke="#16A34A" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                  </g>
+
+                  <!-- Bici y Banco Campus Izquierda -->
+                  <g transform="translate(10, 396)">
+                    <rect x="0" y="12" width="16" height="3" rx="1" fill="#334155" />
+                    <line x1="3" y1="15" x2="3" y2="18" stroke="#334155" stroke-width="1.5" />
+                    <line x1="13" y1="15" x2="13" y2="18" stroke="#334155" stroke-width="1.5" />
+                  </g>
+
+                  <!-- Césped base verde UTP -->
+                  <rect x="0" y="430" width="360" height="30" rx="0 0 16 16" fill="#047857" />
+                  <rect x="0" y="430" width="360" height="3" fill="#10B981" />
+                </g>
+              </svg>
+            </div>
+
+            <!-- Botonera de Pisos Rápida y Accesible -->
+            <div class="floors-quick-stack" id="floors-container">
+              <!-- Botones generados dinámicamente -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Panel de Vendedores del Piso Seleccionado -->
+        <div class="floor-results-card">
+          <div class="results-header">
+            <div class="results-meta-group">
+              <span class="results-pretitle">Piso Seleccionado en el Radar</span>
+              <h3 class="results-title" id="active-floor-title">Torre A — Piso 3</h3>
+            </div>
+            <div class="live-pill">
+              <span class="status-pulse-dot"></span>
+              <span id="active-vendor-pill-count">2 emprendedores activos</span>
+            </div>
+          </div>
+
+          <!-- Banner Informativo del Piso -->
+          <div class="floor-context-banner" id="floor-context-banner">
+            <div class="context-icon-box">
+              <Icon name="map-pin" size={18} color="var(--color-primary)" />
+            </div>
+            <div class="context-info-text">
+              <strong id="context-floor-zone">Zona de Estudio & Bancas Centrales</strong>
+              <span id="context-floor-tip">Pasillo central entre aula 302 y laboratorio 304. Zona de descanso concurrida.</span>
+            </div>
+          </div>
+
+          <!-- Lista de Vendedores Activos -->
+          <div class="vendors-live-list" id="vendors-list-container">
+            <!-- Vendedores inyectados dinámicamente -->
+          </div>
+
+          <div class="results-footer-tip">
+            <Icon name="shield-check" size={16} color="var(--color-accent)" />
+            <span>Todos los vendedores son estudiantes verificados con correo institucional @utp.edu.pe</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .radar-section {
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .radar-interactive-board {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Selector de Torre */
+  .tower-selector-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .selector-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .tower-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .tower-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 18px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .tower-btn-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-dark);
+  }
+
+  .tower-tag {
+    font-size: 0.725rem;
+    color: var(--color-text-muted);
+  }
+
+  .tower-btn:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tower-btn.active {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    box-shadow: var(--shadow-primary);
+  }
+
+  .tower-btn.active .tower-btn-title {
+    color: #FFFFFF !important;
+  }
+
+  .tower-btn.active .tower-tag {
+    color: rgba(255, 255, 255, 0.88) !important;
+  }
+
+  /* Rejilla Principal */
+  .radar-content-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* Tarjeta del Edificio */
+  .campus-schematic-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .schematic-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .schematic-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: var(--color-dark);
+  }
+
+  /* Baliza Animada en el Título */
+  .radar-live-beacon {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .beacon-core {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    display: block;
+  }
+
+  .beacon-ring {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid var(--color-primary);
+    animation: beaconRipple 2s ease-out infinite;
+  }
+
+  @keyframes beaconRipple {
+    0% { transform: scale(0.6); opacity: 1; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+
+  .schematic-interactive-tip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+  }
+
+  .click-cue-pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    animation: beaconRipple 1.8s infinite;
+  }
+
+  /* Contenedor Visual: Edificio SVG + Botonera */
+  .building-visual-container {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .building-svg-wrapper {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+  }
+
+  .building-vector {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* ==========================================================================
+     ANIMACIONES Y ESTILOS VISTOSOS DEL EDIFICIO SVG
+     ========================================================================== */
+  .svg-floor-card {
+    cursor: pointer;
+    outline: none;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .svg-floor-card:hover {
+    transform: translateX(3px);
+  }
+
+  .svg-floor-card:hover .floor-base-rect {
+    stroke: var(--color-primary);
+    stroke-width: 2px;
+  }
+
+  .svg-floor-card.active {
+    transform: translateX(4px);
+  }
+
+  .svg-floor-card.active .floor-base-rect {
+    stroke: var(--color-primary) !important;
+    stroke-width: 2.8px !important;
+  }
+
+  .svg-floor-card.active .floor-highlight-rect {
+    opacity: 1 !important;
+  }
+
+  .svg-floor-card.active .floor-level-pill {
+    fill: var(--color-primary) !important;
+  }
+
+  .svg-floor-card.active .floor-level-label {
+    fill: #FFFFFF !important;
+  }
+
+  .svg-floor-card.active .floor-title-label {
+    fill: var(--color-primary) !important;
+    font-weight: 800 !important;
+  }
+
+  /* Animación del Haz de Escaneo Láser */
+  .floor-scan-beam.active-scanning {
+    opacity: 0.8 !important;
+    animation: laserScanSweep 3s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  }
+
+  @keyframes laserScanSweep {
+    0% { transform: translateX(0px); }
+    100% { transform: translateX(210px); }
+  }
+
+  /* Cabina del Ascensor Animada */
+  .vibrant-elevator-cab {
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Animaciones de Balizas y Ondas de Radar */
+  .beacon-pulse-circle {
+    animation: beaconPulse 2s ease-in-out infinite;
+    transform-origin: 10px 10px;
+  }
+
+  .beacon-pulse-circle-fast {
+    animation: beaconPulse 1.2s ease-in-out infinite;
+    transform-origin: 12px 12px;
+  }
+
+  .beacon-expanding-ring {
+    animation: ringExpand 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    transform-origin: 12px 12px;
+  }
+
+  .antenna-radar-wave {
+    animation: ringExpand 2.4s ease-out infinite;
+    transform-origin: 285px 12px;
+  }
+
+  .antenna-radar-wave-delayed {
+    animation: ringExpand 2.4s ease-out 1.2s infinite;
+    transform-origin: 285px 12px;
+  }
+
+  @keyframes beaconPulse {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.4); opacity: 0.2; }
+  }
+
+  @keyframes ringExpand {
+    0% { transform: scale(0.4); opacity: 1; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+
+  /* Botonera Rápida de Pisos */
+  .floors-quick-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .floor-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    text-align: left;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+  }
+
+  .floor-row:hover {
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-primary-border);
+    transform: translateX(3px);
+  }
+
+  .floor-row.active {
+    background-color: #FFF5F2;
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 14px rgba(255, 68, 31, 0.18);
+    transform: translateX(4px);
+  }
+
+  .floor-level-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--color-dark);
+    flex-shrink: 0;
+  }
+
+  .floor-row.active .floor-level-badge {
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(255, 68, 31, 0.4);
+  }
+
+  .floor-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+  }
+
+  .floor-name {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .floor-sub {
+    font-size: 0.725rem;
+    color: var(--color-text-secondary);
+  }
+
+  .floor-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Columna Derecha: Tarjeta de Resultados */
+  .floor-results-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .results-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .results-meta-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .results-pretitle {
+    font-size: 0.725rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .results-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-dark);
+  }
+
+  .live-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.725rem;
+    font-weight: 700;
+    color: var(--color-accent-hover);
+    background-color: var(--color-accent-light);
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+  }
+
+  .floor-context-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background-color: var(--color-primary-subtle);
+    border-left: 3px solid var(--color-primary);
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+  }
+
+  .context-icon-box {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .context-info-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .context-info-text strong {
+    font-size: 0.875rem;
+    color: var(--color-dark);
+  }
+
+  .context-info-text span {
+    font-size: 0.775rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+  }
+
+  .vendors-live-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .vendor-spotlight-item {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+  }
+
+  .vendor-spotlight-item:hover {
+    border-color: var(--color-border-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .spotlight-avatar-box {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .spotlight-avatar-box.accent {
+    background-color: var(--color-accent-light);
+  }
+
+  .spotlight-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .spotlight-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .spotlight-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .spotlight-rating {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .spotlight-location-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.775rem;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  .spotlight-products {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+  }
+
+  .spotlight-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--color-border);
+  }
+
+  .spotlight-price-tag {
+    font-size: 0.825rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .results-footer-tip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* ==========================================================================
+     RESPONSIVIDAD MÓVIL & TABLET
+     ========================================================================== */
+  @media (max-width: 1024px) {
+    .radar-content-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .building-visual-container {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .radar-interactive-board {
+      padding: 16px;
+    }
+
+    .tower-selector-bar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .tower-buttons {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .tower-btn {
+      width: 100%;
+      min-height: 48px;
+    }
+
+    .building-visual-container {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .building-svg-wrapper {
+      max-width: 310px;
+    }
+
+    .floors-quick-stack {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .floor-row {
+      min-height: 48px; /* Touch target móvil accesible */
+    }
+
+    .vendor-spotlight-item {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .spotlight-actions {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .results-title {
+      font-size: 1.1rem;
+    }
+
+    .building-svg-wrapper {
+      max-width: 290px;
+      padding: 6px;
+    }
+  }
+</style>
+
+<script>
+  interface Vendor {
+    name: string;
+    rating: string;
+    location: string;
+    desc: string;
+    price: string;
+    icon: string;
+  }
+
+  interface FloorData {
+    level: number;
+    name: string;
+    sub: string;
+    online: boolean;
+    zoneTip: string;
+    vendors: Vendor[];
+  }
+
+  const radarData: Record<string, {
+    title: string;
+    count: string;
+    floors: FloorData[];
+  }> = {
+    "torre-a": {
+      title: "Torre A — Radar en Vivo",
+      count: "4 activos",
+      floors: [
+        {
+          level: 5,
+          name: "Piso 5 — Aulas Superiores",
+          sub: "1 emprendedor activo",
+          online: true,
+          zoneTip: "Aulas 501 a 504. Acceso rápido por ascensor oeste o escaleras.",
+          vendors: [
+            {
+              name: "Cookie Crunch UTP",
+              rating: "4.8",
+              location: "Frente al aula 502",
+              desc: "Galletas artesanales rellenas de Nutella y chocochips recién horneadas.",
+              price: "Desde S/ 3.50",
+              icon: "cake"
+            }
+          ]
+        },
+        {
+          level: 4,
+          name: "Piso 4 — Laboratorios de Sistemas",
+          sub: "0 emprendedores en este receso",
+          online: false,
+          zoneTip: "Salas de servidores y laboratorios de software A401-A406.",
+          vendors: []
+        },
+        {
+          level: 3,
+          name: "Piso 3 — Zona de Estudio & Bancas",
+          sub: "2 emprendedores activos ahora",
+          online: true,
+          zoneTip: "Pasillo central entre aula 302 y laboratorio 304. Zona de descanso concurrida.",
+          vendors: [
+            {
+              name: "Sweet Bites UTP",
+              rating: "4.9",
+              location: "Bancas frente al Laboratorio 304",
+              desc: "Brownies melosos con fudge de olla, alfajores triples y galletas caseras.",
+              price: "Desde S/ 2.50",
+              icon: "cake"
+            },
+            {
+              name: "Aura Beads & Accesorios",
+              rating: "4.8",
+              location: "Mesa redonda pasillo central (aula 302)",
+              desc: "Pulseras tejidas a mano, charms con iniciales y correas para celular.",
+              price: "Desde S/ 5.00",
+              icon: "sparkles"
+            }
+          ]
+        },
+        {
+          level: 2,
+          name: "Piso 2 — Aulas Generales",
+          sub: "1 emprendedor activo",
+          online: true,
+          zoneTip: "Aulas 201 a 208. Espacio de conexión hacia pasarela peatonal.",
+          vendors: [
+            {
+              name: "Wrap & Roll Campus",
+              rating: "4.7",
+              location: "Banca al lado de las escaleras centrales",
+              desc: "Sandwiches triples sellados al vacío, wraps de pollo y jugos frescos.",
+              price: "Desde S/ 4.50",
+              icon: "utensils"
+            }
+          ]
+        },
+        {
+          level: 1,
+          name: "Piso 1 — Hall de Ingreso & Jardín",
+          sub: "3 emprendedores en punto fijo",
+          online: true,
+          zoneTip: "Hall de recepción principal, jardines exteriores y acceso a torniquetes.",
+          vendors: [
+            {
+              name: "Coffee & Notes UTP",
+              rating: "4.9",
+              location: "Mesas exteriores frente al jardín",
+              desc: "Café pasado caliente, muffins de arándano y té helado.",
+              price: "Desde S/ 3.00",
+              icon: "utensils"
+            }
+          ]
+        }
+      ]
+    },
+    "torre-b": {
+      title: "Torre B — Radar en Vivo",
+      count: "3 activos",
+      floors: [
+        {
+          level: 4,
+          name: "Piso 4 — Aulas de Especialidad",
+          sub: "1 emprendedor activo",
+          online: true,
+          zoneTip: "Talleres de arquitectura y diseño industrial.",
+          vendors: [
+            {
+              name: "Tech & Cables UTP",
+              rating: "4.9",
+              location: "Frente al taller B401",
+              desc: "Cables USB-C, adaptadores HDMI y protectores para laptops.",
+              price: "Desde S/ 8.00",
+              icon: "sparkles"
+            }
+          ]
+        },
+        {
+          level: 3,
+          name: "Piso 3 — Ingenierías",
+          sub: "1 emprendedor activo",
+          online: true,
+          zoneTip: "Aulas B301-B306. Zona de bancas cerca al laboratorio de física.",
+          vendors: [
+            {
+              name: "Chocotejas Piuranas",
+              rating: "5.0",
+              location: "Pasillo central piso 3",
+              desc: "Chocotejas rellenas de manjarblanco con nueces y pasas borrachas.",
+              price: "Desde S/ 2.00",
+              icon: "cake"
+            }
+          ]
+        },
+        {
+          level: 2,
+          name: "Piso 2 — Salas de Cómputo",
+          sub: "1 emprendedor activo",
+          online: true,
+          zoneTip: "Frente a centros de cómputo B201 y B202.",
+          vendors: [
+            {
+              name: "Print Fast Express",
+              rating: "4.8",
+              location: "Frente a sala de cómputo B202",
+              desc: "Impresiones láser al instante por WhatsApp y anillados urgentes.",
+              price: "Desde S/ 0.30",
+              icon: "book-open"
+            }
+          ]
+        },
+        {
+          level: 1,
+          name: "Piso 1 — Recepción & Hall",
+          sub: "0 emprendedores",
+          online: false,
+          zoneTip: "Acceso peatonal por Av. Vice y módulos de atención al estudiante.",
+          vendors: []
+        }
+      ]
+    },
+    "patio": {
+      title: "Patio & Cafetería — Radar en Vivo",
+      count: "5 activos",
+      floors: [
+        {
+          level: 2,
+          name: "Nivel 2 — Graderías & Áreas Verdes",
+          sub: "2 emprendedores en sombra",
+          online: true,
+          zoneTip: "Graderías norte bajo sombra de árboles del campus.",
+          vendors: [
+            {
+              name: "Sticker Mania UTP",
+              rating: "4.7",
+              location: "Graderías norte cerca a biblioteca",
+              desc: "Stickers impermeables para laptop y botellas térmicas.",
+              price: "Desde S/ 1.50",
+              icon: "sparkles"
+            }
+          ]
+        },
+        {
+          level: 1,
+          name: "Nivel 1 — Zona de Mesas Cafetería",
+          sub: "3 emprendedores en receso",
+          online: true,
+          zoneTip: "Mesas compartidas de cafetería y pérgolas principales.",
+          vendors: [
+            {
+              name: "Empanadas Don Lucho",
+              rating: "4.9",
+              location: "Mesa 8 cerca a pérgola central",
+              desc: "Empanadas de carne y pollo recién horneadas con ají casero.",
+              price: "Desde S/ 4.00",
+              icon: "utensils"
+            },
+            {
+              name: "Postres La Piuranita",
+              rating: "4.9",
+              location: "Bancas bajo la sombra de pérgola",
+              desc: "Torta húmeda de chocolate en vasito y cheesecake de maracuyá.",
+              price: "Desde S/ 5.00",
+              icon: "cake"
+            }
+          ]
+        }
+      ]
+    }
+  };
+
+  let currentTower = "torre-a";
+  let currentFloor = 3;
+
+  const towerBtns = document.querySelectorAll(".tower-btn");
+  const towerTitle = document.getElementById("schematic-tower-name");
+  const floorsContainer = document.getElementById("floors-container");
+  const resultsTitle = document.getElementById("active-floor-title");
+  const vendorPillCount = document.getElementById("active-vendor-pill-count");
+  const contextFloorZone = document.getElementById("context-floor-zone");
+  const contextFloorTip = document.getElementById("context-floor-tip");
+  const vendorsContainer = document.getElementById("vendors-list-container");
+  const elevatorCab = document.getElementById("svg-elevator-cab");
+  const elevatorDisplay = document.getElementById("svg-elevator-floor-display");
+
+  // Posiciones Y del elevador según el piso
+  const elevatorPositions: Record<number, number> = {
+    5: -136, // Piso 5 arriba
+    4: -68,  // Piso 4
+    3: 0,    // Piso 3 centro
+    2: 68,   // Piso 2
+    1: 136   // Piso 1 lobby
+  };
+
+  function updateSvgFloorHighlights(floorLevel: number) {
+    const svgCards = document.querySelectorAll(".svg-floor-card");
+    svgCards.forEach((card) => {
+      const fl = Number(card.getAttribute("data-floor"));
+      const isSelected = fl === floorLevel;
+
+      const baseRect = card.querySelector(".floor-base-rect");
+      const highlightRect = card.querySelector(".floor-highlight-rect");
+      const scanBeam = card.querySelector(".floor-scan-beam");
+      const levelPill = card.querySelector(".floor-level-pill");
+      const levelLabel = card.querySelector(".floor-level-label");
+      const titleLabel = card.querySelector(".floor-title-label");
+      const beacon = card.querySelector(".floor-vendor-beacon");
+
+      if (isSelected) {
+        card.classList.add("active");
+        if (baseRect) {
+          baseRect.setAttribute("stroke", "#FF441F");
+          baseRect.setAttribute("stroke-width", "2.8");
+          baseRect.setAttribute("filter", "url(#activeNeonGlow)");
+        }
+        if (highlightRect) highlightRect.setAttribute("opacity", "1");
+        if (scanBeam) {
+          scanBeam.classList.add("active-scanning");
+          scanBeam.setAttribute("opacity", "0.9");
+        }
+        if (levelPill) levelPill.setAttribute("fill", "#FF441F");
+        if (levelLabel) levelLabel.setAttribute("fill", "#FFFFFF");
+        if (titleLabel) {
+          titleLabel.setAttribute("fill", "#FF441F");
+          titleLabel.setAttribute("font-weight", "800");
+        }
+        if (beacon) beacon.classList.add("active");
+      } else {
+        card.classList.remove("active");
+        if (baseRect) {
+          baseRect.setAttribute("stroke", "#CBD5E1");
+          baseRect.setAttribute("stroke-width", "1.5");
+          baseRect.setAttribute("filter", "url(#cardSoftShadow)");
+        }
+        if (highlightRect) highlightRect.setAttribute("opacity", "0");
+        if (scanBeam) {
+          scanBeam.classList.remove("active-scanning");
+          scanBeam.setAttribute("opacity", "0");
+        }
+        if (levelPill) levelPill.setAttribute("fill", "#F1F5F9");
+        if (levelLabel) levelLabel.setAttribute("fill", "#1E293B");
+        if (titleLabel) {
+          titleLabel.setAttribute("fill", "#64748B");
+          titleLabel.setAttribute("font-weight", "700");
+        }
+        if (beacon) beacon.classList.remove("active");
+      }
+    });
+
+    // Mover cabina del ascensor suavemente y actualizar display LED
+    if (elevatorCab && elevatorPositions[floorLevel] !== undefined) {
+      elevatorCab.style.transform = `translate(0px, ${elevatorPositions[floorLevel]}px)`;
+    }
+    if (elevatorDisplay) {
+      elevatorDisplay.textContent = `P${floorLevel}`;
+    }
+  }
+
+  function renderRadar() {
+    const data = radarData[currentTower];
+    if (!data) return;
+
+    if (towerTitle) towerTitle.textContent = data.title;
+
+    // Renderizar Botones Rápidos de Piso
+    if (floorsContainer) {
+      floorsContainer.innerHTML = data.floors
+        .map(
+          (f) => `
+        <button type="button" class="floor-row ${f.level === currentFloor ? "active" : ""}" data-floor="${f.level}" aria-label="Seleccionar ${f.name}">
+          <div class="floor-level-badge">P${f.level}</div>
+          <div class="floor-info">
+            <span class="floor-name">${f.name}</span>
+            <span class="floor-sub">${f.sub}</span>
+          </div>
+          <div class="floor-indicator">
+            <span class="status-pulse-dot ${f.online ? "" : "offline"}"></span>
+          </div>
+        </button>
+      `
+        )
+        .join("");
+
+      floorsContainer.querySelectorAll(".floor-row").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const fl = Number(btn.getAttribute("data-floor"));
+          currentFloor = fl;
+          renderRadar();
+        });
+      });
+    }
+
+    // Actualizar estados visuales en el edificio SVG
+    updateSvgFloorHighlights(currentFloor);
+
+    // Conectar eventos click en los pisos del edificio SVG
+    document.querySelectorAll(".svg-floor-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        const fl = Number(card.getAttribute("data-floor"));
+        if (!isNaN(fl)) {
+          currentFloor = fl;
+          renderRadar();
+        }
+      });
+      card.addEventListener("keydown", (e: any) => {
+        if (e.key === "Enter" || e.key === " ") {
+          const fl = Number(card.getAttribute("data-floor"));
+          if (!isNaN(fl)) {
+            currentFloor = fl;
+            renderRadar();
+          }
+        }
+      });
+    });
+
+    // Renderizar detalles y lista de vendedores del piso seleccionado
+    const selFloorObj = data.floors.find((f) => f.level === currentFloor) || data.floors[0];
+    if (resultsTitle && selFloorObj) {
+      const towerNameSimple =
+        currentTower === "torre-a" ? "Torre A" : currentTower === "torre-b" ? "Torre B" : "Patio Central";
+      resultsTitle.textContent = `${towerNameSimple} — Piso ${selFloorObj.level}`;
+    }
+
+    if (vendorPillCount && selFloorObj) {
+      vendorPillCount.textContent = `${selFloorObj.vendors.length} emprendedor${selFloorObj.vendors.length === 1 ? "" : "es"} activo${selFloorObj.vendors.length === 1 ? "" : "s"}`;
+    }
+
+    if (contextFloorZone && selFloorObj) {
+      contextFloorZone.textContent = selFloorObj.name;
+    }
+
+    if (contextFloorTip && selFloorObj) {
+      contextFloorTip.textContent = selFloorObj.zoneTip;
+    }
+
+    if (vendorsContainer && selFloorObj) {
+      if (selFloorObj.vendors.length === 0) {
+        vendorsContainer.innerHTML = `
+          <div style="text-align: center; padding: 36px 16px; background-color: var(--color-bg); border-radius: var(--radius-sm); border: 1px dashed var(--color-border);">
+            <div style="margin-bottom: 6px; font-weight: 700; color: var(--color-dark); font-size: 0.95rem;">No hay vendedores en este piso en este momento</div>
+            <p style="font-size: 0.825rem; color: var(--color-text-secondary); max-width: 320px; margin: 0 auto;">Prueba seleccionando otro piso en el edificio o activa tu alerta para enterarte cuando un estudiante suba a vender.</p>
+          </div>
+        `;
+      } else {
+        vendorsContainer.innerHTML = selFloorObj.vendors
+          .map(
+            (v) => `
+          <article class="vendor-spotlight-item">
+            <div class="spotlight-avatar-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="m12 6 4 6h-8l4-6z"/>
+              </svg>
+            </div>
+            <div class="spotlight-details">
+              <div class="spotlight-top">
+                <h4 class="spotlight-name">${v.name}</h4>
+                <div class="spotlight-rating">
+                  <span class="rating-num">${v.rating}</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--color-rating)" stroke="none">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="spotlight-location-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>${v.location}</span>
+              </div>
+              <p class="spotlight-products">${v.desc}</p>
+              <div class="spotlight-actions">
+                <span class="spotlight-price-tag">${v.price}</span>
+                <button type="button" class="btn btn-sm btn-primary open-chat-trigger" data-vendor="${v.name}" data-loc="${v.location}">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+                  </svg>
+                  <span>Pedir por WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        `
+          )
+          .join("");
+
+        // Conectar botones de WhatsApp al modal
+        vendorsContainer.querySelectorAll(".open-chat-trigger").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const vName = btn.getAttribute("data-vendor") || "Emprendedor UTP";
+            const vLoc = btn.getAttribute("data-loc") || "";
+            const modal = document.getElementById("whatsapp-modal");
+            if (modal) {
+              modal.classList.add("is-visible");
+              const titleElem = document.getElementById("modal-merchant-name");
+              if (titleElem) titleElem.textContent = `${vName} (${vLoc})`;
+              const itemInput = document.getElementById("modal-msg-preview") as HTMLTextAreaElement | null;
+              if (itemInput) {
+                itemInput.value = `¡Hola ${vName}! Vi tu publicación en CampusVenta UTP Piura. Estoy en ${vLoc} y me gustaría coordinar un pedido. ¿Tienes disponible ahora?`;
+              }
+            }
+          });
+        });
+      }
+    }
+  }
+
+  // Setup tower tabs
+  towerBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      towerBtns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentTower = btn.getAttribute("data-tower") || "torre-a";
+      currentFloor = currentTower === "patio" ? 1 : 3;
+      renderRadar();
+    });
+  });
+
+  // Init
+  renderRadar();
+</script>

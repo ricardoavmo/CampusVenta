@@ -1,0 +1,214 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<section class="section faq-section" id="preguntas">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <Icon name="award" size={14} />
+        <span>Resuelve tus Dudas</span>
+      </div>
+      <h2 class="section-title">
+        Preguntas Frecuentes
+      </h2>
+      <p class="section-desc">
+        Todo lo que necesitas saber para comprar o vender con seguridad dentro del campus.
+      </p>
+    </div>
+
+    <div class="faq-accordion-container" id="faq-accordion">
+      <!-- FAQ 1 -->
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false">
+          <span class="faq-q-text">¿Tiene algún costo registrar mi negocio o vender en CampusVenta?</span>
+          <div class="faq-icon-arrow">
+            <Icon name="chevron-down" size={18} />
+          </div>
+        </button>
+        <div class="faq-answer">
+          <p>
+            No, es <strong>100% gratuito</strong> para todos los estudiantes de la UTP Piura. No cobramos comisiones por venta ni tarifas mensuales. El dinero de cada venta va íntegro a tu cuenta de Yape, Plin o en efectivo directamente entre compañeros.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false">
+          <span class="faq-q-text">¿Cómo funciona la geolocalización por Torre y Piso en la UTP?</span>
+          <div class="faq-icon-arrow">
+            <Icon name="chevron-down" size={18} />
+          </div>
+        </button>
+        <div class="faq-answer">
+          <p>
+            Al llegar al campus, indicas en tu panel en qué Torre estás (Torre A, Torre B o Patio Central), el piso correspondiente y una referencia corta (ej. <em>"banca frente al aula 304"</em>). Los compradores filtran por su ubicación y te encuentran en menos de 2 minutos durante los recesos.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false">
+          <span class="faq-q-text">¿Qué pasa si entro a clases o se me agotan los productos?</span>
+          <div class="faq-icon-arrow">
+            <Icon name="chevron-down" size={18} />
+          </div>
+        </button>
+        <div class="faq-answer">
+          <p>
+            Con un solo toque en tu switch de disponibilidad pasas tu estado a <em>"Inactivo / Fuera de campus"</em>. Tu catálogo se ocultará del radar en vivo para que puedas prestar atención a tus clases sin recibir notificaciones ni interrupciones.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false">
+          <span class="faq-q-text">¿Quiénes pueden participar en CampusVenta?</span>
+          <div class="faq-icon-arrow">
+            <Icon name="chevron-down" size={18} />
+          </div>
+        </button>
+        <div class="faq-answer">
+          <p>
+            Cualquier estudiante matriculado, docente o trabajador de la <strong>UTP Piura</strong>. Para dar de alta un emprendimiento solicitamos validar tu correo institucional <code>@utp.edu.pe</code>, lo que garantiza una comunidad segura, formal y confiable para todos.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 5 -->
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false">
+          <span class="faq-q-text">¿Cómo se procesan los pedidos y los pagos?</span>
+          <div class="faq-icon-arrow">
+            <Icon name="chevron-down" size={18} />
+          </div>
+        </button>
+        <div class="faq-answer">
+          <p>
+            Al hacer clic en "Contactar por WhatsApp", la aplicación genera automáticamente un mensaje con los datos del producto y el punto de entrega sugerido. El trato y el pago se realizan directamente mediante Yape, Plin o efectivo en mano, sin intermediarios.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-section {
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .faq-accordion-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .faq-item {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg);
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+  }
+
+  .faq-item:hover {
+    border-color: var(--color-border-hover);
+  }
+
+  .faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    text-align: left;
+    background: none;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-dark);
+    gap: 16px;
+    transition: color 0.15s ease;
+  }
+
+  .faq-question:hover {
+    color: var(--color-primary);
+  }
+
+  .faq-icon-arrow {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .faq-item.is-open .faq-icon-arrow {
+    transform: rotate(180deg);
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary-border);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    background-color: var(--color-surface);
+  }
+
+  .faq-answer p {
+    padding: 0 24px 22px;
+    font-size: 0.925rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+
+  .faq-answer code {
+    background-color: var(--color-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    color: var(--color-primary);
+    border: 1px solid var(--color-border);
+  }
+</style>
+
+<script>
+  const faqItems = document.querySelectorAll(".faq-item");
+
+  faqItems.forEach((item) => {
+    const btn = item.querySelector(".faq-question");
+    const answer = item.querySelector(".faq-answer") as HTMLElement | null;
+
+    btn?.addEventListener("click", () => {
+      const isOpen = item.classList.contains("is-open");
+
+      // Cerrar otros
+      faqItems.forEach((other) => {
+        other.classList.remove("is-open");
+        const otherBtn = other.querySelector(".faq-question");
+        const otherAns = other.querySelector(".faq-answer") as HTMLElement | null;
+        if (otherBtn) otherBtn.setAttribute("aria-expanded", "false");
+        if (otherAns) otherAns.style.maxHeight = "0px";
+      });
+
+      if (!isOpen && answer) {
+        item.classList.add("is-open");
+        btn.setAttribute("aria-expanded", "true");
+        answer.style.maxHeight = `${answer.scrollHeight}px`;
+      }
+    });
+  });
+</script>

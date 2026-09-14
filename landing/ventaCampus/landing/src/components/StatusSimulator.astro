@@ -1,0 +1,596 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<section class="section simulator-section" id="simulador">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <Icon name="radio" size={14} />
+        <span>Control Total del Emprendedor</span>
+      </div>
+      <h2 class="section-title">
+        Tú decides cuándo vender, <br />
+        <span class="highlight-text">con un solo toque</span>
+      </h2>
+      <p class="section-desc">
+        Como estudiante, tu prioridad son tus clases. Cuando llegues al campus en tu tiempo libre o receso, activa tu estado y comparte tu ubicación exacta. Cuando entres a clases o te quedes sin stock, desactívalo al instante.
+      </p>
+    </div>
+
+    <div class="simulator-wrapper">
+      <!-- Panel de Control del Emprendedor (Lado Izquierdo) -->
+      <div class="simulator-controls-card">
+        <div class="sim-card-header">
+          <div class="sim-header-info">
+            <span class="sim-badge">Panel de Vendedor</span>
+            <h3 class="sim-business-name">Mi Emprendimiento UTP</h3>
+          </div>
+          <div class="sim-verified-tag">
+            <Icon name="shield-check" size={15} color="var(--color-accent)" />
+            <span>Verificado</span>
+          </div>
+        </div>
+
+        <!-- Switch Principal -->
+        <div class="sim-switch-box">
+          <div class="switch-meta">
+            <span class="switch-title">Estado de Presencia</span>
+            <span class="switch-desc" id="sim-switch-desc">
+              Visible para compradores en campus
+            </span>
+          </div>
+          <button
+            type="button"
+            class="toggle-switch-btn is-active"
+            id="sim-toggle-btn"
+            role="switch"
+            aria-checked="true"
+            aria-label="Alternar presencia en campus"
+          >
+            <span class="toggle-slider"></span>
+          </button>
+        </div>
+
+        <!-- Configuración de Ubicación Actual -->
+        <div class="sim-location-inputs" id="sim-location-inputs">
+          <div class="input-group">
+            <label for="sim-tower-select">
+              <Icon name="building" size={14} />
+              <span>¿En qué Torre estás?</span>
+            </label>
+            <select id="sim-tower-select" class="sim-select">
+              <option value="Torre A">Torre A (Aulas Principales)</option>
+              <option value="Torre B" selected>Torre B (Ingenierías)</option>
+              <option value="Patio Central">Patio Central / Cafetería</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="sim-floor-select">
+              <Icon name="layers" size={14} />
+              <span>Piso actual:</span>
+            </label>
+            <select id="sim-floor-select" class="sim-select">
+              <option value="Piso 1">Piso 1 (Hall)</option>
+              <option value="Piso 2" selected>Piso 2 (Aulas 201-208)</option>
+              <option value="Piso 3">Piso 3 (Laboratorios)</option>
+              <option value="Piso 4">Piso 4 (Especialidad)</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="sim-ref-input">
+              <Icon name="map-pin" size={14} />
+              <span>Punto de referencia exacto:</span>
+            </label>
+            <input
+              type="text"
+              id="sim-ref-input"
+              class="sim-input"
+              value="Banca frente al laboratorio 204"
+              placeholder="Ej: Mesa redonda cerca al ascensor"
+            />
+          </div>
+        </div>
+
+        <div class="sim-benefit-note">
+          <Icon name="zap" size={16} color="var(--color-primary)" />
+          <span>Cero comisiones: los pagos van 100% directos a tu Yape o Plin.</span>
+        </div>
+      </div>
+
+      <!-- Vista Previa en Vivo de Cómo lo Ven los Compradores (Lado Derecho) -->
+      <div class="simulator-preview-card">
+        <div class="preview-header">
+          <span class="preview-label">Vista de los estudiantes en CampusVenta:</span>
+          <div class="status-chip-live" id="preview-status-chip">
+            <span class="status-pulse-dot" id="preview-pulse"></span>
+            <span id="preview-status-text">Disponible en Campus</span>
+          </div>
+        </div>
+
+        <div class="preview-card-body" id="preview-card-body">
+          <div class="preview-banner">
+            <div class="preview-avatar">
+              <Icon name="cake" size={28} color="#FFFFFF" />
+            </div>
+            <div class="preview-meta">
+              <h4 class="preview-name">Brownies & Delicias UTP</h4>
+              <div class="preview-badges">
+                <span class="p-badge">Postres</span>
+                <span class="p-badge rating">
+                  <Icon name="star" size={12} color="var(--color-rating)" />
+                  <span>4.9 (52 reseñas)</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="preview-location-box" id="preview-location-box">
+            <div class="loc-pin-icon">
+              <Icon name="map-pin" size={18} color="var(--color-primary)" />
+            </div>
+            <div class="loc-text">
+              <strong id="preview-tower-floor">Torre B — Piso 2</strong>
+              <span id="preview-ref-text">Banca frente al laboratorio 204</span>
+            </div>
+          </div>
+
+          <div class="preview-products-list">
+            <div class="product-mini-row">
+              <span>Brownie Clásico con Pecanas</span>
+              <strong>S/ 4.00</strong>
+            </div>
+            <div class="product-mini-row">
+              <span>Alfajores Artesanales (Caja x6)</span>
+              <strong>S/ 7.50</strong>
+            </div>
+          </div>
+
+          <div class="preview-action-area">
+            <button type="button" class="btn btn-primary btn-sm preview-order-btn" id="preview-order-btn">
+              <Icon name="whatsapp" size={16} />
+              <span>Pedir por WhatsApp al Emprendedor</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="preview-indicator-notice" id="preview-notice">
+          <Icon name="check-circle" size={16} color="var(--color-accent)" />
+          <span id="preview-notice-text">Tu emprendimiento aparece en el radar del Piso 2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .simulator-section {
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .simulator-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: stretch;
+  }
+
+  /* Tarjeta de Control */
+  .simulator-controls-card {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .sim-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .sim-badge {
+    font-size: 0.725rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    letter-spacing: 0.05em;
+  }
+
+  .sim-business-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-dark);
+  }
+
+  .sim-verified-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background-color: var(--color-accent-light);
+    color: var(--color-accent-hover);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  /* Switch Toggle */
+  .sim-switch-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    padding: 16px 20px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .switch-meta {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .switch-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .switch-desc {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+  }
+
+  .toggle-switch-btn {
+    width: 58px;
+    height: 32px;
+    background-color: #D1D5DB;
+    border-radius: var(--radius-full);
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+    padding: 3px;
+  }
+
+  .toggle-switch-btn.is-active {
+    background-color: var(--color-accent);
+  }
+
+  .toggle-slider {
+    display: block;
+    width: 26px;
+    height: 26px;
+    background-color: #FFFFFF;
+    border-radius: 50%;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .toggle-switch-btn.is-active .toggle-slider {
+    transform: translateX(26px);
+  }
+
+  /* Inputs de Ubicación */
+  .sim-location-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    padding: 18px;
+    border-radius: var(--radius-md);
+    transition: opacity 0.2s ease;
+  }
+
+  .sim-location-inputs.is-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .input-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.825rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .sim-select, .sim-input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--color-text-main);
+  }
+
+  .sim-select:focus, .sim-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background-color: #FFFFFF;
+  }
+
+  .sim-benefit-note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    padding: 12px 16px;
+    background-color: var(--color-primary-subtle);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--color-primary);
+  }
+
+  /* Vista Previa */
+  .simulator-preview-card {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .preview-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-chip-live {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 700;
+    background-color: var(--color-accent-light);
+    color: var(--color-accent-hover);
+    transition: all 0.25s ease;
+  }
+
+  .status-chip-live.is-offline {
+    background-color: rgba(142, 150, 164, 0.15);
+    color: var(--color-text-muted);
+  }
+
+  .preview-card-body {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-md);
+    transition: all 0.25s ease;
+  }
+
+  .preview-card-body.is-dimmed {
+    opacity: 0.55;
+    filter: grayscale(0.6);
+  }
+
+  .preview-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 16px;
+  }
+
+  .preview-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--color-primary) 0%, #FF7A00 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .preview-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .preview-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .p-badge {
+    font-size: 0.725rem;
+    background-color: var(--color-bg);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    font-weight: 600;
+  }
+
+  .p-badge.rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-dark);
+  }
+
+  .preview-location-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background-color: var(--color-primary-subtle);
+    border-left: 3px solid var(--color-primary);
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+  }
+
+  .loc-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .loc-text strong {
+    font-size: 0.9rem;
+    color: var(--color-dark);
+  }
+
+  .loc-text span {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+  }
+
+  .preview-products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 16px;
+  }
+
+  .product-mini-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.825rem;
+    color: var(--color-text-main);
+  }
+
+  .preview-order-btn {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .preview-indicator-notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 12px 16px;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+  }
+
+  @media (max-width: 900px) {
+    .simulator-wrapper {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Lógica del simulador interactivo
+  const toggleBtn = document.getElementById("sim-toggle-btn");
+  const switchDesc = document.getElementById("sim-switch-desc");
+  const locInputs = document.getElementById("sim-location-inputs");
+  const previewBody = document.getElementById("preview-card-body");
+  const statusChip = document.getElementById("preview-status-chip");
+  const statusPulse = document.getElementById("preview-pulse");
+  const statusText = document.getElementById("preview-status-text");
+  const towerSelect = document.getElementById("sim-tower-select") as HTMLSelectElement | null;
+  const floorSelect = document.getElementById("sim-floor-select") as HTMLSelectElement | null;
+  const refInput = document.getElementById("sim-ref-input") as HTMLInputElement | null;
+
+  const previewTowerFloor = document.getElementById("preview-tower-floor");
+  const previewRefText = document.getElementById("preview-ref-text");
+  const previewNoticeText = document.getElementById("preview-notice-text");
+
+  let isOnline = true;
+
+  function updateSimulator() {
+    if (isOnline) {
+      toggleBtn?.classList.add("is-active");
+      toggleBtn?.setAttribute("aria-checked", "true");
+      if (switchDesc) switchDesc.textContent = "Visible para compradores en campus";
+      locInputs?.classList.remove("is-disabled");
+      previewBody?.classList.remove("is-dimmed");
+      statusChip?.classList.remove("is-offline");
+      statusPulse?.classList.remove("offline");
+      if (statusText) statusText.textContent = "Disponible en Campus";
+
+      const towerVal = towerSelect ? towerSelect.value : "Torre B";
+      const floorVal = floorSelect ? floorSelect.value : "Piso 2";
+      const refVal = refInput && refInput.value ? refInput.value : "Punto de encuentro";
+
+      if (previewTowerFloor) previewTowerFloor.textContent = `${towerVal} — ${floorVal}`;
+      if (previewRefText) previewRefText.textContent = refVal;
+      if (previewNoticeText) previewNoticeText.textContent = `Tu emprendimiento aparece visible en ${towerVal} (${floorVal})`;
+    } else {
+      toggleBtn?.classList.remove("is-active");
+      toggleBtn?.setAttribute("aria-checked", "false");
+      if (switchDesc) switchDesc.textContent = "Inactivo (en clases o fuera de campus)";
+      locInputs?.classList.add("is-disabled");
+      previewBody?.classList.add("is-dimmed");
+      statusChip?.classList.add("is-offline");
+      statusPulse?.classList.add("offline");
+      if (statusText) statusText.textContent = "No disponible ahora";
+
+      if (previewTowerFloor) previewTowerFloor.textContent = "Fuera de campus / En clases";
+      if (previewRefText) previewRefText.textContent = "Regresa en el próximo receso";
+      if (previewNoticeText) previewNoticeText.textContent = "Nadie te interrumpirá mientras estás en clase";
+    }
+  }
+
+  toggleBtn?.addEventListener("click", () => {
+    isOnline = !isOnline;
+    updateSimulator();
+  });
+
+  towerSelect?.addEventListener("change", updateSimulator);
+  floorSelect?.addEventListener("change", updateSimulator);
+  refInput?.addEventListener("input", updateSimulator);
+
+  // Conectar botón de pedido de la preview al modal
+  const previewOrderBtn = document.getElementById("preview-order-btn");
+  if (previewOrderBtn) {
+    previewOrderBtn.addEventListener("click", () => {
+      const modal = document.getElementById("whatsapp-modal");
+      if (modal) {
+        modal.classList.add("is-visible");
+        const nameSpan = document.getElementById("modal-merchant-name");
+        if (nameSpan) nameSpan.textContent = "Brownies & Delicias UTP (Torre B - Piso 2)";
+      }
+    });
+  }
+</script>

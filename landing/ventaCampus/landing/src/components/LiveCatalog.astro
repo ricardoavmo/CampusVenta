@@ -1,0 +1,842 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<section class="section catalog-section" id="catalogo">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <Icon name="shopping-bag" size={14} />
+        <span>Catálogo Centralizado</span>
+      </div>
+      <h2 class="section-title">
+        Explora lo que la comunidad <br />
+        <span class="highlight-text">tiene para ofrecer hoy</span>
+      </h2>
+      <p class="section-desc">
+        Todo organizado por categorías y actualizado en tiempo real. Apoya a tus compañeros de carrera comprando productos de calidad directamente en el campus.
+      </p>
+    </div>
+
+    <!-- Barra de Filtros y Búsqueda -->
+    <div class="catalog-controls">
+      <div class="search-input-wrapper">
+        <Icon name="search" size={18} color="var(--color-text-muted)" class="search-icon" />
+        <input
+          type="text"
+          id="catalog-search"
+          placeholder="Buscar brownies, pulseras, impresiones, café..."
+          aria-label="Buscar en el catálogo"
+        />
+      </div>
+
+      <div class="categories-pill-list" id="category-filters">
+        <button type="button" class="cat-pill active" data-category="todos">
+          <Icon name="sparkles" size={15} />
+          <span>Todos</span>
+        </button>
+        <button type="button" class="cat-pill" data-category="postres">
+          <Icon name="cake" size={15} />
+          <span>Postres & Dulces</span>
+        </button>
+        <button type="button" class="cat-pill" data-category="comida">
+          <Icon name="utensils" size={15} />
+          <span>Comida & Snacks</span>
+        </button>
+        <button type="button" class="cat-pill" data-category="accesorios">
+          <Icon name="tag" size={15} />
+          <span>Accesorios & Merch</span>
+        </button>
+        <button type="button" class="cat-pill" data-category="servicios">
+          <Icon name="book-open" size={15} />
+          <span>Servicios Universitarios</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Grid de Merchant Cards (Conforme a Sección 6.1 desing.md) -->
+    <div class="merchants-grid" id="merchants-grid">
+      <!-- Card 1: Sweet Bites UTP -->
+      <article class="merchant-card" data-category="postres">
+        <div class="card-cover-container">
+          <div class="cover-visual bg-dessert-1">
+            <div class="cover-decor-symbol">
+              <Icon name="cake" size={44} color="#FFFFFF" />
+            </div>
+          </div>
+          <!-- Badge Descuento (desing.md 6.1.3) -->
+          <div class="card-badge-discount">
+            <Icon name="tag" size={12} />
+            <span>2x S/ 15 hoy</span>
+          </div>
+          <!-- Badge ETA y Ubicación (desing.md 6.1.2) -->
+          <div class="card-badge-eta">
+            <span class="status-pulse-dot"></span>
+            <Icon name="clock" size={13} />
+            <span>Activo • Torre A, Piso 3</span>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="card-header-row">
+            <h3 class="card-name">Sweet Bites UTP</h3>
+            <div class="card-rating">
+              <span class="rating-val">4.9</span>
+              <Icon name="star" size={15} color="var(--color-rating)" />
+            </div>
+          </div>
+
+          <p class="card-description">
+            Brownies artesanales melosos con fudge de olla, alfajores de maicena y chocochips.
+          </p>
+
+          <div class="card-meta-location">
+            <Icon name="map-pin" size={14} color="var(--color-primary)" />
+            <span>Torre A - Piso 3 (frente al lab 304)</span>
+          </div>
+
+          <!-- Mini lista de productos destacados (desing.md 6.2) -->
+          <div class="card-products-preview">
+            <div class="preview-item">
+              <span class="p-name">Brownie individual</span>
+              <span class="p-price">S/ 4.00</span>
+            </div>
+            <div class="preview-item">
+              <span class="p-name">Caja x4 Brownies surtidos</span>
+              <span class="p-price">S/ 14.00</span>
+            </div>
+          </div>
+
+          <div class="card-actions-row">
+            <div class="price-range">
+              <span class="price-from">Desde</span>
+              <span class="price-amount">S/ 4.00</span>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm trigger-contact-modal"
+              data-merchant="Sweet Bites UTP"
+              data-location="Torre A, Piso 3"
+              data-item="Brownies Melosos"
+            >
+              <Icon name="whatsapp" size={16} />
+              <span>Contactar</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: Piura Crunch & Salados -->
+      <article class="merchant-card" data-category="comida">
+        <div class="card-cover-container">
+          <div class="cover-visual bg-food-1">
+            <div class="cover-decor-symbol">
+              <Icon name="utensils" size={44} color="#FFFFFF" />
+            </div>
+          </div>
+          <!-- Badge Descuento (desing.md 6.1.3 con #00C1B2) -->
+          <div class="card-badge-discount accent">
+            <Icon name="award" size={12} />
+            <span>Popular en receso</span>
+          </div>
+          <div class="card-badge-eta">
+            <span class="status-pulse-dot"></span>
+            <Icon name="clock" size={13} />
+            <span>Activo • Torre B, Piso 1</span>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="card-header-row">
+            <h3 class="card-name">Piura Crunch & Salados</h3>
+            <div class="card-rating">
+              <span class="rating-val">4.8</span>
+              <Icon name="star" size={15} color="var(--color-rating)" />
+            </div>
+          </div>
+
+          <p class="card-description">
+            Empanadas artesanales calientes, sanguchitos triples de pollo y chifle piurano sellado.
+          </p>
+
+          <div class="card-meta-location">
+            <Icon name="map-pin" size={14} color="var(--color-primary)" />
+            <span>Torre B - Hall de ingreso</span>
+          </div>
+
+          <div class="card-products-preview">
+            <div class="preview-item">
+              <span class="p-name">Triple de pollo con palta</span>
+              <span class="p-price">S/ 4.50</span>
+            </div>
+            <div class="preview-item">
+              <span class="p-name">Empanada de carne</span>
+              <span class="p-price">S/ 4.00</span>
+            </div>
+          </div>
+
+          <div class="card-actions-row">
+            <div class="price-range">
+              <span class="price-from">Desde</span>
+              <span class="price-amount">S/ 3.50</span>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm trigger-contact-modal"
+              data-merchant="Piura Crunch & Salados"
+              data-location="Torre B, Piso 1"
+              data-item="Triple de pollo o Empanada"
+            >
+              <Icon name="whatsapp" size={16} />
+              <span>Contactar</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3: Aura Beads & Accesorios -->
+      <article class="merchant-card" data-category="accesorios">
+        <div class="card-cover-container">
+          <div class="cover-visual bg-acc-1">
+            <div class="cover-decor-symbol">
+              <Icon name="tag" size={44} color="#FFFFFF" />
+            </div>
+          </div>
+          <div class="card-badge-discount">
+            <Icon name="sparkles" size={12} />
+            <span>Hecho a mano</span>
+          </div>
+          <div class="card-badge-eta">
+            <span class="status-pulse-dot"></span>
+            <Icon name="clock" size={13} />
+            <span>Activo • Torre A, Piso 2</span>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="card-header-row">
+            <h3 class="card-name">Aura Beads</h3>
+            <div class="card-rating">
+              <span class="rating-val">5.0</span>
+              <Icon name="star" size={15} color="var(--color-rating)" />
+            </div>
+          </div>
+
+          <p class="card-description">
+            Pulseras personalizadas con iniciales, straps para celular resistentes y collares de perlas.
+          </p>
+
+          <div class="card-meta-location">
+            <Icon name="map-pin" size={14} color="var(--color-primary)" />
+            <span>Torre A - Piso 2 (Bancas de lectura)</span>
+          </div>
+
+          <div class="card-products-preview">
+            <div class="preview-item">
+              <span class="p-name">Phone Strap resistente</span>
+              <span class="p-price">S/ 7.00</span>
+            </div>
+            <div class="preview-item">
+              <span class="p-name">Set x2 Pulseras dúo</span>
+              <span class="p-price">S/ 10.00</span>
+            </div>
+          </div>
+
+          <div class="card-actions-row">
+            <div class="price-range">
+              <span class="price-from">Desde</span>
+              <span class="price-amount">S/ 5.00</span>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm trigger-contact-modal"
+              data-merchant="Aura Beads"
+              data-location="Torre A, Piso 2"
+              data-item="Pulseras y Straps"
+            >
+              <Icon name="whatsapp" size={16} />
+              <span>Contactar</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4: Print Fast UTP -->
+      <article class="merchant-card" data-category="servicios">
+        <div class="card-cover-container">
+          <div class="cover-visual bg-serv-1">
+            <div class="cover-decor-symbol">
+              <Icon name="book-open" size={44} color="#FFFFFF" />
+            </div>
+          </div>
+          <div class="card-badge-discount accent">
+            <Icon name="zap" size={12} />
+            <span>Entrega urgente</span>
+          </div>
+          <div class="card-badge-eta">
+            <span class="status-pulse-dot"></span>
+            <Icon name="clock" size={13} />
+            <span>Activo • Torre B, Piso 3</span>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="card-header-row">
+            <h3 class="card-name">Print Fast UTP</h3>
+            <div class="card-rating">
+              <span class="rating-val">4.9</span>
+              <Icon name="star" size={15} color="var(--color-rating)" />
+            </div>
+          </div>
+
+          <p class="card-description">
+            Impresiones b/n y color enviadas por WhatsApp, anillados express y micas para proyectos.
+          </p>
+
+          <div class="card-meta-location">
+            <Icon name="map-pin" size={14} color="var(--color-primary)" />
+            <span>Torre B - Piso 3 (frente a cómputo)</span>
+          </div>
+
+          <div class="card-products-preview">
+            <div class="preview-item">
+              <span class="p-name">Impresión B/N x página</span>
+              <span class="p-price">S/ 0.25</span>
+            </div>
+            <div class="preview-item">
+              <span class="p-name">Anillado A4 con micas</span>
+              <span class="p-price">S/ 3.50</span>
+            </div>
+          </div>
+
+          <div class="card-actions-row">
+            <div class="price-range">
+              <span class="price-from">Desde</span>
+              <span class="price-amount">S/ 0.25</span>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm trigger-contact-modal"
+              data-merchant="Print Fast UTP"
+              data-location="Torre B, Piso 3"
+              data-item="Impresión o Anillado"
+            >
+              <Icon name="whatsapp" size={16} />
+              <span>Contactar</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 5: Chocotejas Doña Rosita -->
+      <article class="merchant-card" data-category="postres">
+        <div class="card-cover-container">
+          <div class="cover-visual bg-dessert-2">
+            <div class="cover-decor-symbol">
+              <Icon name="cake" size={44} color="#FFFFFF" />
+            </div>
+          </div>
+          <div class="card-badge-discount">
+            <Icon name="award" size={12} />
+            <span>Receta Casera</span>
+          </div>
+          <div class="card-badge-eta">
+            <span class="status-pulse-dot"></span>
+            <Icon name="clock" size={13} />
+            <span>Activo • Patio Central</span>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="card-header-row">
+            <h3 class="card-name">Chocotejas Doña Rosita</h3>
+            <div class="card-rating">
+              <span class="rating-val">4.9</span>
+              <Icon name="star" size={15} color="var(--color-rating)" />
+            </div>
+          </div>
+
+          <p class="card-description">
+            Chocotejas de cobertura bitter rellenas de manjarblanco con pecanas, guindones o pasas borrachas.
+          </p>
+
+          <div class="card-meta-location">
+            <Icon name="map-pin" size={14} color="var(--color-primary)" />
+            <span>Patio Central - Sombrillas de cafetería</span>
+          </div>
+
+          <div class="card-products-preview">
+            <div class="preview-item">
+              <span class="p-name">Unidad Chocoteja Pecana</span>
+              <span class="p-price">S/ 2.50</span>
+            </div>
+            <div class="preview-item">
+              <span class="p-name">Pack x5 Chocotejas</span>
+              <span class="p-price">S/ 11.00</span>
+            </div>
+          </div>
+
+          <div class="card-actions-row">
+            <div class="price-range">
+              <span class="price-from">Desde</span>
+              <span class="price-amount">S/ 2.50</span>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm trigger-contact-modal"
+              data-merchant="Chocotejas Doña Rosita"
+              data-location="Patio Central"
+              data-item="Chocotejas Caseras"
+            >
+              <Icon name="whatsapp" size={16} />
+              <span>Contactar</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 6: Sticker Lab & Merch UTP -->
+      <article class="merchant-card" data-category="accesorios">
+        <div class="card-cover-container">
+          <div class="cover-visual bg-acc-2">
+            <div class="cover-decor-symbol">
+              <Icon name="sparkles" size={44} color="#FFFFFF" />
+            </div>
+          </div>
+          <div class="card-badge-discount accent">
+            <Icon name="tag" size={12} />
+            <span>Pack 5x S/ 6</span>
+          </div>
+          <div class="card-badge-eta">
+            <span class="status-pulse-dot"></span>
+            <Icon name="clock" size={13} />
+            <span>Activo • Torre A, Piso 4</span>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="card-header-row">
+            <h3 class="card-name">Sticker Lab Piura</h3>
+            <div class="card-rating">
+              <span class="rating-val">4.8</span>
+              <Icon name="star" size={15} color="var(--color-rating)" />
+            </div>
+          </div>
+
+          <p class="card-description">
+            Stickers vinílicos holográficos e impermeables de series, anime, memes y tecnología.
+          </p>
+
+          <div class="card-meta-location">
+            <Icon name="map-pin" size={14} color="var(--color-primary)" />
+            <span>Torre A - Piso 4 (frente a labs)</span>
+          </div>
+
+          <div class="card-products-preview">
+            <div class="preview-item">
+              <span class="p-name">Sticker Vinilo Troquelado</span>
+              <span class="p-price">S/ 1.50</span>
+            </div>
+            <div class="preview-item">
+              <span class="p-name">Pack Temático x10</span>
+              <span class="p-price">S/ 12.00</span>
+            </div>
+          </div>
+
+          <div class="card-actions-row">
+            <div class="price-range">
+              <span class="price-from">Desde</span>
+              <span class="price-amount">S/ 1.50</span>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm trigger-contact-modal"
+              data-merchant="Sticker Lab Piura"
+              data-location="Torre A, Piso 4"
+              data-item="Stickers Vinílicos"
+            >
+              <Icon name="whatsapp" size={16} />
+              <span>Contactar</span>
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .catalog-section {
+    background-color: var(--color-bg);
+  }
+
+  /* Controles de Búsqueda y Filtros */
+  .catalog-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .search-input-wrapper input {
+    width: 100%;
+    padding: 14px 18px 14px 46px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--color-text-main);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+  }
+
+  .search-input-wrapper input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0px 0px 0px 3px rgba(255, 68, 31, 0.15);
+  }
+
+  .categories-pill-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .cat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    transition: all 0.2s ease;
+  }
+
+  .cat-pill:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .cat-pill.active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #FFFFFF;
+    box-shadow: var(--shadow-primary);
+  }
+
+  /* Grid de Comercios */
+  .merchants-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 1024px) {
+    .merchants-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 680px) {
+    .merchants-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Merchant Card según desing.md 6.1 */
+  .merchant-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md); /* 16px */
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .merchant-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-hover);
+  }
+
+  /* Aspect ratio 16:9 con esquinas superiores 16px (desing.md 6.1.1) */
+  .card-cover-container {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+
+  .cover-visual {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.4s ease;
+  }
+
+  .merchant-card:hover .cover-visual {
+    transform: scale(1.03);
+  }
+
+  .cover-decor-symbol {
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25));
+  }
+
+  /* Gradientes temáticos para tarjetas */
+  .bg-dessert-1 {
+    background: linear-gradient(135deg, #FF6B4A 0%, #FF441F 100%);
+  }
+  .bg-food-1 {
+    background: linear-gradient(135deg, #FF8F3D 0%, #E65100 100%);
+  }
+  .bg-acc-1 {
+    background: linear-gradient(135deg, #00C1B2 0%, #00897B 100%);
+  }
+  .bg-serv-1 {
+    background: linear-gradient(135deg, #4F46E5 0%, #3730A3 100%);
+  }
+  .bg-dessert-2 {
+    background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+  }
+  .bg-acc-2 {
+    background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+  }
+
+  /* Badge Descuento (desing.md 6.1.3) */
+  .card-badge-discount {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    font-size: 0.725rem;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+  }
+
+  .card-badge-discount.accent {
+    background-color: var(--color-accent);
+  }
+
+  /* Badge Flotante ETA y Distancia (desing.md 6.1.2) */
+  .card-badge-eta {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba(22, 24, 29, 0.88);
+    backdrop-filter: blur(8px);
+    color: #FFFFFF;
+    font-size: 0.725rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 2;
+  }
+
+  .card-content {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .card-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .card-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  /* Calificación (desing.md 6.1.4) */
+  .card-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .rating-val {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .card-description {
+    font-size: 0.825rem;
+    color: var(--color-text-secondary);
+    line-height: 1.45;
+    margin-bottom: 12px;
+  }
+
+  .card-meta-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    background-color: var(--color-primary-subtle);
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 14px;
+  }
+
+  /* Vista previa de productos */
+  .card-products-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+  }
+
+  .preview-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.775rem;
+  }
+
+  .p-name {
+    color: var(--color-text-main);
+    font-weight: 600;
+  }
+
+  .p-price {
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .card-actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .price-range {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .price-from {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+  }
+
+  .price-amount {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--color-dark);
+  }
+</style>
+
+<script>
+  // Filtro de Categorías y Búsqueda en Vivo
+  const catPills = document.querySelectorAll(".cat-pill");
+  const cards = document.querySelectorAll<HTMLElement>(".merchant-card");
+  const searchInput = document.getElementById("catalog-search") as HTMLInputElement | null;
+
+  let activeCat = "todos";
+  let searchTerm = "";
+
+  function filterCards() {
+    cards.forEach((card) => {
+      const cardCategory = card.getAttribute("data-category");
+      const cardText = card.innerText.toLowerCase();
+
+      const matchesCat = activeCat === "todos" || cardCategory === activeCat;
+      const matchesSearch = searchTerm === "" || cardText.includes(searchTerm);
+
+      if (matchesCat && matchesSearch) {
+        card.style.display = "flex";
+      } else {
+        card.style.display = "none";
+      }
+    });
+  }
+
+  catPills.forEach((pill) => {
+    pill.addEventListener("click", () => {
+      catPills.forEach((p) => p.classList.remove("active"));
+      pill.classList.add("active");
+      activeCat = pill.getAttribute("data-category") || "todos";
+      filterCards();
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      searchTerm = (e.target as HTMLInputElement).value.toLowerCase().trim();
+      filterCards();
+    });
+  }
+
+  // Conectar botones al modal de WhatsApp
+  document.querySelectorAll(".trigger-contact-modal").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const merchant = btn.getAttribute("data-merchant") || "Emprendedor";
+      const location = btn.getAttribute("data-location") || "";
+      const item = btn.getAttribute("data-item") || "";
+
+      const modal = document.getElementById("whatsapp-modal");
+      if (modal) {
+        modal.classList.add("is-visible");
+        const nameSpan = document.getElementById("modal-merchant-name");
+        if (nameSpan) nameSpan.textContent = `${merchant} (${location})`;
+        const itemInput = document.getElementById("modal-msg-preview") as HTMLTextAreaElement | null;
+        if (itemInput) {
+          itemInput.value = `¡Hola ${merchant}! Vi tu publicación en CampusVenta UTP Piura. Estoy en el campus y me gustaría consultar por ${item}. ¿Dónde estás ubicado exactamente ahora?`;
+        }
+      }
+    });
+  });
+</script>

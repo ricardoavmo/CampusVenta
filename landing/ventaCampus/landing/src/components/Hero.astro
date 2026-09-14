@@ -1,0 +1,650 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<section class="hero-section bg-subtle-mesh" id="hero">
+  <div class="container hero-container">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="status-pulse-dot"></span>
+        <span class="hero-badge-text">Innovación en Comercio Estudiantil • UTP Piura</span>
+      </div>
+
+      <h1 class="hero-title">
+        Encuentra lo que necesitas en el campus, <span class="highlight-text">exactamente dónde y cuándo</span> está disponible.
+      </h1>
+
+      <p class="hero-subtitle">
+        Olvídate de buscar por grupos de WhatsApp o adivinar si tu postre o snack favorito vino hoy. CampusVenta centraliza los emprendimientos de la UTP Piura con geolocalización por <strong>Torre y Piso</strong>, estado <strong>en tiempo real</strong> y contacto directo.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#catalogo" class="btn btn-primary btn-lg hero-cta-btn">
+          <span>Explorar Catálogo en Campus</span>
+          <Icon name="arrow-right" size={18} />
+        </a>
+        <a href="#simulador" class="btn btn-secondary btn-lg">
+          <Icon name="shopping-bag" size={18} />
+          <span>Soy Emprendedor UTP</span>
+        </a>
+      </div>
+
+      <div class="hero-features-strip">
+        <div class="strip-item">
+          <div class="strip-icon-box">
+            <Icon name="map-pin" size={16} color="var(--color-primary)" />
+          </div>
+          <span>Torre y Piso exacto</span>
+        </div>
+        <div class="strip-divider"></div>
+        <div class="strip-item">
+          <div class="strip-icon-box">
+            <Icon name="radio" size={16} color="var(--color-accent)" />
+          </div>
+          <span>Estado en vivo</span>
+        </div>
+        <div class="strip-divider"></div>
+        <div class="strip-item">
+          <div class="strip-icon-box">
+            <Icon name="whatsapp" size={16} color="#25D366" />
+          </div>
+          <span>Trato directo sin comisiones</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <!-- Tarjeta Interactiva de Demostración conforme a desing.md -->
+      <div class="hero-mockup-card">
+        <div class="mockup-header-bar">
+          <div class="mockup-dots">
+            <span class="m-dot red"></span>
+            <span class="m-dot yellow"></span>
+            <span class="m-dot green"></span>
+          </div>
+          <div class="mockup-header-title">
+            <Icon name="shield-check" size={14} color="var(--color-accent)" />
+            <span>CampusVenta Live Radar</span>
+          </div>
+          <div class="mockup-live-indicator">
+            <span class="status-pulse-dot"></span>
+            <span>EN VIVO</span>
+          </div>
+        </div>
+
+        <!-- Merchant Card Showcase (Regla 6.1 de desing.md) -->
+        <div class="merchant-hero-card">
+          <div class="merchant-cover-wrapper">
+            <!-- Representación vectorial estilizada de alta calidad de postres/comida -->
+            <div class="merchant-cover-graphic">
+              <div class="cover-gradient-bg"></div>
+              <div class="cover-decor-icon">
+                <Icon name="cake" size={48} color="rgba(255, 255, 255, 0.9)" />
+              </div>
+            </div>
+
+            <!-- Badge de Descuento (desing.md 6.1.3) -->
+            <div class="badge-discount">
+              <Icon name="tag" size={12} />
+              <span>Promo Receso: 2x S/ 15</span>
+            </div>
+
+            <!-- Badge Flotante de ETA y Ubicación (desing.md 6.1.2) -->
+            <div class="badge-location-eta">
+              <span class="status-pulse-dot"></span>
+              <span class="eta-text">Activa ahora • Torre A, Piso 3</span>
+            </div>
+          </div>
+
+          <div class="merchant-hero-info">
+            <div class="merchant-title-row">
+              <h2 class="merchant-name">Sweet Bites UTP</h2>
+              <div class="merchant-rating">
+                <span class="rating-num">4.9</span>
+                <Icon name="star" size={15} color="var(--color-rating)" />
+                <span class="rating-count">(84)</span>
+              </div>
+            </div>
+
+            <p class="merchant-category-tag">
+              <Icon name="sparkles" size={13} color="var(--color-primary)" />
+              <span>Postres Artesanales & Bocaditos</span>
+            </p>
+
+            <div class="campus-exact-location">
+              <Icon name="map-pin" size={15} color="var(--color-primary)" />
+              <span>Banca frente al Laboratorio 304</span>
+            </div>
+
+            <!-- Producto destacado de rápida adición (desing.md 6.2) -->
+            <div class="featured-item-box">
+              <div class="item-meta">
+                <span class="item-name">Caja x4 Brownies con Fudge</span>
+                <span class="item-stock">Stock actual: 5 disponibles</span>
+              </div>
+              <div class="item-price-action">
+                <span class="item-price">S/ 8.50</span>
+                <button
+                  type="button"
+                  class="btn-quick-chat"
+                  id="hero-open-chat-btn"
+                  title="Contactar al emprendedor"
+                >
+                  <Icon name="whatsapp" size={16} />
+                  <span>Pedir</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer-alert">
+            <Icon name="award" size={14} color="var(--color-accent)" />
+            <span>Estudiante de Ing. Industrial • Ciclo VII</span>
+          </div>
+        </div>
+
+        <!-- Floating pill indicator -->
+        <div class="floating-bubble bubble-left">
+          <div class="bubble-icon">
+            <Icon name="building" size={16} color="var(--color-primary)" />
+          </div>
+          <div class="bubble-text">
+            <strong>Torre B - Piso 2</strong>
+            <span>3 emprendimientos cerca de ti</span>
+          </div>
+        </div>
+
+        <div class="floating-bubble bubble-right">
+          <div class="bubble-icon accent">
+            <Icon name="zap" size={16} color="var(--color-accent)" />
+          </div>
+          <div class="bubble-text">
+            <strong>Respuesta Rápida</strong>
+            <span>Coordina tu entrega en 2 min</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    padding: 70px 0 80px;
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-container {
+    display: grid;
+    grid-template-columns: 1.15fr 0.95fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .hero-badge-text {
+    font-size: 0.825rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+    letter-spacing: 0.02em;
+  }
+
+  .hero-title {
+    font-size: 3.2rem;
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+    color: var(--color-dark);
+    margin-bottom: 20px;
+  }
+
+  .highlight-text {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #FF7A00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-subtitle {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin-bottom: 36px;
+    max-width: 580px;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .hero-features-strip {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .strip-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+  }
+
+  .strip-icon-box {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .strip-divider {
+    width: 1px;
+    height: 20px;
+    background-color: var(--color-border);
+  }
+
+  /* Mockup Visual */
+  .hero-visual {
+    position: relative;
+  }
+
+  .hero-mockup-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    padding: 16px;
+    position: relative;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+
+  .mockup-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 14px;
+  }
+
+  .mockup-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .m-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+  .m-dot.red { background-color: #FF5F56; }
+  .m-dot.yellow { background-color: #FFBD2E; }
+  .m-dot.green { background-color: #27C93F; }
+
+  .mockup-header-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .mockup-live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--color-accent-hover);
+    background-color: var(--color-accent-light);
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+  }
+
+  /* Merchant Card (Conforme a Sección 6.1 desing.md) */
+  .merchant-hero-card {
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .merchant-cover-wrapper {
+    position: relative;
+    aspect-ratio: 16 / 9; /* Conforme a desing.md 6.1.1 */
+    background: linear-gradient(135deg, #FF6B4A 0%, #FF441F 50%, #C82900 100%);
+    overflow: hidden;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+
+  .merchant-cover-graphic {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .cover-gradient-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);
+  }
+
+  .cover-decor-icon {
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+  }
+
+  /* Badge de Descuento (desing.md 6.1.3) */
+  .badge-discount {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    font-size: 0.725rem;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Badge Flotante de ETA y Ubicación (desing.md 6.1.2) */
+  .badge-location-eta {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba(22, 24, 29, 0.88);
+    backdrop-filter: blur(8px);
+    color: #FFFFFF;
+    font-size: 0.725rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .merchant-hero-info {
+    padding: 16px;
+  }
+
+  .merchant-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .merchant-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .merchant-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .rating-num {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .rating-count {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .merchant-category-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.78rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 8px;
+  }
+
+  .campus-exact-location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    background-color: var(--color-primary-subtle);
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 14px;
+    border-left: 3px solid var(--color-primary);
+  }
+
+  /* Tarjeta de Producto Interna (desing.md 6.2) */
+  .featured-item-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  .item-meta {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .item-stock {
+    font-size: 0.725rem;
+    color: var(--color-text-muted);
+  }
+
+  .item-price-action {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .item-price {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--color-dark);
+  }
+
+  .btn-quick-chat {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #25D366;
+    color: #FFFFFF;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+  }
+
+  .btn-quick-chat:hover {
+    background-color: #20BA5A;
+    transform: scale(1.04);
+  }
+
+  .card-footer-alert {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background-color: var(--color-surface-hover);
+    border-top: 1px solid var(--color-border);
+    font-size: 0.725rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+  }
+
+  /* Floating decorative bubbles */
+  .floating-bubble {
+    position: absolute;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 2;
+  }
+
+  .bubble-left {
+    bottom: -18px;
+    left: -24px;
+    animation: floatUpDown 4s ease-in-out infinite;
+  }
+
+  .bubble-right {
+    top: 40px;
+    right: -24px;
+    animation: floatUpDown 4.5s ease-in-out infinite reverse;
+  }
+
+  .bubble-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .bubble-icon.accent {
+    background-color: var(--color-accent-light);
+  }
+
+  .bubble-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.75rem;
+    line-height: 1.25;
+  }
+
+  .bubble-text strong {
+    color: var(--color-dark);
+    font-weight: 700;
+  }
+
+  .bubble-text span {
+    color: var(--color-text-secondary);
+  }
+
+  @keyframes floatUpDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @media (max-width: 1024px) {
+    .hero-title {
+      font-size: 2.5rem;
+    }
+    .hero-container {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+    }
+    .bubble-left {
+      left: 0;
+      bottom: -10px;
+    }
+    .bubble-right {
+      right: 0;
+      top: -10px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-title {
+      font-size: 2rem;
+    }
+    .hero-subtitle {
+      font-size: 1rem;
+    }
+    .hero-features-strip {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .strip-divider {
+      display: none;
+    }
+    .hero-mockup-card {
+      width: 100%;
+    }
+    .bubble-left, .bubble-right {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Conexión con modal de WhatsApp si se pulsa en el Hero
+  const heroBtn = document.getElementById("hero-open-chat-btn");
+  if (heroBtn) {
+    heroBtn.addEventListener("click", () => {
+      const modal = document.getElementById("whatsapp-modal");
+      if (modal) {
+        modal.classList.add("is-visible");
+        const merchantInput = document.getElementById("modal-merchant-name");
+        if (merchantInput) merchantInput.textContent = "Sweet Bites UTP (Torre A - Piso 3)";
+      }
+    });
+  }
+</script>

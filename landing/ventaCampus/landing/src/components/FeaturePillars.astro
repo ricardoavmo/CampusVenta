@@ -1,0 +1,265 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<section class="section pillars-section" id="beneficios">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <Icon name="sparkles" size={14} />
+        <span>Pilares de Innovación</span>
+      </div>
+      <h2 class="section-title">
+        La nueva era del comercio estudiantil <br />
+        <span class="highlight-text">dentro de la UTP Piura</span>
+      </h2>
+      <p class="section-desc">
+        Diseñado por y para universitarios. Resolvemos las fricciones clásicas de comprar y vender en los pabellones para que aproveches cada minuto de tu jornada.
+      </p>
+    </div>
+
+    <div class="pillars-grid">
+      <!-- Pilar 1: Catálogo Digital Centralizado -->
+      <div class="pillar-card">
+        <div class="pillar-icon-wrapper">
+          <Icon name="shopping-bag" size={24} color="var(--color-primary)" />
+        </div>
+        <div class="pillar-number">01</div>
+        <h3 class="pillar-title">Catálogo Centralizado</h3>
+        <p class="pillar-desc">
+          Basta de historias de Instagram que desaparecen o mensajes perdidos en grupos masivos de WhatsApp. Encuentra todos los emprendimientos de la UTP en un solo lugar clasificados por categoría.
+        </p>
+        <ul class="pillar-list">
+          <li>
+            <Icon name="check" size={16} color="var(--color-accent)" />
+            <span>Postres, almuerzos, accesorios y servicios</span>
+          </li>
+          <li>
+            <Icon name="check" size={16} color="var(--color-accent)" />
+            <span>Precios claros y fotos reales de los productos</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pilar 2: Estado en Tiempo Real -->
+      <div class="pillar-card featured">
+        <div class="pillar-icon-wrapper accent">
+          <Icon name="radio" size={24} color="var(--color-accent)" />
+        </div>
+        <div class="pillar-number">02</div>
+        <div class="pillar-badge-top">En Tiempo Real</div>
+        <h3 class="pillar-title">Disponibilidad en Vivo</h3>
+        <p class="pillar-desc">
+          Los emprendedores activan su presencia únicamente cuando están físicamente en el campus y con stock disponible. Sabrás con total certeza si tu vendedor favorito vino hoy.
+        </p>
+        <ul class="pillar-list">
+          <li>
+            <Icon name="check" size={16} color="var(--color-accent)" />
+            <span>Switch de estado "En Campus / En Clases"</span>
+          </li>
+          <li>
+            <Icon name="check" size={16} color="var(--color-accent)" />
+            <span>Cero mensajes a vendedores que ya se fueron</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pilar 3: Geolocalización por Torre y Piso -->
+      <div class="pillar-card">
+        <div class="pillar-icon-wrapper">
+          <Icon name="map-pin" size={24} color="var(--color-primary)" />
+        </div>
+        <div class="pillar-number">03</div>
+        <h3 class="pillar-title">Torre y Piso Exacto</h3>
+        <p class="pillar-desc">
+          El campus de UTP Piura es amplio y los recesos son breves. Nuestro mapa esquemático te dice en qué torre, piso y banca específica se encuentra el vendedor en ese instante.
+        </p>
+        <ul class="pillar-list">
+          <li>
+            <Icon name="check" size={16} color="var(--color-accent)" />
+            <span>Torre A, Torre B, Torre C y Cafetería</span>
+          </li>
+          <li>
+            <Icon name="check" size={16} color="var(--color-accent)" />
+            <span>Ahorra hasta 15 minutos de búsqueda a ciegas</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pilar 4: Contacto Directo Sin Intermediarios -->
+      <div class="pillar-card">
+        <div class="pillar-icon-wrapper whatsapp-bg">
+          <Icon name="whatsapp" size={24} color="#FFFFFF" />
+        </div>
+        <div class="pillar-number">04</div>
+        <h3 class="pillar-title">Contacto Directo (0% Comisión)</h3>
+        <p class="pillar-desc">
+          Coordina tu compra con un solo toque enviando un mensaje pre-rellenado con tu ubicación. Pagos 100% directos mediante Yape, Plin o efectivo entre estudiantes.
+        </p>
+        <ul class="pillar-list">
+          <li>
+            <Icon name="check" size={16} color="var(--color-accent)" />
+            <span>Enlace directo a WhatsApp sin intermediación</span>
+          </li>
+          <li>
+            <Icon name="check" size={16} color="var(--color-accent)" />
+            <span>El estudiante conserva el 100% de su ganancia</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pilar 5: Visibilidad y Formalidad UTP -->
+      <div class="pillar-card wide-card">
+        <div class="wide-inner">
+          <div class="pillar-icon-wrapper utp-bg">
+            <Icon name="award" size={24} color="#FFFFFF" />
+          </div>
+          <div>
+            <div class="pillar-number">05</div>
+            <h3 class="pillar-title">Formalidad & Reputación Estudiantil</h3>
+            <p class="pillar-desc">
+              CampusVenta impulsa el talento emprendedor de la UTP Piura. Cada negocio cuenta con perfil verificado, reseñas y calificaciones reales de compañeros, construyendo una marca sólida y confiable dentro de la universidad.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pillars-section {
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .pillar-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.25s ease;
+  }
+
+  .pillar-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-hover);
+  }
+
+  .pillar-card.featured {
+    border-color: var(--color-accent-border);
+    background: linear-gradient(180deg, #FFFFFF 0%, #F4FBFB 100%);
+  }
+
+  .pillar-icon-wrapper {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .pillar-icon-wrapper.accent {
+    background-color: var(--color-accent-light);
+  }
+
+  .pillar-icon-wrapper.whatsapp-bg {
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  }
+
+  .pillar-icon-wrapper.utp-bg {
+    background: linear-gradient(135deg, var(--color-utp) 0%, #8C0B20 100%);
+  }
+
+  .pillar-number {
+    position: absolute;
+    top: 28px;
+    right: 28px;
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: rgba(22, 24, 29, 0.08);
+  }
+
+  .pillar-badge-top {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    background-color: var(--color-accent-light);
+    color: var(--color-accent-hover);
+    border-radius: var(--radius-full);
+    font-size: 0.725rem;
+    font-weight: 700;
+    width: fit-content;
+    margin-bottom: 8px;
+  }
+
+  .pillar-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--color-dark);
+    margin-bottom: 12px;
+  }
+
+  .pillar-desc {
+    font-size: 0.925rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin-bottom: 20px;
+  }
+
+  .pillar-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .pillar-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+  }
+
+  .wide-card {
+    grid-column: 1 / -1;
+  }
+
+  .wide-inner {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  @media (max-width: 768px) {
+    .pillars-grid {
+      grid-template-columns: 1fr;
+    }
+    .wide-inner {
+      flex-direction: column;
+    }
+    .pillar-card {
+      padding: 24px;
+    }
+  }
+</style>

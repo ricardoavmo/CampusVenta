@@ -1,0 +1,235 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<section class="section testimonials-section" id="comunidad">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <Icon name="users" size={14} />
+        <span>Comunidad UTP Piura</span>
+      </div>
+      <h2 class="section-title">
+        Lo que dicen quienes ya viven la experiencia
+      </h2>
+      <p class="section-desc">
+        Estudiantes que antes dependían de la suerte para vender o encontrar un snack entre clases, ahora ahorran tiempo y aumentan sus ingresos.
+      </p>
+    </div>
+
+    <div class="testimonials-grid">
+      <!-- Testimonio 1 -->
+      <div class="testimonial-card">
+        <div class="test-header">
+          <div class="test-rating">
+            <Icon name="star" size={15} color="var(--color-rating)" />
+            <Icon name="star" size={15} color="var(--color-rating)" />
+            <Icon name="star" size={15} color="var(--color-rating)" />
+            <Icon name="star" size={15} color="var(--color-rating)" />
+            <Icon name="star" size={15} color="var(--color-rating)" />
+          </div>
+          <span class="test-verified">
+            <Icon name="shield-check" size={13} color="var(--color-accent)" />
+            <span>Verificado</span>
+          </span>
+        </div>
+
+        <p class="test-quote">
+          "Antes traía 20 brownies y tenía que estar escribiendo por 5 grupos de WhatsApp rogando que no me silenciaran. Con CampusVenta activo mi estado al subir a la Torre A y en el primer receso ya vendí todo."
+        </p>
+
+        <div class="test-author-box">
+          <div class="author-avatar-badge">
+            <Icon name="cake" size={18} color="var(--color-primary)" />
+          </div>
+          <div class="author-info">
+            <h3 class="author-name">Valeria M.</h3>
+            <span class="author-career">Ingeniería Industrial • VII Ciclo</span>
+            <span class="author-venture">Emprendedora en Sweet Bites</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonio 2 -->
+      <div class="testimonial-card featured">
+        <div class="test-header">
+          <div class="test-rating">
+            <Icon name="star" size={15} color="var(--color-rating)" />
+            <Icon name="star" size={15} color="var(--color-rating)" />
+            <Icon name="star" size={15} color="var(--color-rating)" />
+            <Icon name="star" size={15} color="var(--color-rating)" />
+            <Icon name="star" size={15} color="var(--color-rating)" />
+          </div>
+          <span class="test-verified">
+            <Icon name="shield-check" size={13} color="var(--color-accent)" />
+            <span>Verificado</span>
+          </span>
+        </div>
+
+        <p class="test-quote">
+          "Tengo solo 15 minutos entre la clase de Algoritmos en Torre B y Física en Torre A. Con el radar de pisos miro exactamente qué hay en mi camino, pido por WhatsApp y recojo en 1 minuto. Me salvó los almuerzos."
+        </p>
+
+        <div class="test-author-box">
+          <div class="author-avatar-badge accent">
+            <Icon name="shopping-bag" size={18} color="var(--color-accent)" />
+          </div>
+          <div class="author-info">
+            <h3 class="author-name">Carlos R.</h3>
+            <span class="author-career">Ingeniería de Sistemas • V Ciclo</span>
+            <span class="author-venture">Comprador frecuente</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonio 3 -->
+      <div class="testimonial-card">
+        <div class="test-header">
+          <div class="test-rating">
+            <Icon name="star" size={15} color="var(--color-rating)" />
+            <Icon name="star" size={15} color="var(--color-rating)" />
+            <Icon name="star" size={15} color="var(--color-rating)" />
+            <Icon name="star" size={15} color="var(--color-rating)" />
+            <Icon name="star" size={15} color="var(--color-rating)" />
+          </div>
+          <span class="test-verified">
+            <Icon name="shield-check" size={13} color="var(--color-accent)" />
+            <span>Verificado</span>
+          </span>
+        </div>
+
+        <p class="test-quote">
+          "Lo que más me gusta es que desactivo mi estado cuando entro al laboratorio y nadie me molesta. Además, la gente me califica con estrellas y ahora ya tengo clientes fijos que me buscan cada semana."
+        </p>
+
+        <div class="test-author-box">
+          <div class="author-avatar-badge" style="background-color: rgba(79, 70, 229, 0.1);">
+            <Icon name="tag" size={18} color="#4F46E5" />
+          </div>
+          <div class="author-info">
+            <h3 class="author-name">Andrea P.</h3>
+            <span class="author-career">Administración y Marketing • VI Ciclo</span>
+            <span class="author-venture">Emprendedora en Aura Beads</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonials-section {
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .testimonial-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s ease;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-hover);
+  }
+
+  .testimonial-card.featured {
+    border-color: var(--color-primary-border);
+  }
+
+  .test-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .test-rating {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .test-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.725rem;
+    font-weight: 700;
+    color: var(--color-accent-hover);
+  }
+
+  .test-quote {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-text-main);
+    margin-bottom: 24px;
+    flex: 1;
+    font-style: italic;
+  }
+
+  .test-author-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .author-avatar-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .author-avatar-badge.accent {
+    background-color: var(--color-accent-light);
+  }
+
+  .author-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+  }
+
+  .author-name {
+    font-size: 0.925rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .author-career {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+  }
+
+  .author-venture {
+    font-size: 0.725rem;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  @media (max-width: 960px) {
+    .testimonials-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

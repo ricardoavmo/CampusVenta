@@ -1,0 +1,322 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<div class="modal-backdrop" id="whatsapp-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-dialog-sheet">
+    <div class="sheet-drag-handle"></div>
+
+    <div class="sheet-header">
+      <div class="sheet-avatar-box">
+        <Icon name="whatsapp" size={24} color="#FFFFFF" />
+      </div>
+      <div class="sheet-title-meta">
+        <span class="sheet-pretitle">Contacto Directo vía WhatsApp</span>
+        <h3 class="sheet-merchant-title" id="modal-merchant-name">Sweet Bites UTP (Torre A - Piso 3)</h3>
+      </div>
+      <button type="button" class="btn-close-sheet" id="modal-close-btn" aria-label="Cerrar ventana">
+        <Icon name="x" size={20} />
+      </button>
+    </div>
+
+    <div class="sheet-body">
+      <div class="utp-trust-badge">
+        <Icon name="shield-check" size={15} color="var(--color-accent)" />
+        <span>Estudiante UTP Piura con identidad verificada</span>
+      </div>
+
+      <div class="chat-preview-box">
+        <div class="chat-message-bubble">
+          <p class="bubble-tag">Mensaje predeterminado de pedido:</p>
+          <textarea
+            id="modal-msg-preview"
+            class="bubble-textarea"
+            rows="3"
+          >¡Hola! Vi tu publicación en CampusVenta UTP Piura. Estoy en el campus y me gustaría coordinar un pedido. ¿Dónde estás ubicado exactamente ahora?</textarea>
+          <span class="bubble-time">Ahora • Enviarás esto al abrir WhatsApp</span>
+        </div>
+      </div>
+
+      <div class="safety-tips-box">
+        <div class="tip-line">
+          <Icon name="check" size={14} color="var(--color-accent)" />
+          <span>Coordinas la entrega en puntos concurridos del campus (patios, bancas de torre, cafetería).</span>
+        </div>
+        <div class="tip-line">
+          <Icon name="check" size={14} color="var(--color-accent)" />
+          <span>Pagas directamente mediante Yape, Plin o efectivo al recibir el producto.</span>
+        </div>
+      </div>
+
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-primary btn-lg btn-whatsapp-action" id="modal-send-btn">
+          <Icon name="whatsapp" size={20} />
+          <span>Abrir WhatsApp con el Emprendedor</span>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="modal-cancel-btn">
+          <span>Volver al Catálogo</span>
+        </button>
+      </div>
+
+      <!-- Feedback de confirmación -->
+      <div class="order-sent-toast" id="order-sent-toast">
+        <Icon name="check-circle" size={18} color="#FFFFFF" />
+        <span>¡Enlace generado! Conectando directamente con el vendedor...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(22, 24, 29, 0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .modal-backdrop.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Bottom Sheet con borde superior 24px según desing.md (lg: 24px 24px 0 0) */
+  .modal-dialog-sheet {
+    width: 100%;
+    max-width: 540px;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: var(--shadow-lg);
+    padding: 20px 24px 32px;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-backdrop.is-visible .modal-dialog-sheet {
+    transform: translateY(0);
+  }
+
+  @media (min-width: 640px) {
+    .modal-backdrop {
+      align-items: center;
+      padding: 20px;
+    }
+    .modal-dialog-sheet {
+      border-radius: var(--radius-lg);
+      transform: scale(0.95) translateY(20px);
+    }
+    .modal-backdrop.is-visible .modal-dialog-sheet {
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .sheet-drag-handle {
+    width: 44px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: var(--color-border);
+    margin: 0 auto 16px;
+  }
+
+  .sheet-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 16px;
+  }
+
+  .sheet-avatar-box {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .sheet-title-meta {
+    flex: 1;
+  }
+
+  .sheet-pretitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+  }
+
+  .sheet-merchant-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-dark);
+  }
+
+  .btn-close-sheet {
+    color: var(--color-text-muted);
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    transition: color 0.15s ease;
+  }
+
+  .btn-close-sheet:hover {
+    color: var(--color-dark);
+  }
+
+  .utp-trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--color-accent-light);
+    color: var(--color-accent-hover);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.775rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .chat-preview-box {
+    background-color: #EFEAE2; /* Fondo clásico de chat */
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--color-border);
+  }
+
+  .chat-message-bubble {
+    background-color: #FFFFFF;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .bubble-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+  }
+
+  .bubble-textarea {
+    width: 100%;
+    border: 1px solid transparent;
+    font-family: inherit;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--color-text-main);
+    resize: none;
+    background: transparent;
+  }
+
+  .bubble-textarea:focus {
+    outline: none;
+    border-color: var(--color-border);
+    background-color: #FAFAFA;
+    border-radius: 4px;
+    padding: 4px;
+  }
+
+  .bubble-time {
+    font-size: 0.675rem;
+    color: var(--color-text-muted);
+    align-self: flex-end;
+  }
+
+  .safety-tips-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .tip-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+  }
+
+  .sheet-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-whatsapp-action {
+    background: linear-gradient(135deg, #25D366 0%, #1EBE5D 100%);
+    box-shadow: 0px 6px 18px rgba(37, 211, 102, 0.35);
+  }
+
+  .btn-whatsapp-action:hover {
+    background: linear-gradient(135deg, #20BA5A 0%, #19A450 100%);
+  }
+
+  .order-sent-toast {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background-color: #128C7E;
+    color: #FFFFFF;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.825rem;
+    font-weight: 600;
+    margin-top: 12px;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .order-sent-toast.is-active {
+    display: flex;
+  }
+</style>
+
+<script>
+  const modal = document.getElementById("whatsapp-modal");
+  const closeBtn = document.getElementById("modal-close-btn");
+  const cancelBtn = document.getElementById("modal-cancel-btn");
+  const sendBtn = document.getElementById("modal-send-btn");
+  const toast = document.getElementById("order-sent-toast");
+
+  function closeModal() {
+    if (modal) {
+      modal.classList.remove("is-visible");
+      if (toast) toast.classList.remove("is-active");
+    }
+  }
+
+  closeBtn?.addEventListener("click", closeModal);
+  cancelBtn?.addEventListener("click", closeModal);
+
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  sendBtn?.addEventListener("click", () => {
+    if (toast) {
+      toast.classList.add("is-active");
+      setTimeout(() => {
+        closeModal();
+      }, 1800);
+    }
+  });
+</script>

@@ -1,0 +1,332 @@
+/* ==========================================================================
+   CampusVenta - Global Design System
+   Basado en desing.md para UTP Piura
+   ========================================================================== */
+
+:root {
+  /* Paleta Principal según desing.md */
+  --color-primary: #FF441F;
+  --color-primary-hover: #E03512;
+  --color-primary-light: rgba(255, 68, 31, 0.08);
+  --color-primary-subtle: rgba(255, 68, 31, 0.04);
+  --color-primary-border: rgba(255, 68, 31, 0.2);
+
+  /* Acentos y Estados */
+  --color-accent: #00C1B2;
+  --color-accent-hover: #009E91;
+  --color-accent-light: rgba(0, 193, 178, 0.1);
+  --color-accent-border: rgba(0, 193, 178, 0.24);
+
+  --color-rating: #FFB800;
+  --color-rating-light: rgba(255, 184, 0, 0.12);
+
+  --color-utp: #C8102E;
+  --color-utp-light: rgba(200, 16, 46, 0.08);
+
+  /* Neutros Oscuros y Claros */
+  --color-dark: #16181D;
+  --color-dark-surface: #20242C;
+  --color-dark-card: #282D37;
+  --color-dark-muted: #9BA3AF;
+
+  --color-text-main: #16181D;
+  --color-text-secondary: #586070;
+  --color-text-muted: #8E96A4;
+  --color-text-inverse: #FFFFFF;
+
+  --color-bg: #F8F9FC;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F2F4F8;
+  --color-border: rgba(22, 24, 29, 0.08);
+  --color-border-hover: rgba(22, 24, 29, 0.16);
+
+  /* Bordes Redondeados según desing.md */
+  --radius-sm: 8px;      /* Botones y Badges */
+  --radius-md: 16px;     /* Tarjetas de Restaurante / Producto */
+  --radius-lg: 24px;     /* Bottom Sheets y Modales */
+  --radius-full: 9999px; /* Pills y Chips */
+
+  /* Elevaciones y Sombras según desing.md */
+  --shadow-sm: 0px 2px 8px rgba(22, 24, 29, 0.04), 0px 1px 2px rgba(22, 24, 29, 0.02);
+  --shadow-md: 0px 8px 24px rgba(22, 24, 29, 0.08), 0px 2px 6px rgba(22, 24, 29, 0.04);
+  --shadow-lg: 0px 16px 36px rgba(22, 24, 29, 0.10), 0px -4px 20px rgba(0, 0, 0, 0.04);
+  --shadow-primary: 0px 6px 18px rgba(255, 68, 31, 0.35);
+  --shadow-accent: 0px 6px 18px rgba(0, 193, 178, 0.25);
+
+  /* Tipografía */
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Contenedores */
+  --max-width: 1200px;
+  --header-height: 72px;
+}
+
+/* Reset y base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-body);
+  color: var(--color-text-main);
+  background-color: var(--color-bg);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--color-text-main);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+p {
+  color: var(--color-text-secondary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* Layout container centrado max-width 1200px según desing.md */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Sección Base */
+.section {
+  padding: 80px 0;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 56px 0;
+  }
+}
+
+.section-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 48px;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 14px;
+}
+
+.section-tag.accent {
+  background-color: var(--color-accent-light);
+  color: var(--color-accent-hover);
+}
+
+.section-title {
+  font-size: 2.35rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.85rem;
+  }
+}
+
+.section-desc {
+  font-size: 1.05rem;
+  color: var(--color-text-secondary);
+}
+
+/* Botones con bordes redondeados sm (8px) y microinteracciones */
+.btn, a.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary, a.btn-primary {
+  background-color: var(--color-primary) !important;
+  color: #FFFFFF !important;
+  box-shadow: var(--shadow-primary);
+  text-decoration: none !important;
+}
+
+.btn-primary:hover, a.btn-primary:hover {
+  background-color: var(--color-primary-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: 0px 8px 22px rgba(255, 68, 31, 0.45);
+}
+
+.btn-secondary, a.btn-secondary {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text-main) !important;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none !important;
+}
+
+.btn-secondary:hover, a.btn-secondary:hover {
+  background-color: var(--color-surface-hover) !important;
+  border-color: var(--color-border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-accent, a.btn-accent {
+  background-color: var(--color-accent) !important;
+  color: #FFFFFF !important;
+  box-shadow: var(--shadow-accent);
+  text-decoration: none !important;
+}
+
+.btn-accent:hover, a.btn-accent:hover {
+  background-color: var(--color-accent-hover) !important;
+  transform: translateY(-2px);
+}
+
+.btn-sm, a.btn-sm {
+  padding: 8px 14px;
+  font-size: 0.85rem;
+}
+
+.btn-lg, a.btn-lg {
+  padding: 14px 28px;
+  font-size: 1.05rem;
+}
+
+/* Chips y Badges con radius full (9999px) */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.825rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+/* Indicador de pulso de estado (reemplazo de emojis) */
+.status-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  position: relative;
+  display: inline-block;
+}
+
+.status-pulse-dot::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  opacity: 0.6;
+  animation: pulseAnimation 2s infinite ease-in-out;
+}
+
+.status-pulse-dot.offline {
+  background-color: var(--color-text-muted);
+}
+.status-pulse-dot.offline::after {
+  display: none;
+}
+
+@keyframes pulseAnimation {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+/* Estilos de Iconos SVG uniformes */
+.icon-svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.icon-svg-sm {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.icon-svg-lg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+/* Utilidades de texto */
+.text-primary { color: var(--color-primary); }
+.text-accent { color: var(--color-accent); }
+.text-rating { color: var(--color-rating); }
+
+/* Gradiente sutil para acentos de fondo */
+.bg-subtle-mesh {
+  background: radial-gradient(circle at 10% 20%, rgba(255, 68, 31, 0.05) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(0, 193, 178, 0.06) 0%, transparent 40%),
+              var(--color-bg);
+}

@@ -1,0 +1,269 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<section class="section how-section" id="como-funciona">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag accent">
+        <Icon name="zap" size={14} color="var(--color-accent-hover)" />
+        <span>Simple y Rápido</span>
+      </div>
+      <h2 class="section-title">
+        ¿Cómo funciona CampusVenta?
+      </h2>
+      <p class="section-desc">
+        Diseñado para adaptarse a la velocidad del ritmo universitario. Sin registros complicados ni descargas pesadas.
+      </p>
+    </div>
+
+    <!-- Selector de Rol (Tabs) -->
+    <div class="role-tabs-wrapper">
+      <div class="role-tabs" id="role-tabs">
+        <button type="button" class="role-tab-btn active" data-target="compradores">
+          <Icon name="shopping-bag" size={16} />
+          <span>Para Compradores (Estudiantes y Docentes)</span>
+        </button>
+        <button type="button" class="role-tab-btn" data-target="vendedores">
+          <Icon name="tag" size={16} />
+          <span>Para Emprendedores Estudiantiles</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Flujo Compradores -->
+    <div class="flow-content active" id="flow-compradores">
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-badge">Paso 1</div>
+          <div class="step-icon-box">
+            <Icon name="search" size={24} color="var(--color-primary)" />
+          </div>
+          <h3 class="step-title">Filtra por tu Torre o Antojo</h3>
+          <p class="step-desc">
+            Abre CampusVenta desde tu celular. Selecciona en qué torre y piso estás o busca el postre, almuerzo o servicio que necesitas.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">Paso 2</div>
+          <div class="step-icon-box accent">
+            <Icon name="radio" size={24} color="var(--color-accent)" />
+          </div>
+          <h3 class="step-title">Verifica Estado en Vivo</h3>
+          <p class="step-desc">
+            Revisa el radar en tiempo real: verás únicamente a los vendedores que están físicamente en el campus con stock disponible.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">Paso 3</div>
+          <div class="step-icon-box whatsapp">
+            <Icon name="whatsapp" size={24} color="#FFFFFF" />
+          </div>
+          <h3 class="step-title">Pide Directo por WhatsApp</h3>
+          <p class="step-desc">
+            Toca el botón y envía un mensaje listo con tu ubicación. Acércate a su punto o coordina la entrega en tu aula en menos de 2 minutos.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flujo Vendedores -->
+    <div class="flow-content" id="flow-vendedores">
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-badge">Paso 1</div>
+          <div class="step-icon-box">
+            <Icon name="shield-check" size={24} color="var(--color-primary)" />
+          </div>
+          <h3 class="step-title">Crea tu Catálogo Digital</h3>
+          <p class="step-desc">
+            Registra tu negocio con tu correo UTP. Sube fotos de tus productos, fija tus precios en Soles y agrega tu número de WhatsApp.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">Paso 2</div>
+          <div class="step-icon-box accent">
+            <Icon name="map-pin" size={24} color="var(--color-accent)" />
+          </div>
+          <h3 class="step-title">Activa tu Presencia al Llegar</h3>
+          <p class="step-desc">
+            Al pisar el campus o iniciar tu tiempo libre, activa el switch e indica tu Torre y Piso. Aparecerás al tope del radar de cientos de alumnos.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">Paso 3</div>
+          <div class="step-icon-box" style="background: linear-gradient(135deg, var(--color-rating) 0%, #E0A000 100%);">
+            <Icon name="award" size={24} color="#FFFFFF" />
+          </div>
+          <h3 class="step-title">Cobra 100% y Gana Reputación</h3>
+          <p class="step-desc">
+            Cobra vía Yape, Plin o efectivo sin intermediarios. Recibe calificaciones de tus compañeros para posicionar tu marca en la universidad.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .how-section {
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .role-tabs-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  .role-tabs {
+    display: inline-flex;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    padding: 6px;
+    border-radius: var(--radius-full);
+    gap: 6px;
+  }
+
+  .role-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    transition: all 0.2s ease;
+  }
+
+  .role-tab-btn:hover {
+    color: var(--color-dark);
+  }
+
+  .role-tab-btn.active {
+    background-color: var(--color-surface);
+    color: var(--color-dark);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .flow-content {
+    display: none;
+  }
+
+  .flow-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .step-card {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 30px 24px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+  }
+
+  .step-card:hover {
+    border-color: var(--color-border-hover);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .step-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--color-text-main);
+    width: fit-content;
+    margin-bottom: 20px;
+  }
+
+  .step-icon-box {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .step-icon-box.accent {
+    background-color: var(--color-accent-light);
+  }
+
+  .step-icon-box.whatsapp {
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  }
+
+  .step-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--color-dark);
+    margin-bottom: 10px;
+  }
+
+  .step-desc {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--color-text-secondary);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 900px) {
+    .steps-grid {
+      grid-template-columns: 1fr;
+    }
+    .role-tabs {
+      flex-direction: column;
+      border-radius: var(--radius-md);
+      width: 100%;
+    }
+    .role-tab-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  const tabBtns = document.querySelectorAll(".role-tab-btn");
+  const flows = document.querySelectorAll(".flow-content");
+
+  tabBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach((b) => b.classList.remove("active"));
+      flows.forEach((f) => f.classList.remove("active"));
+
+      btn.classList.add("active");
+      const targetId = btn.getAttribute("data-target");
+      const targetFlow = document.getElementById(`flow-${targetId}`);
+      if (targetFlow) targetFlow.classList.add("active");
+    });
+  });
+</script>

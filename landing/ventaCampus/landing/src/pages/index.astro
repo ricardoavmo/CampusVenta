@@ -1,0 +1,37 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Hero from "../components/Hero.astro";
+import CampusRadar from "../components/CampusRadar.astro";
+import LiveCatalog from "../components/LiveCatalog.astro";
+import StatusSimulator from "../components/StatusSimulator.astro";
+import FeaturePillars from "../components/FeaturePillars.astro";
+import HowItWorks from "../components/HowItWorks.astro";
+import Testimonials from "../components/Testimonials.astro";
+import FAQ from "../components/FAQ.astro";
+import CTASection from "../components/CTASection.astro";
+import Footer from "../components/Footer.astro";
+import WhatsAppModal from "../components/WhatsAppModal.astro";
+import FloatingBottomBar from "../components/FloatingBottomBar.astro";
+---
+
+<Layout
+  title="CampusVenta | El Comercio Estudiantil Inteligente de la UTP Piura"
+  description="Plataforma en tiempo real para emprendimientos universitarios en UTP Piura. Catálogo centralizado, geolocalización por Torre y Piso, estado en vivo y contacto directo sin comisiones."
+>
+  <Navbar />
+  <main id="main-content">
+    <Hero />
+    <CampusRadar />
+    <LiveCatalog />
+    <StatusSimulator />
+    <FeaturePillars />
+    <HowItWorks />
+    <Testimonials />
+    <FAQ />
+    <CTASection />
+  </main>
+  <Footer />
+  <WhatsAppModal />
+  <FloatingBottomBar />
+</Layout>

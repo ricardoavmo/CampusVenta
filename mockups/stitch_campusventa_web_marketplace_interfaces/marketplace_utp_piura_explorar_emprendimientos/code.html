@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'on-secondary': '#ffffff', 'secondary-fixed': '#6ffbbe', 'on-surface': '#131b2e', 'outline-variant': '#e6bdb8', 'tertiary-fixed-dim': '#ffb95f', 'outline': '#916f6b', 'on-tertiary-fixed': '#2a1700', 'background': '#faf8ff', 'surface-container': '#eaedff', 'surface-bright': '#faf8ff', 'on-secondary-fixed': '#002113', 'on-surface-variant': '#5c403c', 'on-background': '#131b2e', 'surface': '#faf8ff', 'on-error': '#ffffff', 'surface-variant': '#dae2fd', 'inverse-surface': '#283044', 'on-error-container': '#93000a', 'on-tertiary-fixed-variant': '#653e00', 'tertiary-fixed': '#ffddb8', 'primary-container': '#dc2626', 'error': '#ba1a1a', 'on-primary-container': '#fff6f5', 'surface-container-high': '#e2e7ff', 'tertiary': '#7f4f00', 'surface-container-lowest': '#ffffff', 'on-primary-fixed-variant': '#93000b', 'error-container': '#ffdad6', 'primary-fixed-dim': '#ffb4ab', 'surface-dim': '#d2d9f4', 'tertiary-container': '#a06500', 'surface-container-low': '#f2f3ff', 'secondary-fixed-dim': '#4edea3', 'inverse-on-surface': '#eef0ff', 'on-tertiary-container': '#fff7f1', 'primary-fixed': '#ffdad6', 'surface-tint': '#bf0715', 'inverse-primary': '#ffb4ab', 'on-secondary-fixed-variant': '#005236', 'secondary-container': '#6cf8bb', 'primary': '#b70011', 'on-secondary-container': '#00714d', 'on-tertiary': '#ffffff', 'surface-container-highest': '#dae2fd', 'secondary': '#006c49', 'on-primary-fixed': '#410002', 'on-primary': '#ffffff' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'margin-tablet': '1.5rem', 'space-2xl': '3rem', 'space-lg': '1.5rem', 'margin-desktop': '2.5rem', 'gutter': '1rem', 'margin': '1rem', 'space-sm': '0.5rem', 'space-md': '1rem', 'space-xs': '0.25rem', 'space-xl': '2rem', 'gutter-desktop': '1.5rem' }, fontFamily: { 'headline-lg': ['Plus Jakarta Sans'], 'headline-xl-mobile': ['Plus Jakarta Sans'], 'label-sm': ['Plus Jakarta Sans'], 'headline-xl': ['Plus Jakarta Sans'], 'mono-num': ['Plus Jakarta Sans'], 'headline-sm': ['Plus Jakarta Sans'], 'label-md': ['Plus Jakarta Sans'], 'headline-md': ['Plus Jakarta Sans'], 'body-sm': ['Plus Jakarta Sans'], 'body-md': ['Plus Jakarta Sans'], 'label-lg': ['Plus Jakarta Sans'], 'body-lg': ['Plus Jakarta Sans'] }, fontSize: { 'headline-lg': ['28px', { lineHeight: '36px', fontWeight: '700' }], 'headline-xl-mobile': ['30px', { lineHeight: '38px', fontWeight: '800' }], 'label-sm': ['11px', { lineHeight: '14px', fontWeight: '700' }], 'headline-xl': ['40px', { lineHeight: '48px', fontWeight: '800' }], 'mono-num': ['13px', { lineHeight: '18px', fontWeight: '700' }], 'headline-sm': ['18px', { lineHeight: '26px', fontWeight: '600' }], 'label-md': ['12px', { lineHeight: '16px', fontWeight: '700' }], 'headline-md': ['22px', { lineHeight: '30px', fontWeight: '700' }], 'body-sm': ['12px', { lineHeight: '18px', fontWeight: '400' }], 'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }], 'label-lg': ['14px', { lineHeight: '20px', fontWeight: '600' }], 'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }] } } } };</script></head><body class="bg-surface font-body-md text-on-surface"><header class="fixed top-0 left-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-28 w-full max-w-[1280px] mx-auto px-margin-desktop flex flex-col justify-between py-space-xs"><div class="flex items-center justify-between gap-space-md h-16"><div class="flex items-center gap-space-md shrink-0"><div class="flex items-center gap-space-sm"><img alt="CampusVenta Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0ItOq7d_F-Bd8kegPo9FXJFNfrG04s6VkXExOFfy7CT-kD3r8cx9DNw8rL3uvyOgHZY5-WIy9F94fCp52sOfpgl1aaJyMKeMS3jjEjO9baqy8nne1_5bfDeSPUjsgjisPPhLW5PTw02pDO2lf292H2PETaKQLur-6kqd7poeVUA18o1TMPADnp30Vk-0TmZ6mbY5rwmPxh45DriAQO2aW2i4SZIlGhtCRVdox1iOuBP-M8NIMsOPLpA"/><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">CampusVenta</span><span class="bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm px-1.5 py-0.5 rounded-full">UTP Piura</span></div></div></div><div class="hidden xl:flex items-center gap-space-xs bg-surface-container-low px-space-sm py-1 rounded-full text-on-surface-variant font-label-md text-label-md"><span class="material-symbols-outlined text-base text-secondary">location_on</span><span>Campus Piura (Av. Vice)</span></div><button class="hidden lg:flex items-center gap-1 bg-surface-container hover:bg-surface-container-high hover:text-on-surface px-space-sm py-1 rounded-full text-on-surface-variant font-label-md text-label-md transition-colors" type="button"><span class="material-symbols-outlined text-base">apartment</span><span>Filtrar por Torre/Piso</span><span class="material-symbols-outlined text-sm">expand_more</span></button></div><div class="flex-1 max-w-lg mx-space-md hidden md:block"><div class="relative flex items-center w-full"><span class="material-symbols-outlined absolute left-3 text-outline text-lg pointer-events-none">search</span><input class="w-full bg-surface-container-low pl-9 pr-14 py-2 rounded-full font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Buscar snacks, postres, cargadores, papelería..." type="text"/><kbd class="absolute right-3 bg-surface-container text-on-surface-variant font-mono-num text-label-sm px-1.5 py-0.5 rounded">⌘K</kbd></div></div><div class="flex items-center gap-space-sm shrink-0"><div class="hidden 2xl:flex items-center gap-2 bg-secondary-container/40 px-3 py-1 rounded-full"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span></span><span class="font-mono-num text-label-sm text-on-secondary-container">42 Emprendedores activos ahora</span></div><button class="flex items-center gap-1.5 bg-primary-container hover:bg-primary text-on-primary-container hover:text-on-primary px-space-md py-2 rounded-full font-label-lg text-label-lg shadow-sm transition-all" type="button"><span class="material-symbols-outlined text-base">add_circle</span><span class="hidden sm:inline">+ Publicar Emprendimiento</span><span class="sm:hidden">Publicar</span></button><button class="relative p-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-full transition-colors" type="button"><span class="material-symbols-outlined text-xl">notifications</span><span class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary-container"></span></button><div class="flex items-center gap-2 pl-2"><div class="relative flex items-center gap-2 bg-surface-container-low hover:bg-surface-container-high py-1 px-2 rounded-full cursor-pointer transition-colors"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7JQcCzsRdnQu1-LWUGDvuaOCS9geJQ2whgOOv2M_pdQxrCM0hNPHPxmuo5uoEmIdF3UQtzXnkSnENYeY17E_ckTFmcl_7p47__67qdKw_eY-x2685jzKwyI8CfbgE4tT1eDGHWRIWevxLvi0pyDW6VNPT26gRAxW10gZsuyCUOkn6vpazhXKXffDhWvOtzOpc5OcA2mE6VrH_wYVD6y1X11Rv-v_etQV3F45N1mCCgiq8vVFri5alTA"/><div class="hidden lg:flex flex-col text-left pr-1"><span class="font-label-md text-label-md text-on-surface leading-tight">Paola Mijahuanga</span><span class="font-label-sm text-label-sm text-secondary font-bold">Emprendedor Pro</span></div><span class="material-symbols-outlined text-outline text-base hidden lg:block">arrow_drop_down</span></div></div></div></div><div class="flex items-center justify-between border-t border-surface-container/60 pt-1 pb-1"><nav class="flex items-center gap-space-xs overflow-x-auto" data-active-classes="bg-surface-container-high text-on-surface font-bold rounded-full"><a aria-current="page" class="px-space-md py-1 whitespace-nowrap transition-colors bg-surface-container-high text-on-surface font-bold rounded-full" data-path="explorar-marketplace" href="#">Explorar Marketplace</a><a class="px-space-md py-1 rounded-full text-on-surface-variant hover:text-on-surface font-label-md text-label-md whitespace-nowrap transition-colors" data-path="mapa-de-torres-y-pisos" href="#">Mapa de Torres y Pisos</a><a class="px-space-md py-1 rounded-full text-on-surface-variant hover:text-on-surface font-label-md text-label-md whitespace-nowrap transition-colors" data-path="mis-pedidos-y-chats" href="#">Mis Pedidos &amp; Chats</a><a class="px-space-md py-1 rounded-full text-on-surface-variant hover:text-on-surface font-label-md text-label-md whitespace-nowrap transition-colors" data-path="panel-de-emprendedor" href="#">Panel de Emprendedor</a></nav><div class="hidden md:flex items-center gap-2 text-outline font-label-sm text-label-sm"><span class="inline-block w-1.5 h-1.5 rounded-full bg-secondary"></span><span>Modo Presencial Activo · Torre A Piso 3</span></div></div></div></header><main class="w-full pt-28 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Interactive Hero Spotlight Section -->
+<section class="relative w-full overflow-hidden bg-surface-container-low/70 py-space-xl px-margin-desktop">
+<div class="max-w-[1280px] mx-auto flex flex-col gap-space-lg relative z-10">
+<!-- Live Indicator + Badge Pill -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<div class="inline-flex items-center gap-2 bg-surface-container-lowest shadow-sm px-3.5 py-1.5 rounded-full">
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary"></span>
+</span>
+<span class="font-mono-num text-label-sm uppercase tracking-wider text-secondary">En vivo · UTP Campus Piura</span>
+</div>
+<div class="inline-flex items-center gap-1.5 bg-primary-fixed/60 text-on-primary-fixed px-3 py-1 rounded-full font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>Recreo Actual: 10:30 AM - 11:15 AM</span>
+</div>
+</div>
+<!-- Main Headline & Subtitle -->
+<div class="max-w-3xl flex flex-col gap-space-xs">
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight leading-tight">
+          Encuentra lo que necesitas <span class="text-primary-container">sin salir de tu torre</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+          Snacks recién horneados, postres artesanales, cargadores y útiles ofrecidos por tus compañeros de clase con entrega inmediata en tu aula o piso.
+        </p>
+</div>
+<!-- Quick Category Pills -->
+<div class="flex items-center gap-space-sm overflow-x-auto pb-1 -mx-2 px-2 scrollbar-none">
+<button class="flex items-center gap-2 bg-primary-container text-on-primary-container px-4 py-2 rounded-full font-label-md text-label-md shadow-sm shrink-0 hover:bg-primary transition-all">
+<span>🔥</span>
+<span>Populares hoy</span>
+</button>
+<button class="flex items-center gap-2 bg-surface-container-lowest text-on-surface hover:bg-surface-container-high px-4 py-2 rounded-full font-label-md text-label-md shadow-sm shrink-0 transition-all">
+<span>🍰</span>
+<span>Postres &amp; Brownies</span>
+</button>
+<button class="flex items-center gap-2 bg-surface-container-lowest text-on-surface hover:bg-surface-container-high px-4 py-2 rounded-full font-label-md text-label-md shadow-sm shrink-0 transition-all">
+<span>🍔</span>
+<span>Almuerzos &amp; Sandwiches</span>
+</button>
+<button class="flex items-center gap-2 bg-surface-container-lowest text-on-surface hover:bg-surface-container-high px-4 py-2 rounded-full font-label-md text-label-md shadow-sm shrink-0 transition-all">
+<span>🎧</span>
+<span>Accesorios &amp; Tech</span>
+</button>
+<button class="flex items-center gap-2 bg-surface-container-lowest text-on-surface hover:bg-surface-container-high px-4 py-2 rounded-full font-label-md text-label-md shadow-sm shrink-0 transition-all">
+<span>📚</span>
+<span>Útiles &amp; Copias</span>
+</button>
+<button class="flex items-center gap-2 bg-surface-container-lowest text-on-surface hover:bg-surface-container-high px-4 py-2 rounded-full font-label-md text-label-md shadow-sm shrink-0 transition-all">
+<span>🎨</span>
+<span>Arte &amp; Handmade</span>
+</button>
+</div>
+</div>
+<!-- Architectural Background Watermark Accent -->
+<div class="absolute right-0 bottom-0 pointer-events-none opacity-5 translate-x-12 translate-y-8">
+<svg class="w-96 h-96 text-primary" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 4.7l5 4.5v5.8h-3v-4H10v4H7v-5.8l5-4.5z"></path>
+</svg>
+</div>
+</section>
+<!-- Campus Interactive Spatial Filter Hub -->
+<section class="w-full max-w-[1280px] mx-auto px-margin-desktop py-space-lg">
+<div class="bg-surface-container-lowest rounded-xl shadow-md p-space-md flex flex-col lg:flex-row gap-space-md lg:items-center justify-between">
+<!-- Tower & Pavilion Selection -->
+<div class="flex flex-col gap-1.5 flex-1 min-w-0">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">apartment</span>
+          Pabellón o Torre
+        </span>
+<div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container-highest text-on-surface font-label-md text-label-md whitespace-nowrap">Todas las Torres</button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap transition-colors">Torre A (Aulas 101-508)</button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap transition-colors">Torre B (Labs &amp; Sistemas)</button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap transition-colors">Pabellón Central</button>
+<button class="px-3.5 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap transition-colors">Terraza &amp; Comedores</button>
+</div>
+</div>
+<!-- Floor Selector -->
+<div class="flex flex-col gap-1.5 shrink-0">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">stairs</span>
+          Piso Exacto
+        </span>
+<div class="flex items-center gap-1.5">
+<button class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm flex items-center justify-center">Todos</button>
+<button class="w-8 h-8 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center">1</button>
+<button class="w-8 h-8 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center">2</button>
+<button class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm flex items-center justify-center shadow-sm">3</button>
+<button class="w-8 h-8 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center">4</button>
+<button class="w-8 h-8 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center">5+</button>
+</div>
+</div>
+<!-- Live Presence Quick Toggle -->
+<div class="flex items-center justify-between lg:justify-end gap-space-md bg-surface-container-low/70 px-4 py-2.5 rounded-xl shrink-0">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+            Solo en Campus AHORA
+          </span>
+<span class="font-body-sm text-body-sm text-outline">Excluye vendedores fuera de sede</span>
+</div>
+<button aria-checked="true" class="w-12 h-6 bg-secondary rounded-full relative p-0.5 transition-colors focus:outline-none" id="live-filter-toggle" role="switch">
+<span class="block w-5 h-5 bg-surface-container-lowest rounded-full shadow-sm transform translate-x-6 transition-transform"></span>
+</button>
+</div>
+</div>
+</section>
+<!-- Real-Time Marketplace Listings Grid -->
+<section class="w-full max-w-[1280px] mx-auto px-margin-desktop py-space-md">
+<!-- Section Title & Meta Header -->
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-space-sm mb-space-lg">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Vendedores Activos en tu Sede</h2>
+<span class="bg-secondary-container text-on-secondary-container font-mono-num text-label-sm px-2 py-0.5 rounded-full">6 en tu radio</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Con entrega directa mano a mano en aulas, pasillos o cafeterías</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-outline">Ordenar por:</span>
+<button class="flex items-center gap-1 text-on-surface font-label-md text-label-md bg-surface-container px-3 py-1 rounded-full">
+<span>Más cercanos a mi piso</span>
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+<!-- Card 1: Chocobombas & Brownies UTP -->
+<div class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1 group">
+<div class="relative w-full h-48 overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Close-up shot of decadent fudgy chocolate brownies sprinkled with sea salt and chocolate ganache bombs, presented cleanly on artisanal craft paper in a collegiate study hall with soft daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ4qAipm2Y_yEZSXL3mvc_5GSZV5oDZsq-0MrdlLzzXdrW9DUeptv_yBknx8wmrcBgptwdG9cGLCOZcGulTUNzl-9S_trrvdyylxYJyFP0gELR-aCeeur3duJY3fQdeteLcZonW9HjI9WWmAlRJGsVnKNlGHe-ZmJgXSp1t6_9GTaexKOMCTV7HFSV_Pynp0T5In16PSV88SYxlUelHnzZOz3CN-sZr167YAa-nJ06glKx7gqIsvK07w"/>
+<div class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-md px-2.5 py-1 rounded-full text-on-surface font-mono-num text-label-sm shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-primary">location_on</span>
+<span>Torre A · Piso 3</span>
+</div>
+<div class="absolute top-3 right-3 bg-secondary-container/95 backdrop-blur-md text-on-secondary-container px-2.5 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Disponible ahora</span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div>
+<div class="flex items-center justify-between gap-2 mb-1">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">Chocobombas &amp; Brownies UTP</span>
+<div class="flex items-center gap-1 text-tertiary-container shrink-0">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-mono-num text-label-md font-bold">4.9</span>
+<span class="font-body-sm text-outline">(128)</span>
+</div>
+</div>
+<div class="flex items-center gap-2 mb-3">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant font-label-sm text-label-sm font-bold">AC</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Andrea Castillo · <span class="text-outline">Psicología</span></span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg mb-3 flex items-start gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-sm text-secondary shrink-0 mt-0.5">place</span>
+<span class="text-xs">Frente al aula 304 (banca de concreto)</span>
+</div>
+<div class="flex flex-wrap gap-1 mb-2">
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Postres</span>
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Recién horneado</span>
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Acepta Yape / Plin</span>
+</div>
+</div>
+<div class="pt-space-xs flex items-center justify-between border-t-0">
+<div>
+<span class="font-label-sm text-label-sm text-outline block">Precios desde</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-extrabold">S/ 4.00 - 8.00</span>
+</div>
+<button class="bg-secondary hover:bg-on-secondary-container text-on-secondary px-3.5 py-2 rounded-full font-label-md text-label-md flex items-center gap-1.5 shadow-sm transition-all">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Pedir al WhatsApp</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2: BurgerBreak Campus -->
+<div class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1 group">
+<div class="relative w-full h-48 overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Artisanal smash burger with melted cheese and fresh crisp lettuce wrapped in brown deli parchment on an outdoor wooden university picnic table, natural sunlight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATJICEivCu60A5ASKBnnqFB9xNJ7vvXMJ3xYJcayY4bIrCjcxP3LDcQhvKY3k0JgKN4UFB3YgzQsfFfO38z2XYHnKrbdhRNcdYjKoERb7K8ODjOLqds6jSOQ4Uo8AXfQJr7yr6urzGkfysPwBDNN_Q2Gw4y6MYb0BYiaRnn2KLnpEWBH0lyczvhau2YXuMKpbEaCVEKBGk8tveVA_-MnTA-jrNRzlkESMXoeTD97UmdDN0Qn-ejwkPcg"/>
+<div class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-md px-2.5 py-1 rounded-full text-on-surface font-mono-num text-label-sm shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-primary">location_on</span>
+<span>Torre B · Piso 1</span>
+</div>
+<div class="absolute top-3 right-3 bg-secondary-container/95 backdrop-blur-md text-on-secondary-container px-2.5 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Disponible ahora</span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div>
+<div class="flex items-center justify-between gap-2 mb-1">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">BurgerBreak Campus</span>
+<div class="flex items-center gap-1 text-tertiary-container shrink-0">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-mono-num text-label-md font-bold">4.8</span>
+<span class="font-body-sm text-outline">(89)</span>
+</div>
+</div>
+<div class="flex items-center gap-2 mb-3">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant font-label-sm text-label-sm font-bold">CR</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Carlos Ramos · <span class="text-outline">Ing. Industrial</span></span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg mb-3 flex items-start gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-sm text-secondary shrink-0 mt-0.5">place</span>
+<span class="text-xs">Bancas techadas junto a cafetín de Torre B</span>
+</div>
+<div class="flex flex-wrap gap-1 mb-2">
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Hamburguesas</span>
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Combos con gaseosa</span>
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Papas nativas</span>
+</div>
+</div>
+<div class="pt-space-xs flex items-center justify-between border-t-0">
+<div>
+<span class="font-label-sm text-label-sm text-outline block">Precios desde</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-extrabold">S/ 7.50 - 12.00</span>
+</div>
+<button class="bg-secondary hover:bg-on-secondary-container text-on-secondary px-3.5 py-2 rounded-full font-label-md text-label-md flex items-center gap-1.5 shadow-sm transition-all">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Pedir al WhatsApp</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3: TechUTP Cables & Adaptadores -->
+<div class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1 group">
+<div class="relative w-full h-48 overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="High quality braided USB Type-C fast charging cables, smartphone adapters, and earphone splitters arranged neatly with sleek minimalist tech packaging on a modern white desk." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRMu4kANZWgR4pf9jhUUfBmKLwv3ys6UcDeIf8YB4MewQp7UO08gsuUbfoLIa3yUZyTNcWgl_V-BX3FOO1RCUWeAg3smuSBHBkhQSQiMLEk6hHG4JbRFKfH5IgxC378SxDn028Gb7TxxCPiQAD6P2y3p6Phh3I2fbpvZ5iceW2pkTiXyp66OoKVUvDNTRzTpjEUMuYRU2Gd5A1hJvZ0QzIejQjIP4b8PkFLFkTYZNKjHmlbQvIwTWqyg"/>
+<div class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-md px-2.5 py-1 rounded-full text-on-surface font-mono-num text-label-sm shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-primary">location_on</span>
+<span>Pabellón Central · Piso 2</span>
+</div>
+<div class="absolute top-3 right-3 bg-secondary-container/95 backdrop-blur-md text-on-secondary-container px-2.5 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Disponible ahora</span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div>
+<div class="flex items-center justify-between gap-2 mb-1">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">TechUTP Cables &amp; Accesorios</span>
+<div class="flex items-center gap-1 text-tertiary-container shrink-0">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-mono-num text-label-md font-bold">5.0</span>
+<span class="font-body-sm text-outline">(64)</span>
+</div>
+</div>
+<div class="flex items-center gap-2 mb-3">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant font-label-sm text-label-sm font-bold">PM</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Paola Mijahuanga · <span class="text-outline">Ing. Sistemas</span></span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg mb-3 flex items-start gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-sm text-secondary shrink-0 mt-0.5">place</span>
+<span class="text-xs">Cubículos de estudio biblioteca (Mesa 4)</span>
+</div>
+<div class="flex flex-wrap gap-1 mb-2">
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Cables Tipo-C</span>
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">OTG iPhone</span>
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Garantía 30 días</span>
+</div>
+</div>
+<div class="pt-space-xs flex items-center justify-between border-t-0">
+<div>
+<span class="font-label-sm text-label-sm text-outline block">Precios desde</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-extrabold">S/ 10.00 - 35.00</span>
+</div>
+<button class="bg-secondary hover:bg-on-secondary-container text-on-secondary px-3.5 py-2 rounded-full font-label-md text-label-md flex items-center gap-1.5 shadow-sm transition-all">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Pedir al WhatsApp</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 4: PiuraKombucha & Frutas Fit -->
+<div class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1 group">
+<div class="relative w-full h-48 overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Chilled glass bottles of colorful fruit-infused kombucha and healthy fresh fruit cups with mango, pineapple, and mint on a clean collegiate outdoor table." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjXr66hMwRowFyHWk6AS8ypsU_WqEOWPrJxjUT2lHzF0ViJRXGOF9gFE5UA3FI971-HeEPlmzq3VFIwCKLMnWXgk80yo-rc3kM61wuYIyjwRTZhFJE87mOGCp4EV0cyl7tBsmz3EygXelHfBnt8AsrlEp_f7-Z-O-Sxui8MD2T-yJ6vmYLDUrY2F9iLNIOC61wQX49wVA6SnYt9qPs4glqRQ1S-T6if9-H72pdmHAAlRuQogmhEkoDkQ"/>
+<div class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-md px-2.5 py-1 rounded-full text-on-surface font-mono-num text-label-sm shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-primary">location_on</span>
+<span>Torre A · Piso 1</span>
+</div>
+<div class="absolute top-3 right-3 bg-secondary-container/95 backdrop-blur-md text-on-secondary-container px-2.5 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Disponible ahora</span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div>
+<div class="flex items-center justify-between gap-2 mb-1">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">PiuraKombucha &amp; Frutas Fit</span>
+<div class="flex items-center gap-1 text-tertiary-container shrink-0">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-mono-num text-label-md font-bold">4.7</span>
+<span class="font-body-sm text-outline">(42)</span>
+</div>
+</div>
+<div class="flex items-center gap-2 mb-3">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant font-label-sm text-label-sm font-bold">LG</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Luciana Gálvez · <span class="text-outline">Nutrición &amp; Dietética</span></span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg mb-3 flex items-start gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-sm text-secondary shrink-0 mt-0.5">place</span>
+<span class="text-xs">Patio exterior al lado del pabellón deportivo</span>
+</div>
+<div class="flex flex-wrap gap-1 mb-2">
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Sin Azúcar</span>
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Bowls de Fruta</span>
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Heladas</span>
+</div>
+</div>
+<div class="pt-space-xs flex items-center justify-between border-t-0">
+<div>
+<span class="font-label-sm text-label-sm text-outline block">Precios desde</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-extrabold">S/ 5.00 - 9.00</span>
+</div>
+<button class="bg-secondary hover:bg-on-secondary-container text-on-secondary px-3.5 py-2 rounded-full font-label-md text-label-md flex items-center gap-1.5 shadow-sm transition-all">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Pedir al WhatsApp</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 5: Stickers & Merch UTP Geek (Away in Class) -->
+<div class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1 opacity-90 group">
+<div class="relative w-full h-48 overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 filter grayscale-[20%]" data-alt="Vinyl glossy stickers of programming code memes, anime characters, and engineering jokes neatly placed in a binder notebook on a university classroom lecture desk." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYI9H7U9Q584HJNRlKrI4jkm1D1qi9UaWf2WMerhkcm-wLapadsQjJUmzdWCnhXg8fgYkBV6_Ye-qa16TwHinwOo6BZBR3t67n-Dd5cos1mIP06TgB3KoTpeuLSbreZOAJkkn2pzIciu_tafSvox68RpZC2v7OJ2rHfgtlXLQWoqklKyvgVaRaBl219jbuJ9kfJIn3SoloFSprOK1jDlujD08-IXjusAszyv2SniPlI9eAFzTlGvI3Hw"/>
+<div class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-md px-2.5 py-1 rounded-full text-on-surface font-mono-num text-label-sm shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-primary">location_on</span>
+<span>Torre B · Piso 4</span>
+</div>
+<div class="absolute top-3 right-3 bg-surface-container-high/90 backdrop-blur-md text-on-surface-variant px-2.5 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span>En clase · Libre 4:00 PM</span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div>
+<div class="flex items-center justify-between gap-2 mb-1">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">Stickers &amp; Merch UTP Geek</span>
+<div class="flex items-center gap-1 text-tertiary-container shrink-0">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-mono-num text-label-md font-bold">4.9</span>
+<span class="font-body-sm text-outline">(95)</span>
+</div>
+</div>
+<div class="flex items-center gap-2 mb-3">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant font-label-sm text-label-sm font-bold">JS</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Jorge Sánchez · <span class="text-outline">Ing. Software</span></span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg mb-3 flex items-start gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-sm text-outline shrink-0 mt-0.5">timer</span>
+<span class="text-xs">Laboratorio 402 (Entregas al terminar sesión)</span>
+</div>
+<div class="flex flex-wrap gap-1 mb-2">
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Stickers Vinil</span>
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Pines Metal</span>
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Llaveros 3D</span>
+</div>
+</div>
+<div class="pt-space-xs flex items-center justify-between border-t-0">
+<div>
+<span class="font-label-sm text-label-sm text-outline block">Precios desde</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-extrabold">S/ 2.00 - 6.00</span>
+</div>
+<button class="bg-surface-container hover:bg-surface-container-high text-on-surface px-3.5 py-2 rounded-full font-label-md text-label-md flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-base">schedule</span>
+<span>Reservar para las 4PM</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 6: Sandwiches & Empanadas Caseras -->
+<div class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1 group">
+<div class="relative w-full h-48 overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Freshly baked golden brown empanadas with lime slices and chicken sandwiches wrapped in clean foil inside an insulated thermal delivery bag on a student desk." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI-W_ng8q-k_qcl0okiEW9gfNjW1I8BMZgcqNuQYv5reJKjg_PbreJxMHKTT3tsc1gjKA8jQr433N_szLbfnJJnhTdi94oo33PacXmt5iulRPdS6gHUUg93r8fZ9BiikvJ9oAe9R2QfNuOofNdeCqdDi35v0ipr4NiNqdLyowPlal6jgqtrkQpBKk5wOQqGjDdMpszQQHKFGYRPMjc1A0Fz-QbbpGMnia-PAXDF09J_g9N_9VhPFjIWA"/>
+<div class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-md px-2.5 py-1 rounded-full text-on-surface font-mono-num text-label-sm shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-primary">location_on</span>
+<span>Torre A · Piso 4</span>
+</div>
+<div class="absolute top-3 right-3 bg-secondary-container/95 backdrop-blur-md text-on-secondary-container px-2.5 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Disponible ahora</span>
+</div>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm">
+<div>
+<div class="flex items-center justify-between gap-2 mb-1">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">Sandwiches &amp; Empanadas Piuranas</span>
+<div class="flex items-center gap-1 text-tertiary-container shrink-0">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-mono-num text-label-md font-bold">4.8</span>
+<span class="font-body-sm text-outline">(110)</span>
+</div>
+</div>
+<div class="flex items-center gap-2 mb-3">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant font-label-sm text-label-sm font-bold">MB</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Mateo Benites · <span class="text-outline">Contabilidad</span></span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg mb-3 flex items-start gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-sm text-secondary shrink-0 mt-0.5">place</span>
+<span class="text-xs">Mesas de descanso junto al elevador central</span>
+</div>
+<div class="flex flex-wrap gap-1 mb-2">
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Empanadas Carne/Pollo</span>
+<span class="bg-surface-container px-2 py-0.5 rounded text-outline font-label-sm text-label-sm">Triple Clásico</span>
+</div>
+</div>
+<div class="pt-space-xs flex items-center justify-between border-t-0">
+<div>
+<span class="font-label-sm text-label-sm text-outline block">Precios desde</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-extrabold">S/ 3.50 - 6.50</span>
+</div>
+<button class="bg-secondary hover:bg-on-secondary-container text-on-secondary px-3.5 py-2 rounded-full font-label-md text-label-md flex items-center gap-1.5 shadow-sm transition-all">
+<span class="material-symbols-outlined text-base">chat</span>
+<span>Pedir al WhatsApp</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Recreo Flash Deals Carousel -->
+<section class="w-full bg-surface-container-high/40 py-space-xl my-space-lg">
+<div class="max-w-[1280px] mx-auto px-margin-desktop flex flex-col gap-space-lg">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface leading-tight">Promociones Rápidas del Recreo</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Descuentos exclusivos activos solo durante la ventana de recreo matutina</p>
+</div>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-lowest px-4 py-2 rounded-full shadow-sm">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Termina en:</span>
+<span class="font-mono-num text-headline-sm text-primary-container font-extrabold tracking-wider" id="flash-countdown">24:38</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-md">
+<!-- Promo 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex items-center gap-space-md hover:shadow-md transition-shadow">
+<img class="w-24 h-24 rounded-lg object-cover shrink-0" data-alt="Combo of iced coffee cup with caramel drizzle paired with a chocolate cookie on a tray in front of university windows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDb-iPWm5i7hk2B7WrSCrRcknclfa-lTYBkJ2DrwuRO3fokqYakhsGRCsuOx7C5dT_Ondgaf_jShq8rXps7MumtP-BwlirZvSfEYH1oT7SJxGm9Ggu1qlA0zoKF2h5fAM-dn7ZUTOfIYp-_W_cDwCHdwM0ikmHz5JY6V85Py5BvTIafcBwRv2kcIeffN987HLRNfX_1NPm61sc3trb1wydf7FqbutqeYCyymD1QQvc5PkzQyjn__2JpBA"/>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm px-2 py-0.5 rounded-full font-bold">-25% OFF</span>
+<span class="font-mono-num text-label-sm text-outline">Quedan 4 combos</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface truncate mt-1">Café Helado + Galleta Avena</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Venta en Torre A · Piso 2</p>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="font-headline-sm text-headline-sm text-primary-container font-extrabold">S/ 6.00</span>
+<span class="font-body-sm text-body-sm text-outline line-through">S/ 8.00</span>
+</div>
+</div>
+</div>
+<!-- Promo 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex items-center gap-space-md hover:shadow-md transition-shadow">
+<img class="w-24 h-24 rounded-lg object-cover shrink-0" data-alt="Crispy rolled Peruvian tequeños with creamy guacamole dip bowl presented fresh on a slate platter." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCKVpVNrS1VqglfvO0yas1ECtNxM5pXUbLVRU34YiQw0_c4xR5EULPghVm2zCEFMHoTpgn3N-D8Z0Nb-6bXnO6Xn9aEmwYcjGN4YsiUjZWbXF1E7VznialAIBxjfuuBnKkrsCqe5HR_KSG5Oq4HL7i8R2kYPZgPYHIYp1rnWfnsQZaPJWRE1nx9HfPiHLN2Zbw0FWa1jR7YzBw9ySzoht_v1Q-NFGusr_zWdPs3d8AeMU1lLyMo0amIA"/>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm px-2 py-0.5 rounded-full font-bold">2x1 RECREO</span>
+<span class="font-mono-num text-label-sm text-outline">Quedan 2 packs</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface truncate mt-1">Pack 6 Tequeños + Palta</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Venta en Pabellón Central Piso 1</p>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="font-headline-sm text-headline-sm text-secondary font-extrabold">S/ 7.00</span>
+<span class="font-body-sm text-body-sm text-outline line-through">S/ 10.00</span>
+</div>
+</div>
+</div>
+<!-- Promo 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex items-center gap-space-md hover:shadow-md transition-shadow">
+<img class="w-24 h-24 rounded-lg object-cover shrink-0" data-alt="Portable powerbank external battery connected to smartphone with illuminated battery indicator on study desk." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByBlopi7sCE26ARe04qoG2NSDvql4ARCVm6bwj0ig0ehJX3ADG_x863T7oTs2lmLSb5LAciPfgbivGnV5o6YVVUPyLmNrR0g8NdUdVYziIXR1M1PpLfOLzg0fW_4sYbiXIzDZpA3g35b4ubv_NQUXg-ZQ35UsXk7vtm0h0Wx19vK7CHCg8vuU8IB663o5z8MuL6ylW2VkNS74Eu4nIB8h3js1NO9eTIn34gMFyd1IvZDGgPUX4CNpLow"/>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm px-2 py-0.5 rounded-full font-bold">ALQUILER FLASH</span>
+<span class="font-mono-num text-label-sm text-secondary font-bold">3 disponibles</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface truncate mt-1">Carga Rápida Powerbank (2h)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Venta en Torre B · Piso 3</p>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="font-headline-sm text-headline-sm text-tertiary font-extrabold">S/ 3.00</span>
+<span class="font-body-sm text-body-sm text-outline">Garantía carné UTP</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Live Campus Economics & Activity Stats Section -->
+<section class="w-full max-w-[1280px] mx-auto px-margin-desktop py-space-xl">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-lg">
+<!-- Community Velocity Card -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-md flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Economía Estudiantil Hoy</span>
+<span class="material-symbols-outlined text-secondary text-2xl">trending_up</span>
+</div>
+<div class="my-space-md">
+<span class="font-headline-xl text-headline-xl text-on-surface font-black block">S/ 1,420.50</span>
+<span class="font-body-sm text-body-sm text-secondary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">arrow_upward</span> +18.4% comparado al recreo de ayer
+          </span>
+</div>
+<div class="flex items-center justify-between border-t border-surface-container pt-space-sm text-outline font-label-sm text-label-sm">
+<span>86 pagos realizados vía Yape</span>
+<span>14 vía Efectivo exacto</span>
+</div>
+</div>
+<!-- Campus Live Radar Stats -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-md flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Entregas y Actividad</span>
+<span class="material-symbols-outlined text-primary text-2xl">rocket_launch</span>
+</div>
+<div class="my-space-md">
+<span class="font-headline-xl text-headline-xl text-on-surface font-black block">86 entregas</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Completadas con éxito en menos de 6 minutos de espera</span>
+</div>
+<!-- Live Mini Progress Activity Bar -->
+<div class="flex flex-col gap-1.5 border-t border-surface-container pt-space-sm">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface">Punto más activo: Torre A (Piso 3)</span>
+<span class="font-mono-num font-bold text-primary">54%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 54%;"></div>
+</div>
+</div>
+</div>
+<!-- Entrepreneur Verification Banner -->
+<div class="bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-xl p-space-lg shadow-md flex flex-col justify-between relative overflow-hidden">
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-on-primary text-primary font-label-sm text-label-sm px-2.5 py-0.5 rounded-full font-bold">¿Tienes algo que vender?</span>
+</div>
+<h4 class="font-headline-md text-headline-md font-bold mb-2">Activa tu tienda en 2 minutos</h4>
+<p class="font-body-sm text-body-sm text-on-primary/90">
+            Sube tu stock, selecciona en qué piso estás y recibe pedidos directos a tu WhatsApp con pago Yape o Plin.
+          </p>
+</div>
+<div class="relative z-10 pt-space-md">
+<button class="bg-surface-container-lowest text-on-surface hover:bg-surface-container-high px-4 py-2.5 rounded-full font-label-lg text-label-lg shadow-md flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-primary text-base">storefront</span>
+<span>Comenzar a vender gratis</span>
+</button>
+</div>
+<!-- Decorative background circles -->
+<div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/10 rounded-full pointer-events-none"></div>
+<div class="absolute -right-2 -top-10 w-28 h-28 bg-white/10 rounded-full pointer-events-none"></div>
+</div>
+</div>
+</section>
+<!-- Interactive script for toggling presence filter & running real-time counter -->
+<script>
+    (function() {
+      // Toggle button micro-interaction
+      const toggle = document.getElementById('live-filter-toggle');
+      if (toggle) {
+        let isLive = true;
+        toggle.addEventListener('click', function() {
+          isLive = !isLive;
+          const thumb = toggle.querySelector('span');
+          if (isLive) {
+            toggle.classList.remove('bg-outline');
+            toggle.classList.add('bg-secondary');
+            thumb.classList.remove('translate-x-0.5');
+            thumb.classList.add('translate-x-6');
+            toggle.setAttribute('aria-checked', 'true');
+          } else {
+            toggle.classList.remove('bg-secondary');
+            toggle.classList.add('bg-outline');
+            thumb.classList.remove('translate-x-6');
+            thumb.classList.add('translate-x-0.5');
+            toggle.setAttribute('aria-checked', 'false');
+          }
+        });
+      }
+
+      // Live countdown simulation for Recreo Deals
+      const countdownEl = document.getElementById('flash-countdown');
+      if (countdownEl) {
+        let totalSeconds = 24 * 60 + 38;
+        setInterval(function() {
+          if (totalSeconds > 0) {
+            totalSeconds--;
+            const mins = Math.floor(totalSeconds / 60);
+            const secs = totalSeconds % 60;
+            countdownEl.textContent = 
+              (mins < 10 ? '0' : '') + mins + ':' + 
+              (secs < 10 ? '0' : '') + secs;
+          }
+        }, 1000);
+      }
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest mt-space-2xl"><div class="max-w-[1280px] mx-auto px-margin-desktop py-space-xl"><div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-space-lg"><div class="flex flex-col gap-1"><div class="flex items-center gap-space-xs"><img alt="CampusVenta Logo" class="h-6 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0ItOq7d_F-Bd8kegPo9FXJFNfrG04s6VkXExOFfy7CT-kD3r8cx9DNw8rL3uvyOgHZY5-WIy9F94fCp52sOfpgl1aaJyMKeMS3jjEjO9baqy8nne1_5bfDeSPUjsgjisPPhLW5PTw02pDO2lf292H2PETaKQLur-6kqd7poeVUA18o1TMPADnp30Vk-0TmZ6mbY5rwmPxh45DriAQO2aW2i4SZIlGhtCRVdox1iOuBP-M8NIMsOPLpA"/><span class="font-headline-sm text-headline-sm text-on-surface">CampusVenta</span><span class="font-label-sm text-label-sm bg-surface-container text-on-surface-variant px-2 py-0.5 rounded-full">UTP Piura</span></div><p class="font-body-sm text-body-sm text-on-surface-variant">Plataforma de comercio e intercambio peer-to-peer para la comunidad estudiantil de la Universidad Tecnológica del Perú - Sede Piura.</p><p class="font-label-sm text-label-sm text-outline">Desarrollado con orgullo por estudiantes de Ingeniería de Sistemas e Informática · UTP Piura.</p></div><div class="flex flex-wrap items-center gap-space-lg text-on-surface-variant font-label-md text-label-md"><a class="hover:text-primary transition-colors" href="#">Normativas de Venta</a><a class="hover:text-primary transition-colors" href="#">Términos Comunitarios UTP</a><a class="hover:text-primary transition-colors" href="#">Seguridad en Campus</a><a class="hover:text-primary transition-colors" href="#">Soporte WhatsApp</a></div></div><div class="mt-space-lg pt-space-md flex flex-col sm:flex-row justify-between items-center gap-space-sm text-outline font-label-sm text-label-sm"><p>© 2025 CampusVenta UTP Piura. Todos los derechos reservados.</p><div class="flex items-center gap-space-md"><span>Pabellón Tecnológico · Av. Vice</span><span class="text-secondary flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary inline-block"></span>Servidores UTP Online</span></div></div></div></footer></body></html>
