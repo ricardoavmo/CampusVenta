@@ -18,6 +18,8 @@ import pe.edu.utp.campusventa.repository.ResenaRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+// Controlador REST para manejar las operaciones relacionadas con los emprendimientos.
+
 @RestController
 @RequestMapping("/api/emprendimientos")
 public class EmprendimientoController {
