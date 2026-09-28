@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="utpGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C8102E"/>
+      <stop offset="100%" stop-color="#870E20"/>
+    </linearGradient>
+    <filter id="shadow512" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0F172A" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="url(#utpGrad512)"/>
+  <!-- Bag / Store with Pin -->
+  <g filter="url(#shadow512)" transform="translate(96, 85)">
+    <rect x="32" y="85" width="256" height="213" rx="48" fill="#FFFFFF"/>
+    <!-- Handle -->
+    <path d="M 96 85 V 53 C 96 21 224 21 224 53 V 85" fill="none" stroke="#FFFFFF" stroke-width="26" stroke-linecap="round"/>
+    <!-- Location Pin Accent in center -->
+    <circle cx="160" cy="165" r="42" fill="#A6192E"/>
+    <path d="M 128 181 C 128 181 160 245 160 245 C 160 245 192 181 192 181" fill="#A6192E"/>
+    <circle cx="160" cy="165" r="16" fill="#FFFFFF"/>
+  </g>
+  <text x="256" y="445" text-anchor="middle" font-family="'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif" font-weight="800" font-size="52" fill="#FFFFFF" letter-spacing="1">CAMPUSVENTA</text>
+</svg>

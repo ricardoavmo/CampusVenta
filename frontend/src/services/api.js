@@ -28,5 +28,35 @@ export const crearResena = async (emprendimientoId, resenaData) => {
   return response.data;
 };
 
+export const crearEmprendimiento = async (emprendimientoData) => {
+  const response = await api.post('/emprendimientos', emprendimientoData);
+  return response.data;
+};
+
+export const actualizarEmprendimiento = async (id, datosParciales) => {
+  const response = await api.patch(`/emprendimientos/${id}`, datosParciales);
+  return response.data;
+};
+
+export const eliminarEmprendimiento = async (id) => {
+  const response = await api.delete(`/emprendimientos/${id}`);
+  return response.data;
+};
+
+export const crearProducto = async (emprendimientoId, productoData) => {
+  const response = await api.post(`/emprendimientos/${emprendimientoId}/productos`, productoData);
+  return response.data;
+};
+
+export const actualizarProducto = async (emprendimientoId, productoId, productoData) => {
+  const response = await api.put(`/emprendimientos/${emprendimientoId}/productos/${productoId}`, productoData);
+  return response.data;
+};
+
+export const eliminarProducto = async (emprendimientoId, productoId) => {
+  const response = await api.delete(`/emprendimientos/${emprendimientoId}/productos/${productoId}`);
+  return response.data;
+};
+
 export default api;
 

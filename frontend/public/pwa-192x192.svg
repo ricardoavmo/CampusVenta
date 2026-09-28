@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="utpGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C8102E"/>
+      <stop offset="100%" stop-color="#870E20"/>
+    </linearGradient>
+    <filter id="shadow192" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0F172A" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect width="192" height="192" rx="44" fill="url(#utpGrad192)"/>
+  <!-- Bag / Store with Pin -->
+  <g filter="url(#shadow192)" transform="translate(36, 32)">
+    <rect x="12" y="32" width="96" height="80" rx="18" fill="#FFFFFF"/>
+    <!-- Handle -->
+    <path d="M 36 32 V 20 C 36 8 84 8 84 20 V 32" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+    <!-- Location Pin Accent in center -->
+    <circle cx="60" cy="62" r="16" fill="#A6192E"/>
+    <path d="M 48 68 C 48 68 60 92 60 92 C 60 92 72 68 72 68" fill="#A6192E"/>
+    <circle cx="60" cy="62" r="6" fill="#FFFFFF"/>
+  </g>
+</svg>
