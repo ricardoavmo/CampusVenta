@@ -14,3 +14,5 @@ frontend/.vite/
 *.iml
 .DS_Store
 Thumbs.db
+*.log
+backend/*.log
