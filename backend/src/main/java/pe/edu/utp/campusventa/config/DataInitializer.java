@@ -18,9 +18,11 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     private final EmprendimientoRepository repository;
+    private final jakarta.persistence.EntityManager entityManager;
 
-    public DataInitializer(EmprendimientoRepository repository) {
+    public DataInitializer(EmprendimientoRepository repository, jakarta.persistence.EntityManager entityManager) {
         this.repository = repository;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -32,7 +34,11 @@ public class DataInitializer implements CommandLineRunner {
         );
 
         if (necesitaCarga) {
-            repository.deleteAll();
+            try {
+                entityManager.createNativeQuery("TRUNCATE TABLE resenas, productos, emprendimientos RESTART IDENTITY CASCADE").executeUpdate();
+            } catch (Exception ex) {
+                repository.deleteAll();
+            }
 
             List<Emprendimiento> tiendas = new ArrayList<>();
 
@@ -407,3 +413,4 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 }
+
