@@ -181,11 +181,6 @@ cd backend
 | Integrante | Código UTP | Rol en el Proyecto |
 | :--- | :---: | :--- |
 | **Paola Elvira Mijahuanga Pingo** | U23227640 | Gerente General / Fundadora – Planificación estratégica y viabilidad |
-| **Angel Junior Ancajima Juarez** | U23231284 | Tech Lead – Arquitectura de software y supervisión de código |
-| **Toom Josue Vilela Carmen** | U23233736 | Frontend Lead – Desarrollo de interfaces React, Vite y diseño visual |
-| **Ricardo Emanuel Avila Montalban** | U23247043 | Backend Lead – Desarrollo de API REST Spring Boot, JPA y Git Flow |
-| **Kelvin Amaro Cienfuegos Morales** | U25209649 | QA / Testing – Pruebas unitarias, funcionales y aseguramiento de calidad |
-
 ---
 
 *Proyecto desarrollado para la asignatura de **Herramientas de Desarrollo** · Universidad Tecnológica del Perú (UTP) · Sede Piura · Ciclo 2026.*
