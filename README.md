@@ -184,3 +184,4 @@ cd backend
 ---
 
 *Proyecto desarrollado para la asignatura de **Herramientas de Desarrollo** · Universidad Tecnológica del Perú (UTP) · Sede Piura · Ciclo 2026.*
+*esto es una prueba para causar **conflicto** .*
