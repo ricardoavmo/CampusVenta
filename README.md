@@ -183,5 +183,7 @@ cd backend
 | **Paola Elvira Mijahuanga Pingo** | U23227640 | Gerente General / Fundadora – Planificación estratégica y viabilidad |
 ---
 
+*esto es una prueba*
+
 *Proyecto desarrollado para la asignatura de **Herramientas de Desarrollo** · Universidad Tecnológica del Perú (UTP) · Sede Piura · Ciclo 2026.*
 *Versión final resuelta: se combinó el cambio de MAIN y DEVELOP para solucionar el conflicto en la nube.*
