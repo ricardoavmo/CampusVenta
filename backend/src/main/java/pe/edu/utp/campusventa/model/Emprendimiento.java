@@ -75,6 +75,9 @@ public class Emprendimiento {
     @Column(name = "tiempo_entrega", length = 50)
     private String tiempoEntrega;
 
+    @Column(name = "horario_atencion", length = 100)
+    private String horarioAtencion;
+
     @OneToMany(mappedBy = "emprendimiento", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     @Builder.Default

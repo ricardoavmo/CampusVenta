@@ -1,7 +1,5 @@
-package pe.edu.utp.campusventa.model;
+package pe.edu.utp.campusventa.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -10,47 +8,33 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "productos")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Producto {
+public class ProductoDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "El nombre del producto es obligatorio")
     @Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
-    @Column(nullable = false, length = 100)
     private String nombre;
 
     @Size(max = 500, message = "La descripción no puede exceder 500 caracteres")
-    @Column(length = 500)
     private String descripcion;
 
     @NotNull(message = "El precio es obligatorio")
     @PositiveOrZero(message = "El precio debe ser mayor o igual a 0")
-    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal precio;
 
-    @Column(nullable = false)
-    private boolean disponible;
+    @Builder.Default
+    private boolean disponible = true;
 
-    @Column(name = "imagen_url", columnDefinition = "TEXT")
     private String imagenUrl;
 
-    @Column(length = 50)
+    @Size(max = 50, message = "La etiqueta no puede exceder 50 caracteres")
     private String badge;
 
-    @Column
     private Integer stock;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "emprendimiento_id", nullable = false)
-    @JsonBackReference
-    private Emprendimiento emprendimiento;
 }
