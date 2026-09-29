@@ -184,4 +184,4 @@ cd backend
 ---
 
 *Proyecto desarrollado para la asignatura de **Herramientas de Desarrollo** · Universidad Tecnológica del Perú (UTP) · Sede Piura · Ciclo 2026.*
-*Versión actualizada desde DEVELOP para prueba de conflicto en la nube.*
+*Versión final resuelta: se combinó el cambio de MAIN y DEVELOP para solucionar el conflicto en la nube.*
