@@ -180,10 +180,30 @@ cd backend
 
 | Integrante | Código UTP | Rol en el Proyecto |
 | :--- | :---: | :--- |
-| **Paola Elvira Mijahuanga Pingo** | U23227640 | Gerente General / Fundadora – Planificación estratégica y viabilidad |
+| **Paola Elvira Mijahuanga Pingo** | U23227640 | Gerente General / Product Owner – Planificación estratégica y viabilidad |
+| **Angel Ancajima Juárez** | U23247043 | Tech Lead / Scrum Master – Arquitectura técnica y facilitación Scrumban |
+| **Ricardo Avila Montalbán** | U23247043 | Backend Developer – API REST Spring Boot, Spring Security JWT y PostgreSQL |
+| **Toom Josué Vilela Carmen** | U22214589 | Frontend Developer – SPA en React, Tailwind CSS y experiencia de usuario |
+| **Kelvin Cienfuegos Morales** | U20210045 | QA Engineer – Aseguramiento de calidad, pruebas unitarias y validación funcional |
+
 ---
 
-*esto es una prueba*
+## 🏛️ Decisiones de Arquitectura y Estado de Datos
+
+Para transparencia técnica y auditoría del avance:
+
+1. **Persistencia Real en PostgreSQL:**
+   - **Usuarios y Seguridad:** Registro, login, emisión de JWT y perfil (`/api/usuarios/me`) con roles `COMPRADOR`, `VENDEDOR` y `ADMIN`, además de baja lógica (`DELETE /api/usuarios/me`).
+   - **Emprendimientos y Catálogo:** Puestos geolocalizados por torre y piso, asociados formalmente al estudiante propietario. Productos y stock en vivo persistidos en base de datos.
+   - **Reseñas:** Asociadas directamente a la entidad `Usuario` y al `Emprendimiento`. La publicación (`POST /api/emprendimientos/{id}/resenas`) está protegida por JWT y se ofrece el endpoint `GET /api/usuarios/me/resenas` para auditar las reseñas propias.
+   - **Panel Administrativo:** 8 endpoints en `/api/admin/*` con métricas globales, gestión de roles y control de estado de usuarios y tiendas.
+
+2. **Preferencias Locales y Coordinación en Campus:**
+   - **Pedidos por WhatsApp:** Los pedidos se coordinan de forma directa y presencial entre estudiantes mediante chat de WhatsApp durante los recesos (la entidad y módulo de transacciones avanzadas está planificada en el backlog).
+   - **Favoritos:** Marcadores de acceso rápido almacenados en el navegador para disponibilidad instantánea.
+   - **Puesto activo y Modo Oscuro:** Preferencias visuales del dispositivo (OLED / Claro) y navegación del panel multitienda.
+   - **Credenciales JWT:** Token almacenado en el cliente para inyección en interceptores Axios.
+
+---
 
 *Proyecto desarrollado para la asignatura de **Herramientas de Desarrollo** · Universidad Tecnológica del Perú (UTP) · Sede Piura · Ciclo 2026.*
-*Versión final resuelta: se combinó el cambio de MAIN y DEVELOP para solucionar el conflicto en la nube.*
