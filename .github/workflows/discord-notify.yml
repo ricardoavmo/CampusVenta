@@ -1,0 +1,92 @@
+name: Notificaciones de Pull Request a Discord
+
+on:
+  pull_request:
+    types: [opened, reopened, closed]
+
+jobs:
+  notify-discord:
+    name: Notificar a Discord (#eventos)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar Secreto de Discord
+        id: check-secret
+        run: |
+          if [ -z "${{ secrets.DISCORD_WEBHOOK_URL }}" ]; then
+            echo "has_secret=false" >> $GITHUB_OUTPUT
+            echo "⚠️ El secreto DISCORD_WEBHOOK_URL no está configurado en el repositorio. Omitiendo notificación."
+          else
+            echo "has_secret=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Notificar PR Abierto o Reabierto
+        if: steps.check-secret.outputs.has_secret == 'true' && (github.event.action == 'opened' || github.event.action == 'reopened')
+        run: |
+          PR_TITLE=$(jq -r -n --arg val "${{ github.event.pull_request.title }}" '$val')
+          PR_URL="${{ github.event.pull_request.html_url }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          HEAD_BRANCH="${{ github.event.pull_request.head.ref }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+
+          PAYLOAD=$(cat <<EOF
+          {
+            "username": "GitHub CampusVenta",
+            "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+            "embeds": [
+              {
+                "title": "📬 Nuevo Pull Request #$PR_NUMBER Abierto",
+                "url": "$PR_URL",
+                "description": "**$PR_TITLE**\n\nPor favor, un compañero del equipo debe revisar y validar los cambios.",
+                "color": 1547854,
+                "fields": [
+                  { "name": "👤 Autor", "value": "$PR_AUTHOR", "inline": true },
+                  { "name": "🌿 Rama Origen", "value": "\`$HEAD_BRANCH\`", "inline": true },
+                  { "name": "🎯 Rama Destino", "value": "\`$BASE_BRANCH\`", "inline": true }
+                ],
+                "footer": {
+                  "text": "CampusVenta · Scrumban · UTP Piura"
+                },
+                "timestamp": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+              }
+            ]
+          }
+          EOF
+          )
+
+          curl -H "Content-Type: application/json" -X POST -d "$PAYLOAD" "${{ secrets.DISCORD_WEBHOOK_URL }}"
+
+      - name: Notificar PR Fusionado (Merged)
+        if: steps.check-secret.outputs.has_secret == 'true' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        run: |
+          PR_TITLE=$(jq -r -n --arg val "${{ github.event.pull_request.title }}" '$val')
+          PR_URL="${{ github.event.pull_request.html_url }}"
+          MERGED_BY="${{ github.event.pull_request.merged_by.login }}"
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+
+          PAYLOAD=$(cat <<EOF
+          {
+            "username": "GitHub CampusVenta",
+            "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+            "embeds": [
+              {
+                "title": "🎉 Pull Request #$PR_NUMBER Fusionado con Éxito",
+                "url": "$PR_URL",
+                "description": "**$PR_TITLE** fue integrado a la rama \`$BASE_BRANCH\`.\n\nLa tarjeta asociada en Trello pasa a la columna **Hecho**.",
+                "color": 3066993,
+                "fields": [
+                  { "name": "🚀 Fusionado por", "value": "$MERGED_BY", "inline": true },
+                  { "name": "🎯 Rama Destino", "value": "\`$BASE_BRANCH\`", "inline": true }
+                ],
+                "footer": {
+                  "text": "CampusVenta · Scrumban · UTP Piura"
+                },
+                "timestamp": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+              }
+            ]
+          }
+          EOF
+          )
+
+          curl -H "Content-Type: application/json" -X POST -d "$PAYLOAD" "${{ secrets.DISCORD_WEBHOOK_URL }}"
