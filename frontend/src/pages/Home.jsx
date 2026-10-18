@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getEmprendimientos } from '../services/api';
+import { getEmprendimientos, getMisFavoritosApi, toggleFavoritoApi } from '../services/api';
 import {
   IconBolt,
   IconVerified,
@@ -52,11 +52,11 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Favoritos persistidos en localStorage
+  // Favoritos persistidos en PostgreSQL y sincronizados localmente
   const [favoritesIds, setFavoritesIds] = useState(() => {
     try {
       const saved = localStorage.getItem('campusventa_favoritos');
-      return saved ? JSON.parse(saved) : [];
+      return saved ? JSON.parse(saved).map(Number) : [];
     } catch {
       return [];
     }
@@ -68,20 +68,52 @@ export default function Home() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const toggleFavorite = (e, storeOrId, storeName) => {
+  useEffect(() => {
+    async function loadFavs() {
+      if (user) {
+        try {
+          const apiFavs = await getMisFavoritosApi();
+          if (Array.isArray(apiFavs)) {
+            setFavoritesIds(apiFavs.map(Number));
+            localStorage.setItem('campusventa_favoritos', JSON.stringify(apiFavs));
+          }
+        } catch (e) {
+          console.warn('[Home] Error al consultar favoritos del backend:', e?.message);
+        }
+      }
+    }
+    loadFavs();
+  }, [user]);
+
+  const toggleFavorite = async (e, storeOrId, storeName) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
     const storeId = typeof storeOrId === 'object' && storeOrId !== null ? storeOrId.id : storeOrId;
+    const numId = Number(storeId);
     const name = storeName || (typeof storeOrId === 'object' && storeOrId !== null ? storeOrId.nombre : 'Puesto');
+
+    if (user) {
+      try {
+        const updated = await toggleFavoritoApi(numId);
+        setFavoritesIds(updated.map(Number));
+        localStorage.setItem('campusventa_favoritos', JSON.stringify(updated));
+        const isFav = updated.map(Number).includes(numId);
+        showToast(isFav ? `¡"${name}" guardado en tus favoritos!` : `Quitaste "${name}" de tus favoritos`);
+        return;
+      } catch (err) {
+        console.warn('[Home] Fallback local toggle favorito:', err?.message);
+      }
+    }
+
     let updated;
-    const isFav = favoritesIds.includes(storeId);
+    const isFav = favoritesIds.includes(numId);
     if (isFav) {
-      updated = favoritesIds.filter((id) => id !== storeId);
+      updated = favoritesIds.filter((id) => Number(id) !== numId);
       showToast(`Quitaste "${name}" de tus favoritos`);
     } else {
-      updated = [...favoritesIds, storeId];
+      updated = [...favoritesIds, numId];
       showToast(`¡"${name}" guardado en tus favoritos!`);
     }
     setFavoritesIds(updated);

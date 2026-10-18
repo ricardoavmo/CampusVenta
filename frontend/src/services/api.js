@@ -182,4 +182,43 @@ export const deleteAdminEmprendimientoApi = async (id) => {
   return response.data;
 };
 
+/* ============================================================
+   PEDIDOS (MÓDULO DE PEDIDOS)
+   ============================================================ */
+
+export const crearPedidoApi = async (pedidoData) => {
+  const response = await api.post('/pedidos', pedidoData);
+  return response.data;
+};
+
+export const getMisPedidosApi = async () => {
+  const response = await api.get('/pedidos/mis-pedidos');
+  return response.data;
+};
+
+export const getPedidosVendedorApi = async (emprendimientoId) => {
+  const response = await api.get(`/pedidos/vendedor/${emprendimientoId}`);
+  return response.data;
+};
+
+export const actualizarEstadoPedidoApi = async (pedidoId, estado) => {
+  const response = await api.patch(`/pedidos/${pedidoId}/estado`, { estado });
+  return response.data;
+};
+
+/* ============================================================
+   FAVORITOS EN BASE DE DATOS
+   ============================================================ */
+
+export const getMisFavoritosApi = async () => {
+  const response = await api.get('/usuarios/me/favoritos');
+  return response.data;
+};
+
+export const toggleFavoritoApi = async (emprendimientoId) => {
+  const response = await api.post(`/usuarios/me/favoritos/${emprendimientoId}`);
+  return response.data;
+};
+
 export default api;
+

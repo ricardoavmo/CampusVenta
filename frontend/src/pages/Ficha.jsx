@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getEmprendimientoById, crearResena } from '../services/api';
+import {
+  getEmprendimientoById,
+  crearResena,
+  crearPedidoApi,
+  getMisFavoritosApi,
+  toggleFavoritoApi
+} from '../services/api';
 import {
   IconStore,
   IconLocation,
@@ -90,25 +96,57 @@ export default function Ficha() {
   };
 
   useEffect(() => {
-    if (emprendimiento?.id) {
+    async function checkFavorite() {
+      if (!emprendimiento?.id) return;
+      const targetId = Number(emprendimiento.id);
+
+      if (user) {
+        try {
+          const apiFavs = await getMisFavoritosApi();
+          if (Array.isArray(apiFavs)) {
+            setIsFavorite(apiFavs.map(Number).includes(targetId));
+            localStorage.setItem('campusventa_favoritos', JSON.stringify(apiFavs));
+            return;
+          }
+        } catch {
+          // continuar con fallback
+        }
+      }
+
       try {
         const saved = localStorage.getItem('campusventa_favoritos');
         const ids = saved ? JSON.parse(saved) : [];
-        setIsFavorite(ids.includes(Number(emprendimiento.id)));
+        setIsFavorite(ids.map(Number).includes(targetId));
       } catch {
         setIsFavorite(false);
       }
     }
-  }, [emprendimiento]);
 
-  const handleToggleFavorite = () => {
+    checkFavorite();
+  }, [emprendimiento, user]);
+
+  const handleToggleFavorite = async () => {
     if (!emprendimiento?.id) return;
+    const targetId = Number(emprendimiento.id);
+
+    if (user) {
+      try {
+        const updatedIds = await toggleFavoritoApi(targetId);
+        const isNowFav = updatedIds.map(Number).includes(targetId);
+        setIsFavorite(isNowFav);
+        localStorage.setItem('campusventa_favoritos', JSON.stringify(updatedIds));
+        showToast(isNowFav ? `¡"${emprendimiento.nombre}" guardado en tus favoritos!` : `Quitaste "${emprendimiento.nombre}" de tus favoritos`);
+        return;
+      } catch (err) {
+        console.warn('[Ficha] Error al sincronizar favorito con backend:', err?.message);
+      }
+    }
+
     try {
       const saved = localStorage.getItem('campusventa_favoritos');
       let ids = saved ? JSON.parse(saved) : [];
-      const targetId = Number(emprendimiento.id);
-      if (ids.includes(targetId)) {
-        ids = ids.filter((favId) => favId !== targetId);
+      if (ids.map(Number).includes(targetId)) {
+        ids = ids.filter((favId) => Number(favId) !== targetId);
         setIsFavorite(false);
         showToast(`Quitaste "${emprendimiento.nombre}" de tus favoritos`);
       } else {
@@ -249,6 +287,32 @@ export default function Ficha() {
     }
 
     return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(texto)}`;
+  };
+
+  // Crear pedido real en PostgreSQL y abrir WhatsApp para coordinar en el campus
+  const handlePedirProducto = async (producto) => {
+    const qty = quantities[producto.id] || 1;
+    const precioUnit = Number(producto.precio || 0);
+
+    try {
+      const nuevoPedido = {
+        emprendimientoId: Number(emprendimiento.id),
+        productoNombre: producto.nombre,
+        cantidad: qty,
+        precioUnitario: precioUnit,
+        puntoEntrega: `${emprendimiento.torre || 'Campus UTP'} - ${emprendimiento.piso || 'Campus Piura'}`,
+        notas: `Coordinación vía WhatsApp por ${user?.nombre || 'Comprador UTP'}`
+      };
+      await crearPedidoApi(nuevoPedido);
+      showToast(`¡Pedido de ${qty}x ${producto.nombre} registrado con éxito!`);
+    } catch (err) {
+      console.warn('[Ficha] Error al registrar pedido en backend:', err?.message);
+    }
+
+    const waUrl = getWhatsAppOrderUrl(producto);
+    if (waUrl && waUrl !== '#') {
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   // Generador de niveles esquemáticos según la zona UTP Piura
@@ -728,15 +792,14 @@ export default function Ficha() {
                             </div>
 
                             {/* Direct WhatsApp CTA for this product */}
-                            <a
-                              href={getWhatsAppOrderUrl(prod)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="w-full liquid-glass-crimson hover:brightness-110 text-white py-2 px-3 rounded-full font-heading text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition-all text-decoration-none"
+                            <button
+                              type="button"
+                              onClick={() => handlePedirProducto(prod)}
+                              className="w-full liquid-glass-crimson hover:brightness-110 text-white py-2 px-3 rounded-full font-heading text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer border-0"
                             >
                               <IconWhatsApp className="w-3.5 h-3.5 text-white" />
                               <span>Pedir {qty}x por WhatsApp (S/ {(Number(prod.precio) * qty).toFixed(2)})</span>
-                            </a>
+                            </button>
                           </div>
                         </div>
                       );

@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { getEmprendimientos, getMisResenasApi } from '../services/api';
+import {
+  getEmprendimientos,
+  getMisResenasApi,
+  getMisPedidosApi,
+  getMisFavoritosApi,
+  toggleFavoritoApi
+} from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import {
   IconHeart,
@@ -35,25 +41,74 @@ export default function MisPedidos() {
   const [misResenas, setMisResenas] = useState([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('campusventa_favoritos');
-    if (saved) {
-      try {
-        setFavoritesIds(JSON.parse(saved));
-      } catch {
-        setFavoritesIds([]);
-      }
-    } else {
-      setFavoritesIds([]);
-    }
-
-    async function loadStores() {
+    async function loadData() {
       try {
         setLoading(true);
+
+        // 1. Cargar Emprendimientos
         const data = await getEmprendimientos();
         const stores = Array.isArray(data) ? data : [];
         setEmprendimientos(stores);
 
-        // Extraer reseñas reales registradas en PostgreSQL vinculadas al usuario
+        // 2. Cargar Favoritos (de API si autenticado, de lo contrario localStorage)
+        let favsLoaded = false;
+        if (user) {
+          try {
+            const apiFavs = await getMisFavoritosApi();
+            if (Array.isArray(apiFavs)) {
+              setFavoritesIds(apiFavs.map(Number));
+              localStorage.setItem('campusventa_favoritos', JSON.stringify(apiFavs));
+              favsLoaded = true;
+            }
+          } catch (e) {
+            console.warn('[MisPedidos] Error al cargar favoritos de API:', e?.message);
+          }
+        }
+        if (!favsLoaded) {
+          const savedFavs = localStorage.getItem('campusventa_favoritos');
+          setFavoritesIds(savedFavs ? JSON.parse(savedFavs).map(Number) : []);
+        }
+
+        // 3. Cargar Pedidos (de API PostgreSQL si autenticado, con fallback a localStorage)
+        let pedidosCargados = false;
+        if (user) {
+          try {
+            const apiPedidos = await getMisPedidosApi();
+            if (Array.isArray(apiPedidos)) {
+              const formatted = apiPedidos.map((ped) => {
+                const store = stores.find((s) => s.id === ped.emprendimientoId);
+                return {
+                  id: ped.codigoPedido || `ORD-${ped.id}`,
+                  dbId: ped.id,
+                  tiendaNombre: ped.emprendimientoNombre || store?.nombre || 'Emprendimiento UTP',
+                  avatarUrl: ped.emprendimientoAvatarUrl || store?.imagenUrl,
+                  producto: `${ped.cantidad}x ${ped.productoNombre}`,
+                  total: ped.total,
+                  torre: ped.puntoEntrega || store?.torre || 'Campus UTP',
+                  piso: store?.piso || 'Entrega en campus',
+                  estado: ped.estado || 'PENDIENTE',
+                  fecha: ped.fechaCreacion ? new Date(ped.fechaCreacion).toLocaleDateString() : 'Reciente',
+                  whatsapp: store?.whatsapp ? store.whatsapp.replace(/\D/g, '') : null,
+                  vendedorNombre: store?.vendedorNombre
+                };
+              });
+              setPedidos(formatted);
+              pedidosCargados = true;
+            }
+          } catch (e) {
+            console.warn('[MisPedidos] Error al consultar /api/pedidos/mis-pedidos:', e?.message);
+          }
+        }
+        if (!pedidosCargados) {
+          try {
+            const savedPeds = localStorage.getItem('campusventa_pedidos');
+            if (savedPeds) setPedidos(JSON.parse(savedPeds));
+          } catch {
+            // omitir
+          }
+        }
+
+        // 4. Extraer reseñas reales registradas en PostgreSQL vinculadas al usuario
         let userResenas = [];
         if (user) {
           try {
@@ -99,27 +154,40 @@ export default function MisPedidos() {
         }
         setMisResenas(userResenas);
       } catch (err) {
-        console.error('Error al cargar tiendas y reseñas del backend:', err);
+        console.error('Error al cargar datos en MisPedidos:', err);
       } finally {
         setLoading(false);
       }
     }
-    loadStores();
+
+    loadData();
 
     const handleStorageChange = () => {
       try {
         const saved = localStorage.getItem('campusventa_favoritos');
-        if (saved) setFavoritesIds(JSON.parse(saved));
+        if (saved) setFavoritesIds(JSON.parse(saved).map(Number));
       } catch (err) {
         console.error(err);
       }
     };
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+  }, [user]);
 
-  const toggleFavorite = (id) => {
+  const toggleFavorite = async (id) => {
     const numId = Number(id);
+
+    if (user) {
+      try {
+        const updated = await toggleFavoritoApi(numId);
+        setFavoritesIds(updated.map(Number));
+        localStorage.setItem('campusventa_favoritos', JSON.stringify(updated));
+        return;
+      } catch (err) {
+        console.warn('[MisPedidos] Error toggleFavoritoApi, fallback local:', err?.message);
+      }
+    }
+
     let updated;
     if (favoritesIds.map(Number).includes(numId)) {
       updated = favoritesIds.filter((favId) => Number(favId) !== numId);
