@@ -48,6 +48,9 @@ class UsuarioControllerTest {
     @Mock
     private ResenaRepository resenaRepository;
 
+    @Mock
+    private pe.edu.utp.campusventa.repository.EmprendimientoRepository emprendimientoRepository;
+
     @InjectMocks
     private UsuarioController usuarioController;
 
@@ -153,4 +156,38 @@ class UsuarioControllerTest {
                 .andExpect(jsonPath("$[0].calificacion").value(5))
                 .andExpect(jsonPath("$[0].comentario").value("Muy buenos chifles y entrega puntual en Torre A"));
     }
+
+    @Test
+    @DisplayName("GET /api/usuarios/me/favoritos responde 200 con IDs de emprendimientos favoritos")
+    void testGetMisFavoritos() throws Exception {
+        Emprendimiento emp = Emprendimiento.builder().id(10L).nombre("Chifles Piuranos").build();
+        usuario.getFavoritos().add(emp);
+
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+
+        mockMvc.perform(get("/api/usuarios/me/favoritos"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").value(10));
+    }
+
+    @Test
+    @DisplayName("POST /api/usuarios/me/favoritos/{id} agrega y remueve favorito correctamente")
+    void testToggleFavorito() throws Exception {
+        Emprendimiento emp = Emprendimiento.builder().id(10L).nombre("Chifles Piuranos").build();
+
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(emprendimientoRepository.findById(10L)).thenReturn(Optional.of(emp));
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // Primera llamada: agrega a favoritos
+        mockMvc.perform(post("/api/usuarios/me/favoritos/10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").value(10));
+
+        // Segunda llamada: remueve de favoritos
+        mockMvc.perform(post("/api/usuarios/me/favoritos/10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
 }
+
