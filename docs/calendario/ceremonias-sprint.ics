@@ -1,0 +1,87 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//CampusVenta//Scrumban Ceremonias Calendar//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:CampusVenta - Ceremonias Scrumban
+X-WR-TIMEZONE:America/Lima
+X-WR-CALDESC:Calendario recurrente de ceremonias agiles Scrumban para el proyecto CampusVenta (UTP Piura).
+BEGIN:VTIMEZONE
+TZID:America/Lima
+X-LIC-LOCATION:America/Lima
+BEGIN:STANDARD
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0500
+TZNAME:-05
+DTSTART:19700101T000000
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:cv-planning-20261019@campusventa.utp.pe
+DTSTAMP:20261018T050000Z
+DTSTART;TZID=America/Lima:20261019T190000
+DTEND;TZID=America/Lima:20261019T200000
+RRULE:FREQ=WEEKLY;UNTIL=20261116T045959Z;BYDAY=MO
+SUMMARY:🎯 Sprint Planning - CampusVenta
+DESCRIPTION:Ceremonia de planificacion semanal del sprint en Scrumban.\nObjetivo: Revisar el backlog priorizado con la Product Owner, estimar tarjetas en Fibonacci y comprometer la Lista de tareas del sprint.\nLugar: Discord - Sala de voz General.
+LOCATION:Discord - Sala de voz General
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio: Sprint Planning de CampusVenta en 15 minutos
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:cv-daily-20261019@campusventa.utp.pe
+DTSTAMP:20261018T050000Z
+DTSTART;TZID=America/Lima:20261019T090000
+DTEND;TZID=America/Lima:20261019T091500
+RRULE:FREQ=WEEKLY;UNTIL=20261116T045959Z;BYDAY=MO,TU,WE,TH,FR
+SUMMARY:☀️ Daily Standup Asincrono - CampusVenta
+DESCRIPTION:Recordatorio diario de sincronizacion del equipo en Discord.\nPublicar en #general las 3 preguntas clave:\n1. Que avance ayer?\n2. En que trabajare hoy?\n3. Tengo algun bloqueo o impedimento?
+LOCATION:Discord - Canal #general
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+TRIGGER:-PT5M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio: Publicar tu reporte de Daily Standup en Discord #general
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:cv-review-20261025@campusventa.utp.pe
+DTSTAMP:20261018T050000Z
+DTSTART;TZID=America/Lima:20261025T180000
+DTEND;TZID=America/Lima:20261025T184500
+RRULE:FREQ=WEEKLY;UNTIL=20261116T045959Z;BYDAY=SU
+SUMMARY:🔍 Sprint Review (Demo) - CampusVenta
+DESCRIPTION:Demostracion del incremento de software terminado al cierre del sprint semanal.\nValidacion de criterios de aceptacion con la Product Owner y aprobacion de historias de usuario.\nLugar: Discord - Sala de voz General.
+LOCATION:Discord - Sala de voz General
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio: Sprint Review (Demo) de CampusVenta en 15 minutos
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:cv-retro-20261025@campusventa.utp.pe
+DTSTAMP:20261018T050000Z
+DTSTART;TZID=America/Lima:20261025T184500
+DTEND;TZID=America/Lima:20261025T193000
+RRULE:FREQ=WEEKLY;UNTIL=20261116T045959Z;BYDAY=SU
+SUMMARY:🔄 Sprint Retrospective - CampusVenta
+DESCRIPTION:Sesion de mejora continua del equipo.\nAnalisis de que salio bien, que salio mal, que cuellos de botella existieron en el flujo de Trello y compromisos de accion para el siguiente sprint.\nLugar: Discord - Sala de voz General.
+LOCATION:Discord - Sala de voz General
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio: Sprint Retrospective de CampusVenta en 10 minutos
+END:VALARM
+END:VEVENT
+END:VCALENDAR
