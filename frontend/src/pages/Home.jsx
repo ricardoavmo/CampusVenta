@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getEmprendimientos } from '../services/api';
-import { DEFAULT_EMPRENDIMIENTOS } from '../utils/seedData';
 import {
   IconBolt,
   IconVerified,
@@ -57,9 +56,9 @@ export default function Home() {
   const [favoritesIds, setFavoritesIds] = useState(() => {
     try {
       const saved = localStorage.getItem('campusventa_favoritos');
-      return saved ? JSON.parse(saved) : [1, 2];
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return [1, 2];
+      return [];
     }
   });
   const [toastMessage, setToastMessage] = useState(null);
@@ -90,13 +89,13 @@ export default function Home() {
   };
 
   const getProductWhatsAppUrl = (prod) => {
-    const rawPhone = prod.whatsapp || prod.telefono || '972341311';
+    const rawPhone = prod.whatsapp || prod.telefono || '';
     let cleanNumber = rawPhone.replace(/\D/g, '');
     if (cleanNumber.length === 9) {
       cleanNumber = '51' + cleanNumber;
     }
-    const texto = `¡Hola ${prod.vendedorNombre || prod.tiendaNombre}! Vi tu producto "${prod.nombre}" en CampusVenta UTP. Deseo pedirlo (S/ ${Number(prod.precio).toFixed(2)}). ¿Estás en ${prod.torre} ${prod.piso} para coordinar la entrega?`;
-    return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(texto)}`;
+    const texto = `¡Hola ${prod.vendedorNombre || prod.tiendaNombre || 'compañero'}! Vi tu producto "${prod.nombre}" en CampusVenta UTP. Deseo pedirlo (S/ ${Number(prod.precio).toFixed(2)}). ¿Estás en ${prod.torre || 'el campus'} ${prod.piso || ''} para coordinar la entrega?`;
+    return cleanNumber ? `https://wa.me/${cleanNumber}?text=${encodeURIComponent(texto)}` : '#';
   };
 
   // Sincronización de Búsqueda con Parámetros URL (?search=...)
@@ -130,23 +129,29 @@ export default function Home() {
       e.stopPropagation();
     }
     const nombre = emp.vendedorNombre || emp.nombre;
-    const cleanUser = nombre.toLowerCase().replace(/\s+/g, '.');
+    const redes = [];
+    if (emp.telefono || emp.whatsapp) {
+      redes.push({ id: '1', plataforma: 'whatsapp', handle: emp.telefono || emp.whatsapp, visible: true });
+    }
+    if (emp.instagram) {
+      redes.push({ id: '2', plataforma: 'instagram', handle: emp.instagram, visible: true });
+    }
+    if (emp.tiktok) {
+      redes.push({ id: '3', plataforma: 'tiktok', handle: emp.tiktok, visible: true });
+    }
+
     setSelectedSellerProfile({
       nombre: nombre,
       avatar: emp.avatarUrl,
       rol: 'vendedor',
-      carrera: emp.vendedorCarrera || 'Ing. Sistemas',
-      ciclo: emp.vendedorCiclo || '6to Ciclo',
-      bio: emp.descripcion || `Emprendimiento oficial en campus UTP Piura. Encuéntranos en ${emp.torre} - ${emp.piso}.`,
-      torreHabitual: emp.torre || 'Torre A',
+      carrera: emp.carrera || emp.vendedorCarrera || 'Comunidad UTP',
+      ciclo: emp.ciclo || emp.vendedorCiclo || 'Campus Piura',
+      bio: emp.descripcion || `Emprendimiento en campus UTP Piura. Encuéntranos en ${emp.torre || 'el campus'} - ${emp.piso || ''}.`,
+      torreHabitual: emp.torre || 'Campus UTP',
       piso: emp.piso || '',
       emprendimientoId: emp.id,
       tiendaNombre: emp.nombre,
-      redesSociales: [
-        { id: '1', plataforma: 'whatsapp', handle: emp.telefono || '972341311', visible: true },
-        { id: '2', plataforma: 'instagram', handle: cleanUser, visible: true },
-        { id: '3', plataforma: 'tiktok', handle: `${cleanUser}_utp`, visible: true },
-      ],
+      redesSociales: redes,
     });
     setShowSellerModal(true);
   };
@@ -166,43 +171,16 @@ export default function Home() {
     try {
       setLoading(true);
       setError(null);
-      const data = await getEmprendimientos();
-      let combined = Array.isArray(data) && data.length > 0 ? [...data] : [...DEFAULT_EMPRENDIMIENTOS];
-
-      // Sincronizar con puestos locales registrados por el usuario
-      try {
-        const saved = localStorage.getItem('campusventa_mis_puestos');
-        if (saved) {
-          const localList = JSON.parse(saved);
-          if (Array.isArray(localList)) {
-            localList.forEach((lp) => {
-              const existingIdx = combined.findIndex((e) => String(e.id) === String(lp.id));
-              if (existingIdx >= 0) {
-                combined[existingIdx] = { ...combined[existingIdx], ...lp };
-              } else {
-                combined.unshift(lp);
-              }
-            });
-          }
-        }
-      } catch {}
-
-      setEmprendimientos(combined);
+      const data = await getEmprendimientos({
+        search: searchTerm.trim() || undefined,
+        categoria: selectedCategoria !== 'TODOS' ? selectedCategoria : undefined,
+        disponible: onlyDisponibles ? true : undefined,
+      });
+      setEmprendimientos(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.warn('Backend fetch warning, combinando con datos de respaldo de campus:', err);
-      try {
-        const saved = localStorage.getItem('campusventa_mis_puestos');
-        const userStores = saved ? JSON.parse(saved) : [];
-        const merged = [...userStores];
-        DEFAULT_EMPRENDIMIENTOS.forEach((de) => {
-          if (!merged.some((m) => String(m.id) === String(de.id))) {
-            merged.push(de);
-          }
-        });
-        setEmprendimientos(merged);
-      } catch {
-        setEmprendimientos(DEFAULT_EMPRENDIMIENTOS);
-      }
+      console.error('[CampusVenta] Error al obtener datos del backend:', err);
+      setEmprendimientos([]);
+      setError('No se pudo conectar con el servidor.');
     } finally {
       setLoading(false);
     }
@@ -252,9 +230,7 @@ export default function Home() {
   // Extraer todos los productos aplanados con los datos de su respectiva tienda
   const allProducts = useMemo(() => {
     const list = [];
-    const storesSource = Array.isArray(emprendimientos) && emprendimientos.length > 0
-      ? emprendimientos
-      : DEFAULT_EMPRENDIMIENTOS;
+    const storesSource = Array.isArray(emprendimientos) ? emprendimientos : [];
     storesSource.forEach((emp) => {
       // Combinar productos del backend con productos creados localmente
       let storeProds = Array.isArray(emp.productos) ? [...emp.productos] : [];
@@ -286,7 +262,7 @@ export default function Home() {
             nombre: prod.nombre,
             descripcion: prod.descripcion || emp.descripcion,
             precio: Number(prod.precio) || Number(emp.precioDesde) || 0,
-            imagenUrl: prod.imagenUrl || emp.imagenUrl || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&auto=format&fit=crop&q=80',
+            imagenUrl: prod.imagenUrl || emp.imagenUrl || null,
             badge: prod.badge || fallbackBadge,
             stock: prod.stock,
             categoria: (prod.categoria || emp.categoria || 'COMIDA').toUpperCase(),
@@ -314,7 +290,7 @@ export default function Home() {
           nombre: emp.nombre,
           descripcion: emp.descripcion,
           precio: Number(emp.precioDesde) || 4.5,
-          imagenUrl: emp.imagenUrl || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&auto=format&fit=crop&q=80',
+          imagenUrl: emp.imagenUrl || null,
           badge: emp.calificacion >= 4.8 ? 'Más vendido' : 'Top Ventas',
           stock: null,
           categoria: (emp.categoria || 'COMIDA').toUpperCase(),
@@ -719,11 +695,17 @@ export default function Home() {
               >
                 <div className="flex items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <img
-                      src={prod.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
-                      alt={prod.tiendaNombre}
-                      className="w-8 h-8 rounded-full object-cover shrink-0 ring-1 ring-primary/20"
-                    />
+                    {prod.avatarUrl ? (
+                      <img
+                        src={prod.avatarUrl}
+                        alt={prod.tiendaNombre}
+                        className="w-8 h-8 rounded-full object-cover shrink-0 ring-1 ring-primary/20"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-heading font-extrabold text-xs flex items-center justify-center shrink-0">
+                        {prod.tiendaNombre ? prod.tiendaNombre.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                    )}
                     <div className="min-w-0 flex-1">
                       <p className="font-heading text-xs font-bold text-text-main truncate group-hover:text-primary transition-colors">
                         {prod.tiendaNombre}
@@ -740,12 +722,18 @@ export default function Home() {
                   </span>
                 </div>
 
-                <div className="mt-2 flex items-center gap-2.5 bg-white/50 p-2 rounded-xl border border-white/60">
-                  <img
-                    src={prod.imagenUrl}
-                    alt={prod.nombre}
-                    className="w-10 h-10 rounded-lg object-cover shrink-0"
-                  />
+                <div className="mt-2 flex items-center gap-2.5 bg-white/50 dark:bg-white/5 p-2 rounded-xl border border-white/60 dark:border-white/10">
+                  {prod.imagenUrl ? (
+                    <img
+                      src={prod.imagenUrl}
+                      alt={prod.nombre}
+                      className="w-10 h-10 rounded-lg object-cover shrink-0"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined text-lg">local_mall</span>
+                    </div>
+                  )}
                   <div className="min-w-0 flex-1">
                     <p className="font-heading text-xs font-bold text-text-main truncate">
                       {prod.nombre}
@@ -891,22 +879,22 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Campus Testimonial Widget */}
+            {/* Campus Info Widget */}
             <div className="liquid-glass-card rounded-3xl p-4 border border-white/80 shadow-xs space-y-2.5">
               <div className="flex items-center gap-2 font-heading text-xs font-bold text-text-main">
                 <IconSparkles className="w-4 h-4 text-amber-500" />
-                <span>Experiencias en Campus Piura</span>
+                <span>Comunidad UTP Piura</span>
               </div>
               <div className="liquid-glass p-3 rounded-xl border border-white/60 space-y-1">
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-bold text-text-main">Carlos M. (Ing. Sistemas)</span>
-                  <span className="text-amber-500 font-bold flex items-center gap-0.5">
-                    <IconStar className="w-3 h-3 text-amber-500" />
-                    <span>5.0</span>
+                  <span className="font-bold text-primary">Entregas en campus</span>
+                  <span className="text-emerald-600 font-bold flex items-center gap-0.5">
+                    <IconCheck className="w-3 h-3 text-emerald-600" />
+                    <span>Verificado</span>
                   </span>
                 </div>
                 <p className="text-xs text-text-secondary leading-relaxed">
-                  "Los brownies me salvaron durante el parcial de Cálculo en Torre B. Entregaron al aula en 3 min."
+                  Coordina tus entregas directamente en Torre A, Torre B o Canchas en recesos y cambios de clase.
                 </p>
               </div>
             </div>
@@ -1132,11 +1120,18 @@ export default function Home() {
                       <div>
                         {/* Card Image Cover with Overlays */}
                         <div className="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
-                          <img
-                            src={prod.imagenUrl}
-                            alt={prod.nombre}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
+                          {prod.imagenUrl ? (
+                            <img
+                              src={prod.imagenUrl}
+                              alt={prod.nombre}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 text-slate-400 group-hover:scale-105 transition-transform duration-300">
+                              <span className="material-symbols-outlined text-4xl mb-1 text-primary/60">storefront</span>
+                              <span className="text-[11px] font-heading font-bold text-slate-500 dark:text-slate-400">CampusVenta UTP</span>
+                            </div>
+                          )}
 
                           {/* Top Left: Badge Más Vendido / Top Ventas / etc. (En reemplazo del precio) */}
                           <div className="absolute top-2.5 left-2.5 z-20">

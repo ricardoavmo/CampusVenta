@@ -4,6 +4,8 @@ import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import {
   getEmprendimientos,
+  getMisEmprendimientosApi,
+  crearEmprendimiento,
   crearProducto,
   actualizarProducto,
   eliminarProducto,
@@ -25,96 +27,6 @@ import {
   IconPhoto,
   IconWhatsApp
 } from '../components/Icons';
-
-const DEFAULT_MIS_PUESTOS = [
-  {
-    id: 1,
-    nombre: 'SweetHub UTP',
-    categoria: 'POSTRES',
-    torre: 'Torre A',
-    piso: 'Piso 2',
-    referencia: 'Frente a los ascensores',
-    disponible: true,
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
-    calificacion: 4.9,
-    totalResenas: 14,
-    tiempoEntrega: '2-5 min',
-    descripcion: 'Brownies artesanales, galletas con chispas Hershey y frappés.',
-    productosCount: 3,
-  },
-  {
-    id: 3,
-    nombre: 'Pixel UTP Merch & Stickers',
-    categoria: 'ACCESORIOS',
-    torre: 'Torre B',
-    piso: 'Piso 1',
-    referencia: 'Cerca a las bancas techadas',
-    disponible: true,
-    avatarUrl: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=200',
-    calificacion: 5.0,
-    totalResenas: 8,
-    tiempoEntrega: '~3 min',
-    descripcion: 'Stickers de programación, llaveros y accesorios para laptops.',
-    productosCount: 2,
-  },
-];
-
-const STORE_PRODUCTS = {
-  1: [
-    {
-      id: 1,
-      nombre: 'Brownie Melcochudo Clásico',
-      precio: 4.50,
-      descripcion: 'Con centro suave de chocolate al 60% y nueces picadas.',
-      disponible: true,
-      stock: 6,
-      badge: 'Más vendido',
-      imagenUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&auto=format&fit=crop&q=80'
-    },
-    {
-      id: 2,
-      nombre: 'Cookie con Chispas Hershey',
-      precio: 3.50,
-      descripcion: 'Galleta artesanal horneada hoy mismo con mantequilla pura.',
-      disponible: true,
-      stock: 4,
-      badge: 'Recién horneada',
-      imagenUrl: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&auto=format&fit=crop&q=80'
-    },
-    {
-      id: 3,
-      nombre: 'Frappé de Moka Helado',
-      precio: 6.00,
-      descripcion: 'Café expreso con chocolate y leche bien helada.',
-      disponible: false,
-      stock: 0,
-      badge: null,
-      imagenUrl: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&auto=format&fit=crop&q=80'
-    },
-  ],
-  21: [
-    {
-      id: 211,
-      nombre: 'Pack 5 Stickers Dev & Linux',
-      precio: 5.00,
-      descripcion: 'Stickers de vinil resistentes al agua para laptops y termos.',
-      disponible: true,
-      stock: 12,
-      badge: 'Más vendido',
-      imagenUrl: 'https://images.unsplash.com/photo-1572375992501-4b0892d50c69?w=400&auto=format&fit=crop&q=80'
-    },
-    {
-      id: 212,
-      nombre: 'Llavero Acrílico Python UTP',
-      precio: 6.50,
-      descripcion: 'Llavero corte láser con acabado brillante de alta duración.',
-      disponible: true,
-      stock: 8,
-      badge: 'Top Ventas',
-      imagenUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&auto=format&fit=crop&q=80'
-    },
-  ]
-};
 
 const ZONAS_CAMPUS = [
   {
@@ -161,7 +73,7 @@ const ZONAS_CAMPUS = [
 ];
 
 export default function Panel() {
-  const { user, isSeller, isAuthenticated, loginAsDemo, login } = useAuth();
+  const { user, isSeller, isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const urlStoreId = searchParams.get('storeId');
@@ -174,20 +86,8 @@ export default function Panel() {
   }, [isAuthenticated, navigate]);
 
   // Lista de puestos del usuario
-  const [misPuestos, setMisPuestos] = useState(() => {
-    try {
-      const saved = localStorage.getItem('campusventa_mis_puestos');
-      return saved ? JSON.parse(saved) : DEFAULT_MIS_PUESTOS;
-    } catch {
-      return DEFAULT_MIS_PUESTOS;
-    }
-  });
-
-  const [activeStoreId, setActiveStoreId] = useState(() => {
-    if (urlStoreId) return Number(urlStoreId);
-    const saved = localStorage.getItem('campusventa_active_store_id');
-    return saved ? Number(saved) : 1;
-  });
+  const [misPuestos, setMisPuestos] = useState([]);
+  const [activeStoreId, setActiveStoreId] = useState(() => (urlStoreId ? Number(urlStoreId) : null));
 
   const [showStoreSwitcher, setShowStoreSwitcher] = useState(false);
   const [emprendimiento, setEmprendimiento] = useState(null);
@@ -234,8 +134,8 @@ export default function Panel() {
     setStoreEditForm({
       nombre: emprendimiento?.nombre || '',
       categoria: emprendimiento?.categoria || 'POSTRES',
-      descripcion: emprendimiento?.descripcion || 'Brownies artesanales, galletas con chispas Hershey y frappés.',
-      whatsapp: emprendimiento?.whatsapp || '972341311',
+      descripcion: emprendimiento?.descripcion || '',
+      whatsapp: emprendimiento?.whatsapp || user?.telefono || '',
       tiempoEntrega: emprendimiento?.tiempoEntrega || '2-5 min',
       horarioAtencion: emprendimiento?.horarioAtencion || 'Lun - Vie: 9:00 AM - 6:00 PM',
       avatarUrl: emprendimiento?.avatarUrl || '',
@@ -345,50 +245,22 @@ export default function Panel() {
     }
   };
 
-  // Productos locales del vendedor
-  const [productos, setProductos] = useState(() => {
-    return STORE_PRODUCTS[activeStoreId] || STORE_PRODUCTS[1] || [];
-  });
+  // Productos reales del emprendimiento
+  const [productos, setProductos] = useState([]);
 
   const switchStore = (storeId) => {
     setActiveStoreId(storeId);
-    localStorage.setItem('campusventa_active_store_id', String(storeId));
     setSearchParams({ storeId: String(storeId) });
     setShowStoreSwitcher(false);
 
-    const targetStore = misPuestos.find((s) => s.id === storeId) || misPuestos[0];
+    const targetStore = misPuestos.find((s) => s.id === storeId);
     if (targetStore) {
-      setEmprendimiento({
-        id: targetStore.id,
-        nombre: targetStore.nombre,
-        categoria: targetStore.categoria || 'POSTRES',
-        vendedorNombre: user?.nombre || 'Valeria Mendoza',
-        carreraCiclo: user?.carrera ? `${user.carrera} (${user.ciclo || 'Campus'})` : 'Ing. Sistemas (6to Ciclo)',
-        whatsapp: user?.telefono || '972341311',
-        calificacion: targetStore.calificacion || 5.0,
-        totalResenas: targetStore.totalResenas || 5,
-        tiempoEntrega: targetStore.tiempoEntrega || '~3 min',
-        avatarUrl: targetStore.avatarUrl,
-        torre: targetStore.torre,
-        piso: targetStore.piso,
-        descripcion: targetStore.descripcion,
-        horarioAtencion: targetStore.horarioAtencion || 'Lun - Vie: 9:00 AM - 6:00 PM',
-      });
+      setEmprendimiento(targetStore);
       setTorre(targetStore.torre || 'Torre A');
       setPiso(targetStore.piso || 'Piso 1');
       if (targetStore.referencia) setReferencia(targetStore.referencia);
-      
-      let storeProds = [];
-      try {
-        const cached = localStorage.getItem(`campusventa_products_${targetStore.id}`);
-        if (cached) {
-          storeProds = JSON.parse(cached);
-        }
-      } catch {}
-      if (!Array.isArray(storeProds) || storeProds.length === 0) {
-        storeProds = STORE_PRODUCTS[targetStore.id] || [];
-      }
-      setProductos(storeProds);
+      setProductos(Array.isArray(targetStore.productos) ? targetStore.productos : []);
+      setStatus(targetStore.disponible ? 'live' : 'paused');
       showToast(`Puesto activo: ${targetStore.nombre}`);
     }
   };
@@ -403,64 +275,29 @@ export default function Panel() {
     async function fetchVendorInfo() {
       try {
         setLoading(true);
-        const list = await getEmprendimientos();
-        const currentId = urlStoreId ? Number(urlStoreId) : activeStoreId;
-        const targetFromPuestos = misPuestos.find((s) => s.id === currentId);
-        const backendStore = Array.isArray(list) ? list.find((s) => s.id === currentId) : null;
-
-        if (targetFromPuestos) {
-          setEmprendimiento({
-            id: targetFromPuestos.id,
-            nombre: backendStore?.nombre || targetFromPuestos.nombre,
-            categoria: backendStore?.categoria || targetFromPuestos.categoria,
-            vendedorNombre: backendStore?.vendedorNombre || user?.nombre || 'Valeria Mendoza',
-            carreraCiclo: backendStore?.carreraCiclo || (user?.carrera ? `${user.carrera} (${user.ciclo || 'Campus'})` : 'Ing. Sistemas (6to Ciclo)'),
-            whatsapp: backendStore?.whatsapp || user?.telefono || '972341311',
-            calificacion: backendStore?.calificacion || targetFromPuestos.calificacion || 4.9,
-            totalResenas: backendStore?.totalResenas || targetFromPuestos.totalResenas || 14,
-            tiempoEntrega: backendStore?.tiempoEntrega || targetFromPuestos.tiempoEntrega || '2-5 min',
-            avatarUrl: backendStore?.avatarUrl || targetFromPuestos.avatarUrl,
-            torre: backendStore?.torre || targetFromPuestos.torre,
-            piso: backendStore?.piso || targetFromPuestos.piso,
-            descripcion: backendStore?.descripcion || targetFromPuestos.descripcion,
-            horarioAtencion: backendStore?.horarioAtencion || targetFromPuestos.horarioAtencion || 'Lun - Vie: 9:00 AM - 6:00 PM',
-          });
-          if (backendStore?.torre || targetFromPuestos.torre) setTorre(backendStore?.torre || targetFromPuestos.torre);
-          if (backendStore?.piso || targetFromPuestos.piso) setPiso(backendStore?.piso || targetFromPuestos.piso);
-        } else if (backendStore) {
-          setEmprendimiento(backendStore);
-          if (backendStore.torre) setTorre(backendStore.torre);
-          if (backendStore.piso) setPiso(backendStore.piso);
-        } else if (Array.isArray(list) && list.length > 0) {
-          const seller = list[0];
-          setEmprendimiento(seller);
-          if (seller.torre) setTorre(seller.torre);
-          if (seller.piso) setPiso(seller.piso);
-        }
-
-        // Cargar productos: Base de datos real + Cache local de este puesto combinados
-        let prodsList = [];
-        if (backendStore && Array.isArray(backendStore.productos) && backendStore.productos.length > 0) {
-          prodsList = [...backendStore.productos];
-        }
+        let myStores = [];
         try {
-          const cached = localStorage.getItem(`campusventa_products_${currentId}`);
-          if (cached) {
-            const localList = JSON.parse(cached);
-            if (Array.isArray(localList)) {
-              localList.forEach((lp) => {
-                if (!prodsList.some((p) => String(p.id) === String(lp.id) || p.nombre === lp.nombre)) {
-                  prodsList.unshift(lp);
-                }
-              });
-            }
-          }
-        } catch {}
-
-        if (prodsList.length === 0) {
-          prodsList = STORE_PRODUCTS[currentId] || STORE_PRODUCTS[1] || [];
+          myStores = await getMisEmprendimientosApi();
+        } catch (e) {
+          console.warn('[CampusVenta] Error obteniendo mis emprendimientos:', e?.message);
+          myStores = [];
         }
-        setProductos(prodsList);
+
+        if (Array.isArray(myStores) && myStores.length > 0) {
+          setMisPuestos(myStores);
+          const currentId = urlStoreId ? Number(urlStoreId) : activeStoreId;
+          const target = myStores.find((s) => s.id === currentId) || myStores[0];
+          setActiveStoreId(target.id);
+          setEmprendimiento(target);
+          if (target.torre) setTorre(target.torre);
+          if (target.piso) setPiso(target.piso);
+          setStatus(target.disponible ? 'live' : 'paused');
+          setProductos(Array.isArray(target.productos) ? target.productos : []);
+        } else {
+          setMisPuestos([]);
+          setEmprendimiento(null);
+          setProductos([]);
+        }
       } catch (err) {
         console.error('Error al cargar panel:', err);
       } finally {
@@ -468,7 +305,7 @@ export default function Panel() {
       }
     }
     fetchVendorInfo();
-  }, [activeStoreId, urlStoreId]);
+  }, [urlStoreId]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -684,11 +521,17 @@ export default function Panel() {
           {/* Header Card del Alumno Comprador */}
           <div className="liquid-glass-hero rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-5 border border-white/80">
             <div className="flex items-center gap-4">
-              <img
-                src={user?.avatar || 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200'}
-                alt={user?.nombre}
-                className="w-16 h-16 rounded-2xl object-cover ring-4 ring-primary/20 shadow-md"
-              />
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user?.nombre}
+                  className="w-16 h-16 rounded-2xl object-cover ring-4 ring-primary/20 shadow-md"
+                />
+              ) : (
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary to-orange-400 text-white font-heading font-extrabold text-2xl flex items-center justify-center shadow-md">
+                  {user?.nombre ? user.nombre.charAt(0).toUpperCase() : 'U'}
+                </div>
+              )}
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="font-heading font-extrabold text-xl sm:text-2xl text-text-main">
@@ -705,14 +548,13 @@ export default function Panel() {
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <button
-                type="button"
-                onClick={() => loginAsDemo('vendedor')}
-                className="flex-1 sm:flex-none px-4 py-2.5 rounded-2xl liquid-glass-crimson text-white font-heading font-bold text-xs shadow-sm hover:brightness-110 transition-all flex items-center justify-center gap-1.5 active:scale-95"
+              <Link
+                to="/nuevo-emprendimiento"
+                className="flex-1 sm:flex-none px-4 py-2.5 rounded-2xl liquid-glass-crimson text-white font-heading font-bold text-xs shadow-sm hover:brightness-110 transition-all flex items-center justify-center gap-1.5 active:scale-95 text-decoration-none"
               >
                 <IconStore className="w-4 h-4" />
-                <span>Activar Modo Vendedor (Demo)</span>
-              </button>
+                <span>Registrar Mi Puesto</span>
+              </Link>
             </div>
           </div>
 
@@ -810,14 +652,17 @@ export default function Panel() {
           {/* Identity Left */}
           <div className="flex items-center gap-3.5 sm:gap-4">
             <div className="relative shrink-0 group">
-              <img
-                src={
-                  emprendimiento?.avatarUrl ||
-                  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'
-                }
-                alt="Avatar"
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-primary/20 shadow-md group-hover:brightness-90 transition-all"
-              />
+              {emprendimiento?.avatarUrl ? (
+                <img
+                  src={emprendimiento.avatarUrl}
+                  alt={emprendimiento?.nombre || 'Puesto'}
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-primary/20 shadow-md group-hover:brightness-90 transition-all"
+                />
+              ) : (
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-primary to-orange-400 text-white font-heading font-extrabold text-2xl flex items-center justify-center shadow-md">
+                  {emprendimiento?.nombre ? emprendimiento.nombre.charAt(0).toUpperCase() : <IconStore className="w-8 h-8" />}
+                </div>
+              )}
               <button
                 type="button"
                 onClick={handleOpenEditStore}
@@ -843,7 +688,7 @@ export default function Panel() {
                     title="Haz clic para cambiar entre tus puestos"
                   >
                     <h1 className="font-heading font-extrabold text-xl sm:text-2xl text-text-main group-hover:text-primary transition-colors truncate max-w-[200px] sm:max-w-[340px]">
-                      {emprendimiento?.nombre || 'SweetHub UTP'}
+                      {emprendimiento?.nombre || 'Mi Puesto'}
                     </h1>
                     <span className="material-symbols-outlined text-xl text-text-muted group-hover:text-primary transition-transform">
                       {showStoreSwitcher ? 'arrow_drop_up' : 'arrow_drop_down'}
@@ -922,18 +767,18 @@ export default function Panel() {
                 </span>
                 <span className="font-heading font-bold text-xs text-amber-600 flex items-center gap-1 shrink-0">
                   <IconStar className="w-3.5 h-3.5 text-amber-500" />
-                  <span>{emprendimiento?.calificacion || '4.9'} ({emprendimiento?.totalResenas || 14})</span>
+                  <span>{emprendimiento?.calificacion && emprendimiento.totalResenas > 0 ? Number(emprendimiento.calificacion).toFixed(1) : 'Nuevo'} ({emprendimiento?.totalResenas || 0})</span>
                 </span>
               </div>
 
               <p className="text-xs text-text-secondary mt-0.5 truncate">
-                {emprendimiento?.vendedorNombre || 'Valeria Mendoza'} · {emprendimiento?.carreraCiclo || 'Ing. Sistemas'}
+                {emprendimiento?.vendedorNombre || user?.nombre || 'Mi Perfil'} · {emprendimiento?.carreraCiclo || user?.carrera || 'Campus UTP'}
               </p>
 
               <div className="flex items-center gap-2 text-[11px] text-text-muted mt-1.5 flex-wrap">
                 <span className="flex items-center gap-1 font-medium">
                   <IconWhatsApp className="w-3.5 h-3.5 text-[#25D366] shrink-0" />
-                  <span>{emprendimiento?.whatsapp || '972 341 311'}</span>
+                  <span>{emprendimiento?.whatsapp || user?.telefono || 'Sin WhatsApp configurado'}</span>
                 </span>
                 <span>·</span>
                 <span className="flex items-center gap-1">
@@ -1620,13 +1465,19 @@ export default function Panel() {
             {/* Form */}
             <form onSubmit={handleSaveStoreData} className="flex flex-col gap-4 text-xs">
               {/* Foto / Avatar del Puesto */}
-              <div className="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+              <div className="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-white/10">
                 <div className="relative shrink-0">
-                  <img
-                    src={storeEditForm.avatarUrl || emprendimiento?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'}
-                    alt="Puesto"
-                    className="w-16 h-16 rounded-2xl object-cover ring-2 ring-primary/20 shadow-sm"
-                  />
+                  {(storeEditForm.avatarUrl || emprendimiento?.avatarUrl) ? (
+                    <img
+                      src={storeEditForm.avatarUrl || emprendimiento?.avatarUrl}
+                      alt="Puesto"
+                      className="w-16 h-16 rounded-2xl object-cover ring-2 ring-primary/20 shadow-sm"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 rounded-2xl bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-300 flex items-center justify-center font-heading font-bold text-xl shadow-xs">
+                      {emprendimiento?.nombre ? emprendimiento.nombre.charAt(0).toUpperCase() : <IconStore className="w-7 h-7" />}
+                    </div>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <label className="font-heading font-bold text-xs text-slate-800 dark:text-slate-100 block">
@@ -1669,7 +1520,7 @@ export default function Panel() {
                   required
                   value={storeEditForm.nombre}
                   onChange={(e) => setStoreEditForm({ ...storeEditForm, nombre: e.target.value })}
-                  placeholder="Ej: SweetHub UTP"
+                  placeholder="Ej: Mi Emprendimiento UTP"
                   className="px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:bg-white focus:border-[#BA122D] text-xs text-slate-800 rounded-xl outline-none placeholder:text-slate-400 transition-all"
                 />
               </div>
@@ -1713,7 +1564,7 @@ export default function Panel() {
                   required
                   value={storeEditForm.whatsapp}
                   onChange={(e) => setStoreEditForm({ ...storeEditForm, whatsapp: e.target.value })}
-                  placeholder="972341311"
+                  placeholder="Ej: 987654321"
                   className="px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:bg-white focus:border-[#BA122D] text-xs text-slate-800 rounded-xl outline-none placeholder:text-slate-400 transition-all"
                 />
               </div>
