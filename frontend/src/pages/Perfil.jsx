@@ -6,7 +6,8 @@ import {
   eliminarEmprendimiento,
   updatePerfilApi,
   getMisEmprendimientosApi,
-  crearEmprendimiento
+  crearEmprendimiento,
+  desactivarMiCuentaApi
 } from '../services/api';
 import ProfilePreviewModal, { PLATFORMS_CONFIG } from '../components/ProfilePreviewModal';
 import { applyTheme, getStoredTheme } from '../utils/theme';
@@ -34,6 +35,26 @@ export default function Perfil() {
   const [toastMessage, setToastMessage] = useState(null);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showRegisterStoreModal, setShowRegisterStoreModal] = useState(false);
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  const [deactivatingAccount, setDeactivatingAccount] = useState(false);
+
+  const handleConfirmDeactivateAccount = async () => {
+    setDeactivatingAccount(true);
+    try {
+      await desactivarMiCuentaApi();
+      setShowDeactivateModal(false);
+      logout();
+      navigate('/login', {
+        state: { message: 'Tu cuenta ha sido desactivada temporalmente (baja lógica).' },
+        replace: true,
+      });
+    } catch (err) {
+      console.error('Error al desactivar cuenta:', err);
+      showToast(err.response?.data?.message || 'Error al desactivar la cuenta.');
+    } finally {
+      setDeactivatingAccount(false);
+    }
+  };
 
   const handleInstantBecomeSeller = () => {
     setShowRegisterStoreModal(true);
@@ -108,19 +129,18 @@ export default function Perfil() {
     const targetId = storeToDelete.id;
     setDeletingStore(true);
     try {
-      try {
-        await eliminarEmprendimiento(targetId);
-      } catch (err) {
-        console.warn('Backend delete store error (falling back to local):', err);
-      }
+      await eliminarEmprendimiento(targetId);
       const updated = misPuestos.filter((s) => s.id !== targetId);
       setMisPuestos(updated);
-      localStorage.setItem('campusventa_mis_puestos', JSON.stringify(updated));
 
       if (activeStoreId === targetId) {
-        const nextId = updated.length > 0 ? updated[0].id : 1;
+        const nextId = updated.length > 0 ? updated[0].id : null;
         setActiveStoreId(nextId);
-        localStorage.setItem('campusventa_active_store_id', String(nextId));
+        if (nextId) {
+          localStorage.setItem('campusventa_active_store_id', String(nextId));
+        } else {
+          localStorage.removeItem('campusventa_active_store_id');
+        }
       }
       showToast(`Puesto "${storeToDelete.nombre}" eliminado correctamente.`);
       setStoreToDelete(null);
@@ -1382,6 +1402,29 @@ export default function Perfil() {
           </div>
         </section>
 
+        {/* 5. GESTIÓN DE CUENTA Y BAJA LÓGICA (SOFT DELETE) */}
+        <section className="liquid-glass rounded-3xl p-6 shadow-xs border border-white/80 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 className="font-heading font-bold text-base text-text-main flex items-center gap-2">
+                <span className="material-symbols-outlined text-red-500 text-lg">shield</span>
+                <span>Gestión de Cuenta & Estado</span>
+              </h2>
+              <p className="text-xs text-text-secondary mt-0.5">
+                Políticas de baja lógica institucional y privacidad UTP.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowDeactivateModal(true)}
+              className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 hover:bg-red-100 text-xs font-heading font-bold transition-all self-start sm:self-auto active:scale-95"
+            >
+              Desactivar mi cuenta
+            </button>
+          </div>
+        </section>
+
       </main>
 
       {/* MODAL: REGISTRAR PUESTO / HACERME VENDEDOR DIRECTAMENTE DESDE PERFIL */}
@@ -1634,6 +1677,49 @@ export default function Perfil() {
                     <IconTrash className="w-4 h-4 text-white" />
                     <span>Sí, Eliminar</span>
                   </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmación para desactivar cuenta (Baja lógica) */}
+      {showDeactivateModal && (
+        <div className="fixed inset-0 z-[140] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-sm bg-white dark:bg-[#121724] text-slate-900 dark:text-white rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-white/10 flex flex-col gap-4 text-center animate-scale-up">
+            <div className="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto border border-red-100 dark:border-red-900/40 shadow-xs">
+              <span className="material-symbols-outlined text-2xl">no_accounts</span>
+            </div>
+
+            <div>
+              <h3 className="font-heading font-bold text-base text-slate-900 dark:text-white">
+                ¿Desactivar tu cuenta de estudiante?
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                Tu perfil y puestos dejarán de estar visibles en el campus de forma inmediata mediante baja lógica. Tus datos históricos permanecerán resguardados en el sistema universitario.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 dark:border-white/10">
+              <button
+                type="button"
+                disabled={deactivatingAccount}
+                onClick={() => setShowDeactivateModal(false)}
+                className="w-full h-11 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-heading font-bold text-xs transition-all active:scale-95 flex items-center justify-center text-center"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={deactivatingAccount}
+                onClick={handleConfirmDeactivateAccount}
+                className="w-full h-11 rounded-full bg-red-600 hover:bg-red-700 text-white font-heading font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-60 flex items-center justify-center gap-1.5 text-center"
+              >
+                {deactivatingAccount ? (
+                  <span>Desactivando...</span>
+                ) : (
+                  <span>Sí, Desactivar</span>
                 )}
               </button>
             </div>
