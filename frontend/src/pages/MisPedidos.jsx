@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { getEmprendimientos } from '../services/api';
+import { getEmprendimientos, getMisResenasApi } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import {
   IconHeart,
@@ -53,27 +53,51 @@ export default function MisPedidos() {
         const stores = Array.isArray(data) ? data : [];
         setEmprendimientos(stores);
 
-        // Extraer reseñas reales registradas en PostgreSQL
-        const backendResenas = [];
-        stores.forEach((emp) => {
-          if (Array.isArray(emp.resenas)) {
-            emp.resenas.forEach((r) => {
-              if (!user?.nombre || r.estudianteNombre === user.nombre || r.usuarioId === user?.id) {
-                backendResenas.push({
+        // Extraer reseñas reales registradas en PostgreSQL vinculadas al usuario
+        let userResenas = [];
+        if (user) {
+          try {
+            const apiRes = await getMisResenasApi();
+            if (Array.isArray(apiRes) && apiRes.length > 0) {
+              userResenas = apiRes.map((r) => {
+                const tienda = stores.find((s) => s.id === r.emprendimientoId);
+                return {
                   id: r.id,
-                  emprendimientoId: emp.id,
-                  tiendaNombre: emp.nombre,
+                  emprendimientoId: r.emprendimientoId,
+                  tiendaNombre: r.emprendimientoNombre || tienda?.nombre || 'Emprendimiento UTP',
                   estudianteNombre: r.estudianteNombre,
                   calificacion: r.calificacion,
                   comentario: r.comentario,
                   fecha: r.fechaCreacion ? new Date(r.fechaCreacion).toLocaleDateString() : 'Reciente',
-                  fotoUrl: r.fotoUrl,
-                });
-              }
-            });
+                };
+              });
+            }
+          } catch (e) {
+            console.warn('[MisPedidos] Error al consultar /api/usuarios/me/resenas:', e?.message);
           }
-        });
-        setMisResenas(backendResenas);
+        }
+
+        // Si no trajo por endpoint dedicado, extraer de las tiendas
+        if (userResenas.length === 0) {
+          stores.forEach((emp) => {
+            if (Array.isArray(emp.resenas)) {
+              emp.resenas.forEach((r) => {
+                if (!user?.nombre || r.estudianteNombre === user.nombre || (user?.id && r.usuarioId === user.id)) {
+                  userResenas.push({
+                    id: r.id,
+                    emprendimientoId: emp.id,
+                    tiendaNombre: emp.nombre,
+                    estudianteNombre: r.estudianteNombre,
+                    calificacion: r.calificacion,
+                    comentario: r.comentario,
+                    fecha: r.fechaCreacion ? new Date(r.fechaCreacion).toLocaleDateString() : 'Reciente',
+                  });
+                }
+              });
+            }
+          });
+        }
+        setMisResenas(userResenas);
       } catch (err) {
         console.error('Error al cargar tiendas y reseñas del backend:', err);
       } finally {

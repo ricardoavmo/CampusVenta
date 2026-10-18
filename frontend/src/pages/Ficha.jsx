@@ -174,6 +174,10 @@ export default function Ficha() {
   // Manejo del envío de una nueva reseña de comprador (estudiante autenticado)
   const handleSubmitResena = async (e) => {
     e.preventDefault();
+    if (!user) {
+      setMensajeResena({ tipo: 'error', texto: 'Debes iniciar sesión con tu cuenta institucional UTP para publicar una reseña.' });
+      return;
+    }
     if (!formComentario.trim()) {
       setMensajeResena({ tipo: 'error', texto: 'Por favor escribe tu opinión sobre tu compra en el puesto.' });
       return;

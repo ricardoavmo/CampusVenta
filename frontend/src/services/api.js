@@ -70,6 +70,11 @@ export const desactivarMiCuentaApi = async () => {
   return response.data;
 };
 
+export const getMisResenasApi = async () => {
+  const response = await api.get('/usuarios/me/resenas');
+  return response.data;
+};
+
 /* ============================================================
    EMPRENDIMIENTOS & PUESTOS
    ============================================================ */
