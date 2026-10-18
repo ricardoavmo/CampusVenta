@@ -177,22 +177,9 @@ export default function Panel() {
       avatarUrl: storeEditForm.avatarUrl || emprendimiento?.avatarUrl,
     };
 
-    setEmprendimiento(updatedStore);
-
-    const updatedList = misPuestos.map((s) => (s.id === currentId ? { ...s, ...updatedStore } : s));
-    setMisPuestos(updatedList);
-    localStorage.setItem('campusventa_mis_puestos', JSON.stringify(updatedList));
-
-    if (user && (user.emprendimientoId === currentId || !user.emprendimientoId)) {
-      login({
-        ...user,
-        tiendaNombre: updatedStore.nombre,
-      });
-    }
-
     try {
       if (currentId) {
-        await actualizarEmprendimiento(currentId, {
+        const res = await actualizarEmprendimiento(currentId, {
           nombre: updatedStore.nombre,
           categoria: updatedStore.categoria,
           descripcion: updatedStore.descripcion,
@@ -201,13 +188,26 @@ export default function Panel() {
           horarioAtencion: updatedStore.horarioAtencion,
           avatarUrl: updatedStore.avatarUrl,
         });
+        const finalStore = res || updatedStore;
+        setEmprendimiento(finalStore);
+        setMisPuestos((prev) => prev.map((s) => (s.id === currentId ? finalStore : s)));
+      } else {
+        setEmprendimiento(updatedStore);
+        setMisPuestos((prev) => prev.map((s) => (s.id === currentId ? updatedStore : s)));
       }
-    } catch (err) {
-      console.warn('Backend update error (operating in demo mode):', err);
-    }
 
-    setShowEditStoreModal(false);
-    showToast(`¡Datos del puesto "${updatedStore.nombre}" actualizados con éxito!`);
+      if (user && (user.emprendimientoId === currentId || !user.emprendimientoId)) {
+        login({
+          ...user,
+          tiendaNombre: updatedStore.nombre,
+        });
+      }
+      setShowEditStoreModal(false);
+      showToast(`¡Datos del puesto "${updatedStore.nombre}" actualizados con éxito!`);
+    } catch (err) {
+      console.error('Error al actualizar puesto en servidor:', err);
+      showToast(err.response?.data?.message || 'Error al guardar cambios del puesto.');
+    }
   };
 
   const handleDeleteStore = async () => {
@@ -216,15 +216,10 @@ export default function Panel() {
 
     setDeletingStore(true);
     try {
-      try {
-        await eliminarEmprendimiento(currentId);
-      } catch (err) {
-        console.warn('Backend delete store error (falling back to local):', err);
-      }
+      await eliminarEmprendimiento(currentId);
 
       const remainingStores = misPuestos.filter((s) => s.id !== currentId);
       setMisPuestos(remainingStores);
-      localStorage.setItem('campusventa_mis_puestos', JSON.stringify(remainingStores));
 
       showToast(`Puesto "${emprendimiento?.nombre || ''}" eliminado correctamente.`);
       setShowDeleteStoreModal(false);
@@ -408,44 +403,22 @@ export default function Panel() {
     setSavingProduct(true);
     try {
       if (editingProduct) {
-        // Actualizar producto existente
-        let updated = null;
-        if (emprendimiento?.id) {
-          try {
-            updated = await actualizarProducto(emprendimiento.id, editingProduct.id, payload);
-          } catch (apiErr) {
-            console.warn('API update failed, guardando localmente:', apiErr);
-          }
-        }
+        // Actualizar producto existente en backend
+        const updated = await actualizarProducto(emprendimiento.id, editingProduct.id, payload);
         const finalProd = updated || { ...editingProduct, ...payload };
-        const nextList = productos.map((p) => (p.id === editingProduct.id ? finalProd : p));
-        setProductos(nextList);
-        try {
-          localStorage.setItem(`campusventa_products_${emprendimiento?.id || activeStoreId || 1}`, JSON.stringify(nextList));
-        } catch {}
+        setProductos((prev) => prev.map((p) => (p.id === editingProduct.id ? finalProd : p)));
         showToast(`Producto "${finalProd.nombre}" actualizado con éxito.`);
       } else {
-        // Crear nuevo producto
-        let created = null;
-        if (emprendimiento?.id) {
-          try {
-            created = await crearProducto(emprendimiento.id, payload);
-          } catch (apiErr) {
-            console.warn('API create failed, guardando localmente:', apiErr);
-          }
-        }
+        // Crear nuevo producto en backend
+        const created = await crearProducto(emprendimiento.id, payload);
         const finalProd = created || { id: Date.now(), ...payload };
-        const nextList = [finalProd, ...productos];
-        setProductos(nextList);
-        try {
-          localStorage.setItem(`campusventa_products_${emprendimiento?.id || activeStoreId || 1}`, JSON.stringify(nextList));
-        } catch {}
+        setProductos((prev) => [finalProd, ...prev]);
         showToast(`Producto "${finalProd.nombre}" publicado en tu catálogo.`);
       }
       setShowProductModal(false);
     } catch (err) {
       console.error('Error al guardar producto:', err);
-      showToast('Ocurrió un error al guardar el producto.');
+      showToast(err.response?.data?.message || 'Ocurrió un error al guardar el producto.');
     } finally {
       setSavingProduct(false);
     }
@@ -459,22 +432,14 @@ export default function Panel() {
     setDeletingProduct(true);
     try {
       if (emprendimiento?.id) {
-        try {
-          await eliminarProducto(emprendimiento.id, productId);
-        } catch (apiErr) {
-          console.warn('API delete failed, eliminando localmente:', apiErr);
-        }
+        await eliminarProducto(emprendimiento.id, productId);
       }
-      const nextList = productos.filter((p) => p.id !== productId);
-      setProductos(nextList);
-      try {
-        localStorage.setItem(`campusventa_products_${emprendimiento?.id || activeStoreId || 1}`, JSON.stringify(nextList));
-      } catch {}
+      setProductos((prev) => prev.filter((p) => p.id !== productId));
       showToast(`Producto "${prod?.nombre || ''}" eliminado.`);
       setProductToDelete(null);
     } catch (err) {
       console.error('Error al eliminar producto:', err);
-      showToast('Error al eliminar producto.');
+      showToast(err.response?.data?.message || 'Error al eliminar producto.');
     } finally {
       setDeletingProduct(false);
     }
@@ -482,26 +447,19 @@ export default function Panel() {
 
   const toggleProductStock = async (id) => {
     const target = productos.find((p) => p.id === id);
-    if (!target) return;
+    if (!target || !emprendimiento?.id) return;
     const nextState = !target.disponible;
 
-    const nextList = productos.map((p) => (p.id === id ? { ...p, disponible: nextState } : p));
-    setProductos(nextList);
     try {
-      localStorage.setItem(`campusventa_products_${emprendimiento?.id || activeStoreId || 1}`, JSON.stringify(nextList));
-    } catch {}
-
-    showToast(nextState ? `"${target.nombre}" marcado disponible` : `"${target.nombre}" marcado agotado`);
-
-    if (emprendimiento?.id) {
-      try {
-        await actualizarProducto(emprendimiento.id, id, {
-          ...target,
-          disponible: nextState,
-        });
-      } catch (err) {
-        console.warn('No se pudo sincronizar el stock en el backend:', err);
-      }
+      await actualizarProducto(emprendimiento.id, id, {
+        ...target,
+        disponible: nextState,
+      });
+      setProductos((prev) => prev.map((p) => (p.id === id ? { ...p, disponible: nextState } : p)));
+      showToast(nextState ? `"${target.nombre}" marcado disponible` : `"${target.nombre}" marcado agotado`);
+    } catch (err) {
+      console.error('Error al actualizar disponibilidad:', err);
+      showToast('No se pudo actualizar la disponibilidad en el servidor.');
     }
   };
 
