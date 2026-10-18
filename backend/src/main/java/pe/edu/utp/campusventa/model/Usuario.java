@@ -92,4 +92,18 @@ public class Usuario {
     @JsonManagedReference("usuario-resena")
     @Builder.Default
     private List<Resena> resenas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "comprador", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("usuario-pedidos")
+    @Builder.Default
+    private List<Pedido> pedidos = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "usuarios_favoritos",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "emprendimiento_id")
+    )
+    @Builder.Default
+    private java.util.Set<Emprendimiento> favoritos = new java.util.HashSet<>();
 }

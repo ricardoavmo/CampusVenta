@@ -100,6 +100,12 @@ public class Emprendimiento {
     @Builder.Default
     private List<Resena> resenas = new ArrayList<>();
 
+    @OneToMany(mappedBy = "emprendimiento", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("fechaCreacion DESC")
+    @JsonManagedReference("emprendimiento-pedidos")
+    @Builder.Default
+    private List<Pedido> pedidos = new ArrayList<>();
+
     public void addProducto(Producto p) {
         productos.add(p);
         p.setEmprendimiento(this);
