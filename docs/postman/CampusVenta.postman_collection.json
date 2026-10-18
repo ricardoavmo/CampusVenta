@@ -1,0 +1,460 @@
+{
+  "info": {
+    "_postman_id": "c1f7a29e-4a61-49e0-8123-campusventa-api",
+    "name": "CampusVenta API REST",
+    "description": "Colección completa de pruebas para la API REST de CampusVenta (Spring Boot 3.4.3 / Java 21) desarrollada para el Avance de Proyecto Final 1 (APF1) - UTP Sede Piura.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Emprendimientos - Consultas",
+      "item": [
+        {
+          "name": "Listar todos los emprendimientos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos"]
+            },
+            "description": "Obtiene la lista general de todos los emprendimientos registrados en el campus."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Respuesta es un arreglo JSON\", function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filtrar por categoría, disponibilidad y búsqueda",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos?categoria=POSTRES&disponible=true&search=brownie",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos"],
+              "query": [
+                { "key": "categoria", "value": "POSTRES", "description": "Enum: POSTRES, COMIDA, ACCESORIOS, SERVICIOS, TECNOLOGIA" },
+                { "key": "disponible", "value": "true", "description": "true para puestos activos en campus" },
+                { "key": "search", "value": "brownie", "description": "Búsqueda predictiva por nombre o descripción" }
+              ]
+            },
+            "description": "Prueba los filtros combinados multicriterio implementados con Spring Data JPA Specification."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"El filtrado retorna un arreglo\", function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar puestos activos en campus",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos/activos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos", "activos"]
+            },
+            "description": "Endpoint optimizado para alimentar el carrusel y radar de puestos presentes ahora mismo en torres o pisos."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar puestos top calificados",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos/top",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos", "top"]
+            },
+            "description": "Obtiene los puestos ordenados por reputación y promedio de estrellas de los estudiantes."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener emprendimiento por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos/{{testEmprendimientoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos", "{{testEmprendimientoId}}"]
+            },
+            "description": "Retorna la ficha completa de un emprendimiento, incluyendo su lista de productos y reseñas."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"El objeto contiene los campos esperados\", function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data).to.have.property('id');",
+                  "    pm.expect(data).to.have.property('nombre');",
+                  "    pm.expect(data).to.have.property('categoria');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Emprendimientos - Gestión (Crear, Actualizar, Eliminar)",
+      "item": [
+        {
+          "name": "Crear nuevo emprendimiento",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"SweetHub Postres UTP\",\n  \"descripcion\": \"Brownies artesanales melcochudos, alfajores de maicena y galletas horneadas en el dia.\",\n  \"categoria\": \"POSTRES\",\n  \"disponible\": true,\n  \"torre\": \"Torre A\",\n  \"piso\": \"Piso 4\",\n  \"referencia\": \"Frente a los ascensores principales\",\n  \"precioDesde\": 3.50,\n  \"whatsapp\": \"972341311\",\n  \"vendedorNombre\": \"Valeria Mendoza\",\n  \"tiempoEntrega\": \"2-5 min\",\n  \"horarioAtencion\": \"Lun a Vie: 9:00 AM - 6:00 PM\",\n  \"imagenUrl\": \"https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600\",\n  \"avatarUrl\": \"https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos"]
+            },
+            "description": "Registra un nuevo puesto estudiantil en el catálogo de CampusVenta."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Retorna el ID asignado\", function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data.id).to.be.a('number');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar datos parciales / ubicacion en vivo",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"disponible\": true,\n  \"torre\": \"Torre B\",\n  \"piso\": \"Piso 2\",\n  \"referencia\": \"Cerca a las bancas techadas\",\n  \"tiempoEntrega\": \"~3 min\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos/{{testEmprendimientoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos", "{{testEmprendimientoId}}"]
+            },
+            "description": "Permite al vendedor cambiar rápidamente su torre, piso y estado de disponibilidad en tiempo real."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Se actualizo la torre a Torre B\", function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data.torre).to.eql(\"Torre B\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar emprendimiento por ID",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos", "999999"]
+            },
+            "description": "Elimina un puesto y sus dependencias. Nota: Si el ID no existe responderá 404 Not Found; si existe responderá 204 No Content."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 204 No Content o 404 Not Found si no existe\", function () {",
+                  "    pm.expect([204, 404]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Catálogo de Productos",
+      "item": [
+        {
+          "name": "Listar productos de un puesto",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos/{{testEmprendimientoId}}/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos", "{{testEmprendimientoId}}", "productos"]
+            },
+            "description": "Obtiene la lista de productos disponibles en la mochila o puesto del estudiante."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Retorna un arreglo de productos\", function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Agregar producto al puesto",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Brownie Fudge con Nueces\",\n  \"descripcion\": \"Bizcocho humedo de cacao al 65% con trozos de nuez tostada.\",\n  \"precio\": 4.50,\n  \"disponible\": true,\n  \"badge\": \"Mas vendido\",\n  \"stock\": 8,\n  \"imagenUrl\": \"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos/{{testEmprendimientoId}}/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos", "{{testEmprendimientoId}}", "productos"]
+            },
+            "description": "Agrega un nuevo ítem al catálogo utilizando el DTO validado ProductoDTO."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"El producto creado tiene ID y precio correcto\", function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data.id).to.be.a('number');",
+                  "    pm.expect(data.precio).to.eql(4.50);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar producto existente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Brownie Fudge Extra Choc (Promocion)\",\n  \"descripcion\": \"Cacao puro con doble bano de fudge artesanal.\",\n  \"precio\": 5.00,\n  \"disponible\": true,\n  \"badge\": \"Oferta\",\n  \"stock\": 5,\n  \"imagenUrl\": \"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos/{{testEmprendimientoId}}/productos/{{testProductoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos", "{{testEmprendimientoId}}", "productos", "{{testProductoId}}"]
+            },
+            "description": "Modifica precio, nombre, stock o disponibilidad de un producto existente."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar producto del catálogo",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos/{{testEmprendimientoId}}/productos/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos", "{{testEmprendimientoId}}", "productos", "999999"]
+            },
+            "description": "Elimina un producto por ID. Responderá 204 No Content si existe o 404 Not Found si ya fue eliminado."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 204 No Content o 404 Not Found\", function () {",
+                  "    pm.expect([204, 404]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Reseñas y Calificaciones",
+      "item": [
+        {
+          "name": "Agregar reseña a un emprendimiento",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estudianteNombre\": \"Mateo Ruiz\",\n  \"carreraCiclo\": \"Ing. Civil · 5to Ciclo\",\n  \"calificacion\": 5,\n  \"comentario\": \"Excelente atencion en Torre A piso 4, los brownies llegaron calientitos y el servicio super rapido.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/emprendimientos/{{testEmprendimientoId}}/resenas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emprendimientos", "{{testEmprendimientoId}}", "resenas"]
+            },
+            "description": "Registra una calificación de 1 a 5 estrellas y recalcula automáticamente el promedio del puesto."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Estado HTTP es 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"La reseña tiene calificación y estudiante correctos\", function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data.calificacion).to.eql(5);",
+                  "    pm.expect(data.estudianteNombre).to.eql(\"Mateo Ruiz\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
