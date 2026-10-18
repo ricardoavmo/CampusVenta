@@ -2,11 +2,12 @@
 Una solución integral para la geolocalización interna, catálogo en vivo y coordinación de compras entre estudiantes de la Universidad Tecnológica del Perú (UTP Sede Piura).
 
 ![Java](https://img.shields.io/badge/Java%2021-ED8B00?style=flat&logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot%203.4-6DB33F?style=flat&logo=springboot&logoColor=white)
-![React](https://img.shields.io/badge/React%2018-20232A?style=flat&logo=react&logoColor=61DAFB)
-![Vite](https://img.shields.io/badge/Vite%205-646CFF?style=flat&logo=vite&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat&logo=postgresql&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.3-6DB33F?style=flat&logo=springboot&logoColor=white)
+![React](https://img.shields.io/badge/React%2018.3.1-20232A?style=flat&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite%205.4.6-646CFF?style=flat&logo=vite&logoColor=white)
+![Astro](https://img.shields.io/badge/Astro-7.3.2-BC52EE?style=flat&logo=astro&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.4.11-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-316192?style=flat&logo=postgresql&logoColor=white)
 ![Maven](https://img.shields.io/badge/Maven-C71A36?style=flat&logo=apachemaven&logoColor=white)
 ![JUnit 5](https://img.shields.io/badge/JUnit%205-25A162?style=flat&logo=junit5&logoColor=white)
 ![Mockito](https://img.shields.io/badge/Mockito-78A731?style=flat&logo=mockito&logoColor=white)
@@ -180,10 +181,46 @@ cd backend
 
 | Integrante | Código UTP | Rol en el Proyecto |
 | :--- | :---: | :--- |
-| **Paola Elvira Mijahuanga Pingo** | U23227640 | Gerente General / Fundadora – Planificación estratégica y viabilidad |
+| **Paola Elvira Mijahuanga Pingo** | U23227640 | Gerente General / Product Owner – Visión del producto y priorización del backlog |
+| **Angel Ancajima Juárez** | Pendiente | Tech Lead / Scrum Master – Arquitectura técnica y facilitación del marco Scrumban |
+| **Ricardo Avila Montalbán** | Pendiente | Backend Developer – Desarrollo de API REST Spring Boot, JPA y base de datos |
+| **Toom Josué Vilela Carmen** | Pendiente | Frontend Developer – Desarrollo SPA en React, Tailwind CSS y experiencia de usuario |
+| **Kelvin Cienfuegos Morales** | Pendiente | QA Engineer – Aseguramiento de calidad, pruebas unitarias y validación funcional |
+
 ---
 
-*esto es una prueba*
+## 📋 Gestión del Proyecto
+
+El equipo gestiona el ciclo de vida de **CampusVenta** combinando principios ágiles de **Scrumban**, integrando la cadencia de sprints semanales con la fluidez y visibilidad de un tablero Kanban.
+
+### Metodología y Marco de Trabajo
+- **Scrumban Semanal:** Ciclos de desarrollo de lunes a domingo.
+- **Límite WIP (Work In Progress):** Máximo **2 tareas simultáneas en proceso por integrante**, garantizando foco y flujo continuo.
+- **Estimación:** Puntos de historia basados en secuencia Fibonacci simplificada (`1`, `2`, `3`, `5`, `8`).
+- **Definición de Listo (DoR) y Definición de Terminado (DoD):** Criterios rigurosos de aceptación, calidad de código y pruebas antes de dar por completada cualquier tarjeta.
+
+### Herramientas del Ecosistema
+- **Trello:** Tablero Scrumban oficial con listas *Backlog*, *Lista de tareas*, *En proceso*, *En revisión* y *Hecho*. Automatizaciones activadas mediante **Butler** y Power-Ups de **GitHub** y **Calendario**.
+- **Discord:** Centro de comunicación del equipo con canales especializados (`#general`, `#backend`, `#frontend`, `#diseño`, `#dudas-tecnicas`, `#eventos` y sala de voz `General`). Se utiliza para los *Daily Standups* asíncronos matutinos.
+- **GitHub:** Repositorio central, flujo Git Flow / feature branch, plantillas de Pull Request, protección de ramas `main` y `develop`, y GitHub Actions para notificaciones en tiempo real a Discord.
+- **Figma:** Diseño de interfaz, prototipado de flujos y sistema de diseño visual con la identidad gráfica de la UTP.
+- **Postman:** Colección de pruebas de integración y contratos de la API REST para desarrolladores y QA.
+- **Excel:** Matriz de planificación de requerimientos y seguimiento de avance de proyecto.
+
+### Documentación Detallada en `docs/`
+- 📖 [Metodología Scrumban del Proyecto](docs/metodologia-scrumban.md): Roles, ceremonias, límites WIP, listas del tablero, DoR/DoD y hoja de aprobación.
+- 💬 [Guía de Integración con Discord](docs/guia-discord.md): Canales, configuración de webhooks y notificaciones automáticas de GitHub.
+- 🤖 [Reglas de Butler y Power-Up GitHub en Trello](docs/trello-butler-reglas.md): Automatizaciones de movimiento de tarjetas y control WIP.
+- 📅 [Calendario de Ceremonias del Sprint (.ics)](docs/calendario/README.md): Eventos recurrentes de planning, daily, review y retro para importar en Google Calendar / Outlook.
+- 📮 [Colección y Entorno de Postman](docs/postman/): Archivos JSON para importar en Postman con tests automáticos de código HTTP.
+- 🔍 [Auditoría Frontend ↔ API REST](docs/auditoria-front-api.md): Diagnóstico exhaustivo de cada pantalla, llamadas reales vs datos mock y plan de trabajo.
+- 🎨 [Guía de Organización de Figma](docs/figma-orden.md): Estructura de páginas por flujo, convención de nombres y tokens de color UTP.
+- 🔐 [Contrato de API para Autenticación](docs/api-auth-contract.md): Especificación de endpoints `/api/auth/login` y `/api/auth/registro`.
+- 🏁 [Informe de Cierre de Sprint 1](docs/CIERRE-SPRINT1.md): Estado de las 10 tarjetas del Sprint 1, auditoría y acciones pendientes.
+
+> [!NOTE]
+> **TODO: Enlace al tablero oficial de Figma pendiente de adjuntar por el equipo de diseño.**
+
+---
 
 *Proyecto desarrollado para la asignatura de **Herramientas de Desarrollo** · Universidad Tecnológica del Perú (UTP) · Sede Piura · Ciclo 2026.*
-*Versión final resuelta: se combinó el cambio de MAIN y DEVELOP para solucionar el conflicto en la nube.*
