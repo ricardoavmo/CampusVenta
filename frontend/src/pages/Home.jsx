@@ -232,21 +232,7 @@ export default function Home() {
     const list = [];
     const storesSource = Array.isArray(emprendimientos) ? emprendimientos : [];
     storesSource.forEach((emp) => {
-      // Combinar productos del backend con productos creados localmente
-      let storeProds = Array.isArray(emp.productos) ? [...emp.productos] : [];
-      try {
-        const cached = localStorage.getItem(`campusventa_products_${emp.id}`);
-        if (cached) {
-          const localList = JSON.parse(cached);
-          if (Array.isArray(localList)) {
-            localList.forEach((lp) => {
-              if (!storeProds.some((p) => String(p.id) === String(lp.id) || p.nombre === lp.nombre)) {
-                storeProds.unshift(lp);
-              }
-            });
-          }
-        }
-      } catch {}
+      const storeProds = Array.isArray(emp.productos) ? emp.productos : [];
 
       if (storeProds.length > 0) {
         storeProds.forEach((prod, idx) => {

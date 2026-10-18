@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { getEmprendimientos } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import {
   IconHeart,
   IconCheck,
@@ -14,12 +15,13 @@ import {
 } from '../components/Icons';
 
 export default function MisPedidos() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('favoritos'); // 'favoritos' | 'pedidos' | 'resenas'
   const [emprendimientos, setEmprendimientos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [favoritesIds, setFavoritesIds] = useState([]);
 
-  // Pedidos del usuario (persistidos localmente o coordinados en campus)
+  // Pedidos del usuario (coordinados en campus vía WhatsApp)
   const [pedidos, setPedidos] = useState(() => {
     try {
       const saved = localStorage.getItem('campusventa_pedidos');
@@ -29,15 +31,8 @@ export default function MisPedidos() {
     }
   });
 
-  // Reseñas emitidas por el estudiante
-  const [misResenas, setMisResenas] = useState(() => {
-    try {
-      const saved = localStorage.getItem('campusventa_mis_resenas');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  // Reseñas emitidas en PostgreSQL
+  const [misResenas, setMisResenas] = useState([]);
 
   useEffect(() => {
     const saved = localStorage.getItem('campusventa_favoritos');
@@ -55,9 +50,32 @@ export default function MisPedidos() {
       try {
         setLoading(true);
         const data = await getEmprendimientos();
-        setEmprendimientos(Array.isArray(data) ? data : []);
+        const stores = Array.isArray(data) ? data : [];
+        setEmprendimientos(stores);
+
+        // Extraer reseñas reales registradas en PostgreSQL
+        const backendResenas = [];
+        stores.forEach((emp) => {
+          if (Array.isArray(emp.resenas)) {
+            emp.resenas.forEach((r) => {
+              if (!user?.nombre || r.estudianteNombre === user.nombre || r.usuarioId === user?.id) {
+                backendResenas.push({
+                  id: r.id,
+                  emprendimientoId: emp.id,
+                  tiendaNombre: emp.nombre,
+                  estudianteNombre: r.estudianteNombre,
+                  calificacion: r.calificacion,
+                  comentario: r.comentario,
+                  fecha: r.fechaCreacion ? new Date(r.fechaCreacion).toLocaleDateString() : 'Reciente',
+                  fotoUrl: r.fotoUrl,
+                });
+              }
+            });
+          }
+        });
+        setMisResenas(backendResenas);
       } catch (err) {
-        console.error('Error al cargar tiendas:', err);
+        console.error('Error al cargar tiendas y reseñas del backend:', err);
       } finally {
         setLoading(false);
       }
