@@ -3,6 +3,7 @@ package pe.edu.utp.campusventa.controller;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
@@ -12,6 +13,9 @@ import pe.edu.utp.campusventa.model.Emprendimiento;
 import pe.edu.utp.campusventa.repository.EmprendimientoRepository;
 import pe.edu.utp.campusventa.repository.ProductoRepository;
 import pe.edu.utp.campusventa.repository.ResenaRepository;
+import pe.edu.utp.campusventa.repository.UsuarioRepository;
+import pe.edu.utp.campusventa.security.JwtTokenProvider;
+import pe.edu.utp.campusventa.security.CustomUserDetailsService;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -29,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(EmprendimientoController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class EmprendimientoControllerTest {
 
     @Autowired
@@ -42,6 +47,15 @@ class EmprendimientoControllerTest {
 
     @MockitoBean
     private ProductoRepository productoRepository;
+
+    @MockitoBean
+    private UsuarioRepository usuarioRepository;
+
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     @DisplayName("GET /api/emprendimientos debe responder 200 y contener elementos")
