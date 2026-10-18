@@ -6,13 +6,16 @@ export default function BottomNav() {
   const location = useLocation();
   const { user, isSeller } = useAuth();
 
-  // No renderizar barra inferior en la página de login para evitar colisiones
-  if (location.pathname === '/login') {
+  // No renderizar barra inferior en páginas de login o administración
+  if (
+    location.pathname === '/login' ||
+    location.pathname === '/admin' ||
+    location.pathname === '/admin/login'
+  ) {
     return null;
   }
 
-  // Determinar si el usuario está actualmente en rol vendedor
-  const isUserSeller = user?.rol === 'vendedor';
+  const isUserSeller = user?.rol?.toUpperCase() === 'VENDEDOR';
 
   // Configuración de pestañas según el rol
   const navItems = isUserSeller
@@ -82,9 +85,9 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Navegación móvil"
-      className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 sm:left-auto sm:right-auto sm:w-[420px] sm:left-1/2 sm:-translate-x-1/2 z-40 md:hidden liquid-glass rounded-3xl p-1.5 px-2 transition-all shadow-[0_12px_40px_rgba(15,23,42,0.18)]"
+      className="fixed bottom-0 left-0 right-0 w-full z-40 md:hidden liquid-glass border-t border-white/60 dark:border-white/10 pt-1.5 pb-[max(0.65rem,env(safe-area-inset-bottom))] px-3 shadow-[0_-8px_30px_rgba(0,0,0,0.1)] backdrop-blur-xl transition-all"
     >
-      <div className="flex items-center justify-around w-full">
+      <div className="max-w-md mx-auto flex items-center justify-around w-full">
         {navItems.map((item) => {
           const isActive = item.exact
             ? location.pathname === item.to

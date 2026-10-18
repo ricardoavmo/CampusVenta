@@ -2,8 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
-import { eliminarEmprendimiento } from '../services/api';
+import {
+  eliminarEmprendimiento,
+  updatePerfilApi,
+  getMisEmprendimientosApi,
+  crearEmprendimiento
+} from '../services/api';
 import ProfilePreviewModal, { PLATFORMS_CONFIG } from '../components/ProfilePreviewModal';
+import { applyTheme, getStoredTheme } from '../utils/theme';
 import {
   IconStore,
   IconSchool,
@@ -20,43 +26,8 @@ import {
   IconClock
 } from '../components/Icons';
 
-const DEFAULT_MIS_PUESTOS = [
-  {
-    id: 1,
-    nombre: 'SweetHub UTP',
-    categoria: 'POSTRES',
-    torre: 'Torre A',
-    piso: 'Piso 2',
-    referencia: 'Frente a los ascensores',
-    disponible: true,
-    horarioAtencion: 'Lun - Vie: 9:00 AM - 6:00 PM',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
-    calificacion: 4.9,
-    totalResenas: 14,
-    tiempoEntrega: '2-5 min',
-    descripcion: 'Brownies artesanales, galletas con chispas Hershey y frappés.',
-    productosCount: 3,
-  },
-  {
-    id: 3,
-    nombre: 'Pixel UTP Merch & Stickers',
-    categoria: 'ACCESORIOS',
-    torre: 'Torre B',
-    piso: 'Piso 1',
-    referencia: 'Cerca a las bancas techadas',
-    disponible: true,
-    horarioAtencion: 'Lun - Sáb: 10:00 AM - 7:00 PM',
-    avatarUrl: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=200',
-    calificacion: 5.0,
-    totalResenas: 8,
-    tiempoEntrega: '~3 min',
-    descripcion: 'Stickers de programación, llaveros y accesorios para laptops.',
-    productosCount: 2,
-  },
-];
-
 export default function Perfil() {
-  const { user, isSeller, login, logout, loginAsDemo } = useAuth();
+  const { user, isSeller, isAdmin, login, logout, updateUser } = useAuth();
   const navigate = useNavigate();
 
   const [editing, setEditing] = useState(false);
@@ -64,32 +35,47 @@ export default function Perfil() {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showRegisterStoreModal, setShowRegisterStoreModal] = useState(false);
 
-  // Lista de puestos del usuario
-  const [misPuestos, setMisPuestos] = useState(() => {
-    try {
-      const saved = localStorage.getItem('campusventa_mis_puestos');
-      return saved ? JSON.parse(saved) : DEFAULT_MIS_PUESTOS;
-    } catch {
-      return DEFAULT_MIS_PUESTOS;
-    }
-  });
+  const handleInstantBecomeSeller = () => {
+    setShowRegisterStoreModal(true);
+  };
+
+  // Lista de puestos del usuario desde backend
+  const [misPuestos, setMisPuestos] = useState([]);
+  const [loadingStores, setLoadingStores] = useState(true);
 
   const [activeStoreId, setActiveStoreId] = useState(() => {
     const saved = localStorage.getItem('campusventa_active_store_id');
-    return saved ? Number(saved) : 1;
+    return saved ? Number(saved) : null;
   });
 
   // Modal de confirmación para eliminar puesto
   const [storeToDelete, setStoreToDelete] = useState(null);
   const [deletingStore, setDeletingStore] = useState(false);
 
+  // Cargar mis emprendimientos desde la base de datos
+  useEffect(() => {
+    async function loadStores() {
+      try {
+        setLoadingStores(true);
+        const data = await getMisEmprendimientosApi();
+        setMisPuestos(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.warn('[Perfil] Error al obtener puestos del usuario:', err?.message);
+        setMisPuestos([]);
+      } finally {
+        setLoadingStores(false);
+      }
+    }
+    loadStores();
+  }, []);
+
   // Form State para creación rápida de tienda dentro del perfil
   const [storeFormData, setStoreFormData] = useState({
     nombre: '',
     categoria: 'POSTRES',
     torre: 'Torre A',
-    piso: 'Piso 4',
-    telefono: user?.telefono || '972341311',
+    piso: 'Piso 1',
+    telefono: user?.telefono || '',
     tiempoEntrega: 'Entrega en ~3 min',
     horarioAtencion: 'Lun - Vie: 9:00 AM - 6:00 PM',
     descripcion: '',
@@ -111,24 +97,9 @@ export default function Perfil() {
     reader.readAsDataURL(file);
   };
 
-  const handleInstantBecomeSeller = () => {
-    loginAsDemo('vendedor');
-    showToast('¡Ahora eres vendedor oficial de CampusVenta!');
-  };
-
   const handleSelectStore = (storeId) => {
     setActiveStoreId(storeId);
     localStorage.setItem('campusventa_active_store_id', String(storeId));
-    const target = misPuestos.find((s) => s.id === storeId);
-    if (target) {
-      const updatedUser = {
-        ...user,
-        rol: 'vendedor',
-        tiendaNombre: target.nombre,
-        emprendimientoId: target.id,
-      };
-      login(updatedUser);
-    }
     navigate(`/panel?storeId=${storeId}`);
   };
 
@@ -161,109 +132,80 @@ export default function Perfil() {
     }
   };
 
-  const handleCreateStoreSubmit = (e) => {
+  const handleCreateStoreSubmit = async (e) => {
     e.preventDefault();
     if (!storeFormData.nombre.trim()) {
       showToast('Por favor ingresa el nombre de tu emprendimiento.');
       return;
     }
 
-    const defaultStoreImages = {
-      POSTRES: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300&auto=format&fit=crop&q=80',
-      COMIDA: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&auto=format&fit=crop&q=80',
-      ACCESORIOS: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=80',
-      SERVICIOS: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&auto=format&fit=crop&q=80',
-    };
+    try {
+      const res = await crearEmprendimiento({
+        nombre: storeFormData.nombre.trim(),
+        categoria: storeFormData.categoria || 'POSTRES',
+        torre: storeFormData.torre,
+        piso: storeFormData.piso,
+        whatsapp: storeFormData.telefono?.trim() || user?.telefono || '51999999999',
+        tiempoEntrega: storeFormData.tiempoEntrega || '~3 min',
+        horarioAtencion: storeFormData.horarioAtencion?.trim() || 'Lun - Vie: 9:00 AM - 6:00 PM',
+        descripcion: storeFormData.descripcion?.trim() || 'Puesto oficial en campus UTP.',
+        avatarUrl: storeFormData.avatarUrl || null,
+        precioDesde: 1.0,
+        disponible: true,
+      });
 
-    // La foto de la tienda es independiente de la foto de perfil del vendedor
-    const storeAvatar = storeFormData.avatarUrl || defaultStoreImages[storeFormData.categoria] || 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=300';
+      setMisPuestos((prev) => [...prev, res]);
+      setActiveStoreId(res.id);
+      localStorage.setItem('campusventa_active_store_id', String(res.id));
 
-    const newStore = {
-      id: Date.now(),
-      nombre: storeFormData.nombre.trim(),
-      categoria: storeFormData.categoria || 'POSTRES',
-      torre: storeFormData.torre,
-      piso: storeFormData.piso,
-      referencia: 'Campus UTP',
-      disponible: true,
-      avatarUrl: storeAvatar, // Foto o Logo Oficial de la Tienda
-      vendedorNombre: formData.nombre || user?.nombre || 'Estudiante UTP',
-      vendedorAvatar: formData.avatar || user?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
-      calificacion: 5.0,
-      totalResenas: 1,
-      tiempoEntrega: storeFormData.tiempoEntrega || '~3 min',
-      horarioAtencion: storeFormData.horarioAtencion.trim() || 'Lun - Vie: 9:00 AM - 6:00 PM',
-      descripcion: storeFormData.descripcion || 'Puesto oficial en campus UTP.',
-      productosCount: 0,
-    };
+      updateUser({
+        ...user,
+        rol: 'VENDEDOR',
+        tiendaNombre: res.nombre,
+        emprendimientoId: res.id,
+      });
 
-    const updatedStores = [...misPuestos, newStore];
-    setMisPuestos(updatedStores);
-    setActiveStoreId(newStore.id);
-    localStorage.setItem('campusventa_mis_puestos', JSON.stringify(updatedStores));
-    localStorage.setItem('campusventa_active_store_id', String(newStore.id));
-
-    const updatedUser = {
-      ...user,
-      ...formData,
-      rol: 'vendedor',
-      tiendaNombre: newStore.nombre,
-      emprendimientoId: newStore.id,
-      torreHabitual: `${newStore.torre} - ${newStore.piso}`,
-    };
-    login(updatedUser);
-    setShowRegisterStoreModal(false);
-    setStoreFormData({
-      nombre: '',
-      categoria: 'POSTRES',
-      torre: 'Torre A',
-      piso: 'Piso 4',
-      telefono: user?.telefono || '972341311',
-      tiempoEntrega: 'Entrega en ~3 min',
-      horarioAtencion: 'Lun - Vie: 9:00 AM - 6:00 PM',
-      descripcion: '',
-      avatarUrl: '',
-    });
-    showToast(`¡Puesto "${newStore.nombre}" creado con éxito!`);
+      setShowRegisterStoreModal(false);
+      setStoreFormData({
+        nombre: '',
+        categoria: 'POSTRES',
+        torre: 'Torre A',
+        piso: 'Piso 1',
+        telefono: user?.telefono || '',
+        tiempoEntrega: 'Entrega en ~3 min',
+        horarioAtencion: 'Lun - Vie: 9:00 AM - 6:00 PM',
+        descripcion: '',
+        avatarUrl: '',
+      });
+      showToast(`¡Puesto "${res.nombre}" creado con éxito en CampusVenta!`);
+    } catch (err) {
+      console.error('Error al crear tienda:', err);
+      showToast(err.response?.data?.message || 'Error al crear el puesto.');
+    }
   };
 
   // Estados de configuración de preferencias
   const [tema, setTema] = useState(() => {
-    return localStorage.getItem('campusventa_theme') || 'claro';
+    return getStoredTheme();
   });
   const [notifBajones, setNotifBajones] = useState(true);
   const [sonidoHaptico, setSonidoHaptico] = useState(true);
   const [ahorroDatos, setAhorroDatos] = useState(false);
   const [zonaFrecuente, setZonaFrecuente] = useState('Torre A');
 
-  // Form State dinámico
+  // Form State dinámico basado 100% en el usuario autenticado
   const [formData, setFormData] = useState(() => {
-    const defaultRedes = isSeller
-      ? [
-          { id: '1', plataforma: 'whatsapp', handle: user?.telefono || '972341311', visible: true },
-          { id: '2', plataforma: 'instagram', handle: 'valeria.utp', visible: true },
-          { id: '3', plataforma: 'tiktok', handle: 'valeria_bakes', visible: true },
-        ]
-      : [
-          { id: '1', plataforma: 'instagram', handle: 'carlos.utp', visible: true },
-          { id: '2', plataforma: 'whatsapp', handle: user?.telefono || '951234567', visible: false },
-        ];
-
     return {
-      nombre: user?.nombre || (isSeller ? 'Valeria Mendoza' : 'Carlos Morales'),
-      email: user?.email || (isSeller ? 'u20210045@utp.edu.pe' : 'u20220199@utp.edu.pe'),
-      codigo: user?.codigo || (isSeller ? 'U20210045' : 'U20220199'),
-      carrera: user?.carrera || (isSeller ? 'Ing. Sistemas' : 'Ing. Industrial'),
-      ciclo: user?.ciclo || (isSeller ? '6to Ciclo' : '4to Ciclo'),
-      telefono: user?.telefono || (isSeller ? '972341311' : '951234567'),
-      bio: user?.bio || (isSeller
-        ? 'Estudiante UTP Piura. Venta y entrega de postres caseros entre clases en Torre A y Torre B.'
-        : 'Estudiante explorador de bajones y dulces en el campus.'),
-      avatar: user?.avatar || null,
+      nombre: user?.nombre || '',
+      email: user?.email || '',
+      codigo: user?.codigo || '',
+      carrera: user?.carrera || '',
+      ciclo: user?.ciclo || '',
+      telefono: user?.telefono || '',
+      bio: user?.bio || '',
+      avatar: user?.avatarUrl || user?.avatar || null,
       torreHabitual: user?.torreHabitual || 'Torre A',
-      redesSociales: Array.isArray(user?.redesSociales) && user.redesSociales.length > 0
-        ? user.redesSociales
-        : defaultRedes,
+      redesSociales: Array.isArray(user?.redesSociales) ? user.redesSociales : [],
     };
   });
 
@@ -276,19 +218,7 @@ export default function Perfil() {
 
   const aplicarTema = (nuevoTema) => {
     setTema(nuevoTema);
-    localStorage.setItem('campusventa_theme', nuevoTema);
-
-    if (nuevoTema === 'oscuro') {
-      document.documentElement.classList.add('dark');
-    } else if (nuevoTema === 'claro') {
-      document.documentElement.classList.remove('dark');
-    } else {
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    }
+    applyTheme(nuevoTema);
     showToast(`Tema cambiado a: ${nuevoTema === 'oscuro' ? 'Oscuro OLED' : nuevoTema === 'claro' ? 'Claro Cristal' : 'Automático'}`);
   };
 
@@ -302,8 +232,13 @@ export default function Perfil() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 3 * 1024 * 1024) {
-      showToast('La imagen supera el límite de 3MB. Selecciona una más ligera.');
+    if (!file.type.startsWith('image/')) {
+      showToast('Por favor selecciona un archivo de imagen válido (JPG, PNG, WebP).');
+      return;
+    }
+
+    if (file.size > 4 * 1024 * 1024) {
+      showToast('La foto supera el límite de 4MB. Selecciona una más ligera.');
       return;
     }
 
@@ -311,7 +246,10 @@ export default function Perfil() {
     reader.onload = (uploadEvent) => {
       const base64 = uploadEvent.target.result;
       setFormData((prev) => ({ ...prev, avatar: base64 }));
-      showToast('Nueva foto cargada. Guarda los cambios para aplicarla.');
+      if (user) {
+        login({ ...user, avatar: base64 });
+      }
+      showToast('¡Foto de perfil actualizada desde tu dispositivo!');
     };
     reader.readAsDataURL(file);
   };
@@ -319,6 +257,9 @@ export default function Perfil() {
   // Eliminar foto de perfil
   const handleRemovePhoto = () => {
     setFormData((prev) => ({ ...prev, avatar: null }));
+    if (user) {
+      login({ ...user, avatar: null });
+    }
     showToast('Foto de perfil eliminada.');
   };
 
@@ -466,16 +407,26 @@ export default function Perfil() {
     showToast('Canal eliminado.');
   };
 
-  const handleSaveProfile = (e) => {
+  const handleSaveProfile = async (e) => {
     e.preventDefault();
-    const updatedUser = {
-      ...user,
-      ...formData,
-      redesSociales: formData.redesSociales.filter((r) => r.handle && r.handle.trim()),
-    };
-    login(updatedUser);
-    setEditing(false);
-    showToast('¡Perfil actualizado con éxito!');
+    try {
+      const payload = {
+        nombre: formData.nombre?.trim(),
+        carrera: formData.carrera?.trim(),
+        ciclo: formData.ciclo?.trim(),
+        telefono: formData.telefono?.trim(),
+        bio: formData.bio?.trim(),
+        avatarUrl: formData.avatar,
+        redesSocialesJson: JSON.stringify(formData.redesSociales.filter((r) => r.handle && r.handle.trim())),
+      };
+      const updated = await updatePerfilApi(payload);
+      updateUser(updated);
+      setEditing(false);
+      showToast('¡Perfil actualizado con éxito en el servidor!');
+    } catch (err) {
+      console.error('Error al actualizar perfil:', err);
+      showToast(err.response?.data?.message || 'Error al guardar los cambios de perfil.');
+    }
   };
 
   const handleLogout = () => {
@@ -483,41 +434,12 @@ export default function Perfil() {
     navigate('/login');
   };
 
-  const handleToggleRole = () => {
-    const newRole = isSeller ? 'comprador' : 'vendedor';
-    const switchedUser = loginAsDemo(newRole);
-    setFormData({
-      nombre: switchedUser.nombre,
-      email: switchedUser.email,
-      codigo: switchedUser.codigo,
-      carrera: switchedUser.carrera,
-      ciclo: switchedUser.ciclo,
-      telefono: newRole === 'vendedor' ? '972341311' : '951234567',
-      bio: newRole === 'vendedor'
-        ? 'Vendedora de SweetHub en campus UTP Piura.'
-        : 'Estudiante explorador de bajones y dulces en el campus.',
-      avatar: switchedUser.avatar,
-      torreHabitual: newRole === 'vendedor' ? 'Torre A' : 'Torre B',
-      redesSociales: newRole === 'vendedor'
-        ? [
-            { id: '1', plataforma: 'whatsapp', handle: '972341311', visible: true },
-            { id: '2', plataforma: 'instagram', handle: 'valeria.utp', visible: true },
-            { id: '3', plataforma: 'tiktok', handle: 'valeria_bakes', visible: true },
-          ]
-        : [
-            { id: '1', plataforma: 'instagram', handle: 'carlos.utp', visible: true },
-            { id: '2', plataforma: 'whatsapp', handle: '951234567', visible: false },
-          ],
-    });
-    showToast(`Cambiaste a Modo ${newRole === 'vendedor' ? 'Vendedor' : 'Comprador'}`);
-  };
-
   const visibleRedes = formData.redesSociales.filter(
     (r) => r.visible !== false && r.handle && r.handle.trim()
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-bg text-text-main font-body antialiased pb-32 sm:pb-16 selection:bg-primary/20">
+    <div className="min-h-screen flex flex-col theme-bg-canvas text-text-main font-body antialiased pb-32 sm:pb-16 selection:bg-primary/20">
       <Navbar />
 
       {/* Floating Animated Toast */}
@@ -575,7 +497,7 @@ export default function Perfil() {
                 </div>
               )}
 
-              {/* Input file oculto para subida directa */}
+              {/* Input file oculto para subida directa desde dispositivo */}
               <input
                 id="hero-avatar-file-input"
                 type="file"
@@ -588,7 +510,7 @@ export default function Perfil() {
               <label
                 htmlFor="hero-avatar-file-input"
                 className="absolute -bottom-2 -right-2 w-9 h-9 rounded-2xl liquid-glass-crimson text-white flex items-center justify-center cursor-pointer shadow-md hover:brightness-110 active:scale-95 transition-all border border-white"
-                title="Subir foto de perfil"
+                title="Subir foto desde tu dispositivo (galería o cámara)"
               >
                 <IconPhoto className="w-4 h-4" />
               </label>
@@ -602,7 +524,7 @@ export default function Perfil() {
                 </h1>
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full liquid-glass-crimson text-white font-heading font-bold text-[10px] shadow-2xs">
                   <IconVerified className="w-3 h-3 text-white" />
-                  <span>{isSeller ? 'Vendedor Oficial' : 'Alumno UTP'}</span>
+                  <span>{isAdmin ? 'Administrador UTP' : isSeller ? 'Vendedor Oficial' : 'Alumno UTP'}</span>
                 </span>
               </div>
 
@@ -623,6 +545,16 @@ export default function Perfil() {
 
               {/* Action Buttons */}
               <div className="flex items-center justify-center sm:justify-start gap-2.5 pt-3 flex-wrap">
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-heading font-bold text-xs text-decoration-none shadow-sm flex items-center gap-1.5 transition-all active:scale-95"
+                  >
+                    <span className="material-symbols-outlined text-sm">admin_panel_settings</span>
+                    <span>Consola Admin</span>
+                  </Link>
+                )}
+
                 <button
                   type="button"
                   onClick={() => setEditing(!editing)}
@@ -710,7 +642,7 @@ export default function Perfil() {
                     className="px-4 py-2 rounded-full liquid-glass border border-primary/30 text-primary text-xs font-heading font-bold hover:bg-white transition-all cursor-pointer shadow-xs active:scale-95 flex items-center gap-1.5"
                   >
                     <IconPhoto className="w-3.5 h-3.5" />
-                    <span>{formData.avatar ? 'Cambiar Foto' : 'Subir Foto'}</span>
+                    <span>{formData.avatar ? 'Cambiar Foto desde Dispositivo' : 'Subir Foto desde Dispositivo'}</span>
                     <input
                       id="edit-avatar-file-input"
                       type="file"
@@ -1507,18 +1439,29 @@ export default function Perfil() {
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 leading-tight my-1">
-                    Esta imagen identificará a tu puesto en el catálogo (tu foto de perfil personal como estudiante se mantiene separada).
+                    Esta imagen identificará a tu puesto en el catálogo. Súbela directamente desde tu celular o PC (tu foto personal de estudiante se mantiene separada).
                   </p>
-                  <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-xs font-heading font-bold text-slate-700 shadow-2xs active:scale-95 transition-all">
-                    <IconPhoto className="w-3.5 h-3.5 text-[#BA122D]" />
-                    <span>{storeFormData.avatarUrl ? 'Cambiar Foto de Tienda' : 'Subir Foto de Tienda'}</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleStoreFormAvatarChange}
-                      className="hidden"
-                    />
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-xs font-heading font-bold text-slate-700 shadow-2xs active:scale-95 transition-all">
+                      <IconPhoto className="w-3.5 h-3.5 text-[#BA122D]" />
+                      <span>{storeFormData.avatarUrl ? 'Cambiar Foto desde Dispositivo' : 'Subir Foto desde Dispositivo'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleStoreFormAvatarChange}
+                        className="hidden"
+                      />
+                    </label>
+                    {storeFormData.avatarUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setStoreFormData((prev) => ({ ...prev, avatarUrl: '' }))}
+                        className="text-[11px] text-red-600 hover:underline font-heading font-semibold"
+                      >
+                        Quitar
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 

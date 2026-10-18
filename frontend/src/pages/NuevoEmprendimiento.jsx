@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useAuth } from '../context/AuthContext';
 import { crearEmprendimiento } from '../services/api';
 
 const CATEGORIAS = [
@@ -42,26 +43,33 @@ const PISOS_POR_TORRE = {
 
 export default function NuevoEmprendimiento() {
   const navigate = useNavigate();
+  const { user, updateUser } = useAuth();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
   // Form State
   const [nombre, setNombre] = useState('');
-  const [vendedorNombre, setVendedorNombre] = useState('');
-  const [carreraCiclo, setCarreraCiclo] = useState('');
-  const [whatsapp, setWhatsapp] = useState('');
+  const [vendedorNombre, setVendedorNombre] = useState(user?.nombre || '');
+  const [carreraCiclo, setCarreraCiclo] = useState(
+    user?.carrera ? `${user.carrera}${user.ciclo ? ' - ' + user.ciclo : ''}` : ''
+  );
+  const [whatsapp, setWhatsapp] = useState(user?.telefono || '');
   const [categoria, setCategoria] = useState('POSTRES');
   const [descripcion, setDescripcion] = useState('');
   const [precioDesde, setPrecioDesde] = useState('');
   const [torre, setTorre] = useState('Torre A');
-  const [piso, setPiso] = useState('Piso 3');
+  const [piso, setPiso] = useState('Piso 1');
   const [tiempoEntrega, setTiempoEntrega] = useState('2 - 5 min');
-  const [avatarUrl, setAvatarUrl] = useState('https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300');
-  const [imagenUrl, setImagenUrl] = useState('https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [imagenUrl, setImagenUrl] = useState('');
 
   const handleStorePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setError('Por favor selecciona un archivo de imagen válido (JPG, PNG, WebP).');
+      return;
+    }
     if (file.size > 4 * 1024 * 1024) {
       setError('La foto de la tienda debe ser menor a 4MB.');
       return;
@@ -69,6 +77,8 @@ export default function NuevoEmprendimiento() {
     const reader = new FileReader();
     reader.onloadend = () => {
       setAvatarUrl(reader.result);
+      setImagenUrl(reader.result);
+      setError(null);
     };
     reader.readAsDataURL(file);
   };
@@ -101,37 +111,29 @@ export default function NuevoEmprendimiento() {
       piso,
       tiempoEntrega,
       disponible: true,
-      calificacion: 5.0,
-      totalResenas: 1,
-      avatarUrl,
-      imagenUrl,
-      productos: [
-        {
-          nombre: `Pack Especial de ${nombre.trim()}`,
-          descripcion: 'El producto estrella de nuestro puesto en campus.',
-          precio: parseFloat(precioDesde),
-          disponible: true,
-          imagenUrl,
-        }
-      ],
-      resenas: [
-        {
-          estudianteNombre: 'Comunidad UTP',
-          carreraCiclo: 'Sede Piura',
-          calificacion: 5,
-          comentario: '¡Excelente atención y entrega rápida entre clases! 100% recomendado.',
-          verificado: true,
-        }
-      ]
+      calificacion: 0.0,
+      totalResenas: 0,
+      avatarUrl: avatarUrl || null,
+      imagenUrl: imagenUrl || null,
+      productos: [],
+      resenas: []
     };
 
     try {
       setSubmitting(true);
       const res = await crearEmprendimiento(payload);
+      if (user) {
+        updateUser({
+          ...user,
+          rol: 'VENDEDOR',
+          tiendaNombre: res.nombre,
+          emprendimientoId: res.id,
+        });
+      }
       if (res && res.id) {
-        navigate(`/emprendimiento/${res.id}`);
+        navigate(`/panel?storeId=${res.id}`);
       } else {
-        navigate('/');
+        navigate('/panel');
       }
     } catch (err) {
       console.error('Error al registrar emprendimiento:', err);
@@ -240,17 +242,31 @@ export default function NuevoEmprendimiento() {
                   Foto o Logo del Puesto
                 </span>
                 <p className="text-[11px] text-text-muted my-1">
-                  Esta imagen identificará tu tienda en el campus. Tu foto de perfil como estudiante permanece separada.
+                  Esta imagen identificará tu tienda en el campus. Súbela directamente desde tu teléfono o computadora (galería o cámara).
                 </p>
-                <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-text-main hover:bg-slate-50 border border-border text-xs font-heading font-bold shadow-2xs active:scale-95 transition-all">
-                  <span>Subir Foto del Puesto</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleStorePhotoChange}
-                    className="hidden"
-                  />
-                </label>
+                <div className="flex items-center gap-2">
+                  <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-text-main hover:bg-slate-50 border border-border text-xs font-heading font-bold shadow-2xs active:scale-95 transition-all">
+                    <span>Elegir Foto del Dispositivo</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleStorePhotoChange}
+                      className="hidden"
+                    />
+                  </label>
+                  {avatarUrl && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAvatarUrl('');
+                        setImagenUrl('');
+                      }}
+                      className="text-xs text-red-500 hover:underline font-heading font-semibold"
+                    >
+                      Quitar
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 

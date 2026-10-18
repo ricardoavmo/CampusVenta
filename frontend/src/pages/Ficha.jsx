@@ -58,25 +58,14 @@ export default function Ficha() {
   // Diferenciación explícita: Foto/Logo de la Tienda vs Foto de Perfil del Vendedor
   const sellerAvatar =
     emprendimiento?.vendedorAvatar ||
-    (emprendimiento?.avatarUrl?.includes('photo-1534528741775') ||
-     emprendimiento?.avatarUrl?.includes('photo-1539571696357') ||
-     emprendimiento?.avatarUrl?.includes('photo-1494790108377')
-      ? emprendimiento.avatarUrl
-      : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80');
+    emprendimiento?.avatarUrl ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(emprendimiento?.vendedorNombre || emprendimiento?.nombre || 'UTP')}&background=BA122D&color=fff`;
 
   const storeLogo =
     emprendimiento?.tiendaLogo ||
-    (emprendimiento?.avatarUrl &&
-     !emprendimiento?.avatarUrl?.includes('photo-1534528741775') &&
-     !emprendimiento?.avatarUrl?.includes('photo-1539571696357') &&
-     !emprendimiento?.avatarUrl?.includes('photo-1494790108377')
-      ? emprendimiento.avatarUrl
-      : emprendimiento?.imagenUrl ||
-        (emprendimiento?.categoria === 'POSTRES'
-          ? 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300&auto=format&fit=crop&q=80'
-          : emprendimiento?.categoria === 'COMIDA'
-          ? 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&auto=format&fit=crop&q=80'
-          : 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=300&auto=format&fit=crop&q=80'));
+    emprendimiento?.imagenUrl ||
+    emprendimiento?.avatarUrl ||
+    null;
   
   // Cantidades por producto (id_producto -> cantidad)
   const [quantities, setQuantities] = useState({});
@@ -113,7 +102,7 @@ export default function Ficha() {
     if (emprendimiento?.id) {
       try {
         const saved = localStorage.getItem('campusventa_favoritos');
-        const ids = saved ? JSON.parse(saved) : [1, 2];
+        const ids = saved ? JSON.parse(saved) : [];
         setIsFavorite(ids.includes(Number(emprendimiento.id)));
       } catch {
         setIsFavorite(false);
@@ -125,7 +114,7 @@ export default function Ficha() {
     if (!emprendimiento?.id) return;
     try {
       const saved = localStorage.getItem('campusventa_favoritos');
-      let ids = saved ? JSON.parse(saved) : [1, 2];
+      let ids = saved ? JSON.parse(saved) : [];
       const targetId = Number(emprendimiento.id);
       if (ids.includes(targetId)) {
         ids = ids.filter((favId) => favId !== targetId);
@@ -149,72 +138,19 @@ export default function Ficha() {
       setErrorMessage('');
       const data = await getEmprendimientoById(id);
       
-      // Combinar con productos agregados o editados localmente
-      let mergedProducts = Array.isArray(data.productos) ? [...data.productos] : [];
-      try {
-        const cached = localStorage.getItem(`campusventa_products_${id}`);
-        if (cached) {
-          const localList = JSON.parse(cached);
-          if (Array.isArray(localList)) {
-            localList.forEach((lp) => {
-              if (!mergedProducts.some((p) => String(p.id) === String(lp.id) || p.nombre === lp.nombre)) {
-                mergedProducts.unshift(lp);
-              }
-            });
-          }
-        }
-      } catch (cacheErr) {}
-
-      const storeWithProducts = {
-        ...data,
-        productos: mergedProducts,
-      };
-      setEmprendimiento(storeWithProducts);
+      const prods = Array.isArray(data.productos) ? data.productos : [];
+      setEmprendimiento(data);
 
       // Inicializar cantidades de productos
-      if (mergedProducts.length > 0) {
+      if (prods.length > 0) {
         const initialQtys = {};
-        mergedProducts.forEach((p) => {
+        prods.forEach((p) => {
           initialQtys[p.id] = 1;
         });
         setQuantities(initialQtys);
       }
     } catch (err) {
       console.error('Error al cargar la ficha:', err);
-      // Fallback a puestos guardados localmente
-      try {
-        const saved = localStorage.getItem('campusventa_mis_puestos');
-        const puestos = saved ? JSON.parse(saved) : [];
-        const localMatch = puestos.find((p) => String(p.id) === String(id));
-        if (localMatch) {
-          let fallbackProds = Array.isArray(localMatch.productos) ? [...localMatch.productos] : [];
-          try {
-            const cached = localStorage.getItem(`campusventa_products_${id}`);
-            if (cached) {
-              const localList = JSON.parse(cached);
-              if (Array.isArray(localList)) {
-                localList.forEach((lp) => {
-                  if (!fallbackProds.some((p) => String(p.id) === String(lp.id) || p.nombre === lp.nombre)) {
-                    fallbackProds.unshift(lp);
-                  }
-                });
-              }
-            }
-          } catch {}
-
-          setEmprendimiento({
-            ...localMatch,
-            productos: fallbackProds,
-            resenas: localMatch.resenas || [],
-          });
-          setErrorStatus(null);
-          setLoading(false);
-          return;
-        }
-      } catch (localErr) {
-        console.warn('Fallback local error:', localErr);
-      }
-
       if (err.response) {
         setErrorStatus(err.response.status);
         setErrorMessage(
@@ -257,26 +193,18 @@ export default function Ficha() {
       setMensajeResena(null);
 
       const nuevaResenaPayload = {
-        estudianteNombre: 'Estudiante UTP',
-        carreraCiclo: 'Pregrado Sede Piura',
+        estudianteNombre: user?.nombre || 'Estudiante UTP',
+        carreraCiclo: user?.carrera
+          ? `${user.carrera}${user.ciclo ? ' - ' + user.ciclo : ''}`
+          : 'Comunidad UTP Piura',
         calificacion: Number(formCalificacion),
         comentario: formComentario.trim(),
         fotoUrl: formFotoResena || null,
       };
 
-      let resenaGuardada;
-      try {
-        resenaGuardada = await crearResena(id, nuevaResenaPayload);
-        if (formFotoResena && !resenaGuardada.fotoUrl) {
-          resenaGuardada.fotoUrl = formFotoResena;
-        }
-      } catch (apiErr) {
-        // Fallback local
-        resenaGuardada = {
-          id: Date.now(),
-          ...nuevaResenaPayload,
-          verificado: true,
-        };
+      const resenaGuardada = await crearResena(id, nuevaResenaPayload);
+      if (formFotoResena && !resenaGuardada.fotoUrl) {
+        resenaGuardada.fotoUrl = formFotoResena;
       }
 
       // Actualizar estado local inmediatamente
@@ -557,11 +485,17 @@ export default function Ficha() {
                   {/* Foto de la Tienda + Foto del Vendedor */}
                   <div className="relative shrink-0 flex items-center">
                     {/* Foto Oficial de la Tienda */}
-                    <img
-                      src={storeLogo}
-                      alt={emprendimiento.nombre}
-                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-primary/15 shadow-sm bg-white"
-                    />
+                    {storeLogo ? (
+                      <img
+                        src={storeLogo}
+                        alt={emprendimiento.nombre}
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-primary/15 shadow-sm bg-white"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-primary to-orange-400 text-white font-heading font-extrabold text-2xl flex items-center justify-center shadow-sm">
+                        {emprendimiento.nombre ? emprendimiento.nombre.charAt(0).toUpperCase() : <IconStore className="w-8 h-8" />}
+                      </div>
+                    )}
 
                     {/* Foto del Vendedor (Al hacer clic abre el perfil directamente) */}
                     <button
@@ -625,12 +559,12 @@ export default function Ficha() {
                 <div className="flex items-center gap-2 shrink-0 flex-wrap">
                   <div className="flex items-center gap-1 px-3 py-1 rounded-full liquid-glass-badge border border-amber-300/40 text-amber-700 font-heading text-xs font-bold shadow-xs">
                     <IconStar className="w-3.5 h-3.5 text-amber-500" />
-                    <span>{emprendimiento.calificacion ? Number(emprendimiento.calificacion).toFixed(1) : '5.0'}</span>
+                    <span>{emprendimiento.calificacion && (emprendimiento.totalResenas > 0 || emprendimiento.resenas?.length > 0) ? Number(emprendimiento.calificacion).toFixed(1) : 'Nuevo'}</span>
                     <span className="text-text-muted font-normal">({emprendimiento.totalResenas || emprendimiento.resenas?.length || 0})</span>
                   </div>
                   <div className="flex items-center gap-1 px-3 py-1 rounded-full liquid-glass text-text-secondary font-heading text-xs font-semibold border border-white/60 shadow-xs">
                     <IconClock className="w-3.5 h-3.5 text-primary" />
-                    <span>Entrega: {emprendimiento.tiempoEntrega || '~4 min'}</span>
+                    <span>Entrega: {emprendimiento.tiempoEntrega || 'Inmediata'}</span>
                   </div>
 
                   {/* Botón de Favorito */}
@@ -732,11 +666,18 @@ export default function Ficha() {
                           <div>
                             {/* Product Image */}
                             <div className="relative h-40 w-full overflow-hidden bg-surface-container">
-                              <img
-                                src={prod.imagenUrl || emprendimiento.imagenUrl || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&auto=format&fit=crop&q=80'}
-                                alt={prod.nombre}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              />
+                              {(prod.imagenUrl || emprendimiento.imagenUrl) ? (
+                                <img
+                                  src={prod.imagenUrl || emprendimiento.imagenUrl}
+                                  alt={prod.nombre}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 text-slate-400 group-hover:scale-105 transition-transform duration-300">
+                                  <span className="material-symbols-outlined text-4xl mb-1 text-primary/60">local_mall</span>
+                                  <span className="text-[10px] font-heading font-bold text-slate-500 dark:text-slate-400">CampusVenta</span>
+                                </div>
+                              )}
                               {prod.badge && (
                                 <span className="absolute top-2 left-2 liquid-glass-crimson text-white font-heading text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
                                   {prod.badge}
@@ -915,12 +856,18 @@ export default function Ficha() {
                 <div className="flex items-center gap-3 liquid-glass p-2 px-3.5 rounded-2xl border border-white/70 shadow-xs shrink-0 self-start sm:self-auto">
                   <div className="text-center">
                     <span className="font-heading text-xl font-extrabold text-text-main leading-none block">
-                      {emprendimiento.calificacion ? Number(emprendimiento.calificacion).toFixed(1) : '5.0'}
+                      {emprendimiento.calificacion && (emprendimiento.totalResenas > 0 || emprendimiento.resenas?.length > 0)
+                        ? Number(emprendimiento.calificacion).toFixed(1)
+                        : '—'}
                     </span>
                     <div className="flex items-center justify-center gap-0.5 text-amber-500 mt-0.5">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <IconStar key={star} className="w-2.5 h-2.5 text-amber-500" />
-                      ))}
+                      {[1, 2, 3, 4, 5].map((star) => {
+                        const hasScore = emprendimiento.calificacion && (emprendimiento.totalResenas > 0 || emprendimiento.resenas?.length > 0);
+                        const isFilled = hasScore && star <= Math.round(emprendimiento.calificacion);
+                        return (
+                          <IconStar key={star} className={`w-2.5 h-2.5 ${isFilled ? 'text-amber-500' : 'text-gray-300'}`} />
+                        );
+                      })}
                     </div>
                   </div>
                   <div className="border-l border-border/60 pl-2.5 text-xs text-text-secondary">
@@ -1164,17 +1111,17 @@ export default function Ficha() {
             nombre: emprendimiento.vendedorNombre || emprendimiento.nombre,
             avatar: sellerAvatar,
             rol: 'vendedor',
-            carrera: emprendimiento.carreraCiclo || 'Ing. Sistemas',
+            carrera: emprendimiento.carreraCiclo || 'Comunidad UTP',
             ciclo: 'Campus Piura',
-            bio: emprendimiento.descripcion || 'Vendedor oficial verificado en Campus UTP Piura.',
-            torreHabitual: emprendimiento.torre || 'Torre A',
+            bio: emprendimiento.descripcion || 'Vendedor oficial en Campus UTP Piura.',
+            torreHabitual: emprendimiento.torre || 'Campus UTP',
             piso: emprendimiento.piso || '',
             emprendimientoId: emprendimiento.id,
             tiendaNombre: emprendimiento.nombre,
             redesSociales: [
-              { id: '1', plataforma: 'whatsapp', handle: emprendimiento.whatsapp || emprendimiento.telefono || '972341311', visible: true },
-              { id: '2', plataforma: 'instagram', handle: (emprendimiento.vendedorNombre || emprendimiento.nombre).toLowerCase().replace(/\s+/g, '.'), visible: true },
-              { id: '3', plataforma: 'tiktok', handle: `${(emprendimiento.vendedorNombre || emprendimiento.nombre).toLowerCase().replace(/\s+/g, '_')}_utp`, visible: true },
+              ...(emprendimiento.whatsapp || emprendimiento.telefono ? [{ id: '1', plataforma: 'whatsapp', handle: emprendimiento.whatsapp || emprendimiento.telefono, visible: true }] : []),
+              ...(emprendimiento.instagram ? [{ id: '2', plataforma: 'instagram', handle: emprendimiento.instagram, visible: true }] : []),
+              ...(emprendimiento.tiktok ? [{ id: '3', plataforma: 'tiktok', handle: emprendimiento.tiktok, visible: true }] : []),
             ],
           }}
           isOpen={showSellerModal}

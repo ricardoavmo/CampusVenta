@@ -29,56 +29,40 @@ export default function Navbar({ onSearch, showSearch = false, initialSearch = '
     }
   };
 
+  const isAdmin = user?.rol?.toUpperCase() === 'ADMIN';
+
   return (
     <header className="sticky top-0 z-40 liquid-glass border-b border-white/60 shadow-sm">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3">
-        {/* Brand Logo & Campus Tag */}
+        {/* Brand Logo */}
         <div className="flex items-center gap-2.5 shrink-0">
-          <Link to="/" className="flex items-center gap-2 text-decoration-none group">
+          <Link to={isAdmin ? "/admin" : "/"} className="flex items-center gap-2 text-decoration-none group">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl liquid-glass-crimson flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
-              <IconStore className="w-5 h-5 sm:w-6 sm:h-6" />
+              {isAdmin ? (
+                <span className="material-symbols-outlined text-xl sm:text-2xl">admin_panel_settings</span>
+              ) : (
+                <IconStore className="w-5 h-5 sm:w-6 sm:h-6" />
+              )}
             </div>
-            <span className="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-primary">
-              Campus<span className="text-secondary">Venta</span>
-            </span>
+            <div className="flex flex-col">
+              <span className="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-primary leading-tight">
+                Campus<span className="text-secondary">Venta</span>
+              </span>
+              {isAdmin && (
+                <span className="text-[9px] font-heading font-black tracking-widest text-[#BA122D] uppercase">
+                  Consola Auditora
+                </span>
+              )}
+            </div>
           </Link>
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass text-primary font-heading font-bold text-xs uppercase tracking-wider border border-primary/20 shadow-xs">
-            <IconSchool className="w-3.5 h-3.5 text-primary" />
-            <span>UTP Sede Piura</span>
-          </span>
         </div>
 
-        {/* Center Navigation Links (Desktop) */}
-        <nav className="hidden lg:flex items-center gap-1 bg-surface-container/60 p-1.5 rounded-full border border-border">
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) =>
-              `px-4 py-1.5 rounded-full text-xs font-heading font-bold transition-all text-decoration-none ${
-                isActive
-                  ? 'bg-dark text-white shadow-sm'
-                  : 'text-text-secondary hover:text-text-main hover:bg-surface-container'
-              }`
-            }
-          >
-            Explorar
-          </NavLink>
-          <NavLink
-            to="/pedidos"
-            className={({ isActive }) =>
-              `flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-heading font-bold transition-all text-decoration-none ${
-                isActive
-                  ? 'bg-dark text-white shadow-sm'
-                  : 'text-text-secondary hover:text-text-main hover:bg-surface-container'
-              }`
-            }
-          >
-            <span className="material-symbols-outlined text-sm text-primary">favorite</span>
-            <span>Mis Pedidos</span>
-          </NavLink>
-          {user?.rol === 'vendedor' && (
+        {/* Center Navigation Links (Desktop) - Solo para Estudiantes */}
+        {!isAdmin ? (
+          <nav className="hidden lg:flex items-center gap-1 bg-surface-container/60 p-1.5 rounded-full border border-border">
             <NavLink
-              to="/panel"
+              to="/"
+              end
               className={({ isActive }) =>
                 `px-4 py-1.5 rounded-full text-xs font-heading font-bold transition-all text-decoration-none ${
                   isActive
@@ -87,25 +71,62 @@ export default function Navbar({ onSearch, showSearch = false, initialSearch = '
                 }`
               }
             >
-              Mi Panel
+              Explorar
             </NavLink>
-          )}
-          <NavLink
-            to="/perfil"
-            className={({ isActive }) =>
-              `px-4 py-1.5 rounded-full text-xs font-heading font-bold transition-all text-decoration-none ${
-                isActive
-                  ? 'bg-dark text-white shadow-sm'
-                  : 'text-text-secondary hover:text-text-main hover:bg-surface-container'
-              }`
-            }
-          >
-            Perfil
-          </NavLink>
-        </nav>
+            <NavLink
+              to="/pedidos"
+              className={({ isActive }) =>
+                `flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-heading font-bold transition-all text-decoration-none ${
+                  isActive
+                    ? 'bg-dark text-white shadow-sm'
+                    : 'text-text-secondary hover:text-text-main hover:bg-surface-container'
+                }`
+              }
+            >
+              <span className="material-symbols-outlined text-sm text-primary">favorite</span>
+              <span>Mis Pedidos</span>
+            </NavLink>
+            {user?.rol?.toUpperCase() === 'VENDEDOR' && (
+              <NavLink
+                to="/panel"
+                className={({ isActive }) =>
+                  `px-4 py-1.5 rounded-full text-xs font-heading font-bold transition-all text-decoration-none ${
+                    isActive
+                      ? 'bg-dark text-white shadow-sm'
+                      : 'text-text-secondary hover:text-text-main hover:bg-surface-container'
+                  }`
+                }
+              >
+                Mi Panel
+              </NavLink>
+            )}
+            <NavLink
+              to="/perfil"
+              className={({ isActive }) =>
+                `px-4 py-1.5 rounded-full text-xs font-heading font-bold transition-all text-decoration-none ${
+                  isActive
+                    ? 'bg-dark text-white shadow-sm'
+                    : 'text-text-secondary hover:text-text-main hover:bg-surface-container'
+                }`
+              }
+            >
+              Perfil
+            </NavLink>
+          </nav>
+        ) : (
+          <div className="hidden sm:flex items-center gap-2">
+            <Link
+              to="/admin"
+              className="px-3.5 py-1.5 rounded-full bg-[#BA122D]/10 hover:bg-[#BA122D]/20 text-[#BA122D] border border-[#BA122D]/20 text-xs font-heading font-bold flex items-center gap-1.5 transition-colors"
+            >
+              <span className="material-symbols-outlined text-sm">dashboard</span>
+              <span>Ir al Panel de Administración</span>
+            </Link>
+          </div>
+        )}
 
-        {/* Quick Search if enabled */}
-        {showSearch && (
+        {/* Quick Search if enabled (Solo Estudiantes) */}
+        {!isAdmin && showSearch && (
           <div className="hidden xl:flex items-center flex-1 max-w-xs mx-2">
             <form onSubmit={handleSearchSubmit} className="w-full flex items-center bg-surface-container rounded-full px-3.5 py-1 border border-border">
               <span className="material-symbols-outlined text-text-muted mr-1.5 text-lg">search</span>
@@ -120,7 +141,7 @@ export default function Navbar({ onSearch, showSearch = false, initialSearch = '
           </div>
         )}
 
-        {/* Right Header Status Actions (Botón de configuración y botón de logout o ingresar) */}
+        {/* Right Header Status Actions */}
         <div className="flex items-center gap-2 shrink-0">
           <Link
             to="/configuracion"
@@ -135,7 +156,7 @@ export default function Navbar({ onSearch, showSearch = false, initialSearch = '
               type="button"
               onClick={() => {
                 logout();
-                navigate('/login');
+                navigate(isAdmin ? '/admin/login' : '/login', { replace: true });
               }}
               title="Cerrar sesión"
               className="w-9 h-9 sm:w-10 sm:h-10 rounded-full liquid-glass border border-white/80 text-text-muted hover:text-red-600 hover:border-red-300 hover:bg-white transition-all flex items-center justify-center shadow-xs active:scale-95"

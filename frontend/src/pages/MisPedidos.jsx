@@ -19,55 +19,25 @@ export default function MisPedidos() {
   const [loading, setLoading] = useState(true);
   const [favoritesIds, setFavoritesIds] = useState([]);
 
-  // Pedidos de muestra / persistidos
-  const [pedidos] = useState([
-    {
-      id: 'PED-1082',
-      vendedorNombre: 'Valeria Mendoza',
-      tiendaNombre: 'SweetHub UTP',
-      producto: '2x Brownies Melcochudos de Chocolate',
-      total: 9.00,
-      torre: 'Torre A',
-      piso: 'Piso 3',
-      fecha: 'Hoy, 10:20 AM (Receso)',
-      estado: 'Entregado en aula',
-      whatsapp: '51972341311',
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'
-    },
-    {
-      id: 'PED-1049',
-      vendedorNombre: 'Carlos Morales',
-      tiendaNombre: 'Bajones & Snacks UTP',
-      producto: '1x Empanada de Pollo al Horno + Chicha',
-      total: 6.50,
-      torre: 'Torre B',
-      piso: 'Piso 2',
-      fecha: 'Ayer, 4:15 PM',
-      estado: 'Entregado en bancas',
-      whatsapp: '51987654321',
-      avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100'
+  // Pedidos del usuario (persistidos localmente o coordinados en campus)
+  const [pedidos, setPedidos] = useState(() => {
+    try {
+      const saved = localStorage.getItem('campusventa_pedidos');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
     }
-  ]);
+  });
 
-  // Reseñas emitidas
-  const [misResenas] = useState([
-    {
-      id: 1,
-      tiendaNombre: 'SweetHub UTP',
-      calificacion: 5,
-      comentario: 'Los brownies me salvaron durante el parcial de Cálculo en Torre A. Llegaron calentitos en menos de 3 minutos.',
-      fecha: 'Hace 2 días',
-      verificado: true
-    },
-    {
-      id: 2,
-      tiendaNombre: 'TecnoCampus Cables',
-      calificacion: 5,
-      comentario: 'Compré un cable Tipo C para cargar mi laptop en biblioteca. Me salvó la vida académica 100%.',
-      fecha: 'Hace 1 semana',
-      verificado: true
+  // Reseñas emitidas por el estudiante
+  const [misResenas, setMisResenas] = useState(() => {
+    try {
+      const saved = localStorage.getItem('campusventa_mis_resenas');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
     }
-  ]);
+  });
 
   useEffect(() => {
     const saved = localStorage.getItem('campusventa_favoritos');
@@ -75,10 +45,10 @@ export default function MisPedidos() {
       try {
         setFavoritesIds(JSON.parse(saved));
       } catch {
-        setFavoritesIds([1, 2]);
+        setFavoritesIds([]);
       }
     } else {
-      setFavoritesIds([1, 2]);
+      setFavoritesIds([]);
     }
 
     async function loadStores() {
@@ -132,7 +102,7 @@ export default function MisPedidos() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-bg text-text-main font-body antialiased pb-32 sm:pb-16 selection:bg-primary/20">
+    <div className="min-h-screen flex flex-col theme-bg-canvas text-text-main font-body antialiased pb-32 sm:pb-16 selection:bg-primary/20">
       <Navbar />
 
       <main className="max-w-[1280px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
@@ -255,11 +225,17 @@ export default function MisPedidos() {
                     <div>
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3">
-                          <img
-                            src={store.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
-                            alt={store.vendedorNombre || store.nombre}
-                            className="w-12 h-12 rounded-2xl object-cover ring-2 ring-primary/20 shadow-xs"
-                          />
+                          {store.avatarUrl ? (
+                            <img
+                              src={store.avatarUrl}
+                              alt={store.vendedorNombre || store.nombre}
+                              className="w-12 h-12 rounded-2xl object-cover ring-2 ring-primary/20 shadow-xs"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary to-orange-400 text-white font-heading font-extrabold text-lg flex items-center justify-center shadow-xs shrink-0">
+                              {store.nombre ? store.nombre.charAt(0).toUpperCase() : 'T'}
+                            </div>
+                          )}
                           <div>
                             <h3 className="font-heading font-bold text-base text-text-main group-hover:text-primary transition-colors">
                               {store.nombre}
@@ -341,103 +317,151 @@ export default function MisPedidos() {
         {/* TAB 2: HISTORIAL DE PEDIDOS */}
         {activeTab === 'pedidos' && (
           <section className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {pedidos.map((ped) => (
-                <div
-                  key={ped.id}
-                  className="liquid-glass-card rounded-3xl p-5 border border-white/80 shadow-xs flex flex-col justify-between gap-4"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={ped.avatarUrl}
-                        alt={ped.tiendaNombre}
-                        className="w-11 h-11 rounded-2xl object-cover ring-2 ring-primary/20 shadow-xs"
-                      />
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-[10px] text-text-muted font-bold">
-                            {ped.id}
-                          </span>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full liquid-glass-emerald font-heading text-[10px] font-bold">
-                            <IconCheck className="w-2.5 h-2.5 inline mr-1 text-emerald-700" />
-                            <span>{ped.estado}</span>
-                          </span>
+            {pedidos.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {pedidos.map((ped) => (
+                  <div
+                    key={ped.id}
+                    className="liquid-glass-card rounded-3xl p-5 border border-white/80 shadow-xs flex flex-col justify-between gap-4"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        {ped.avatarUrl ? (
+                          <img
+                            src={ped.avatarUrl}
+                            alt={ped.tiendaNombre}
+                            className="w-11 h-11 rounded-2xl object-cover ring-2 ring-primary/20 shadow-xs"
+                          />
+                        ) : (
+                          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-primary to-orange-400 text-white font-heading font-extrabold text-base flex items-center justify-center shadow-xs shrink-0">
+                            {ped.tiendaNombre ? ped.tiendaNombre.charAt(0).toUpperCase() : 'P'}
+                          </div>
+                        )}
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-[10px] text-text-muted font-bold">
+                              {ped.id}
+                            </span>
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full liquid-glass-emerald font-heading text-[10px] font-bold">
+                              <IconCheck className="w-2.5 h-2.5 inline mr-1 text-emerald-700" />
+                              <span>{ped.estado}</span>
+                            </span>
+                          </div>
+                          <h3 className="font-heading font-bold text-base text-text-main">
+                            {ped.tiendaNombre}
+                          </h3>
+                          <p className="text-xs text-text-secondary">
+                            {ped.producto}
+                          </p>
                         </div>
-                        <h3 className="font-heading font-bold text-base text-text-main">
-                          {ped.tiendaNombre}
-                        </h3>
-                        <p className="text-xs text-text-secondary">
-                          {ped.producto}
-                        </p>
                       </div>
+
+                      <span className="font-heading font-extrabold text-base text-primary">
+                        S/ {Number(ped.total || 0).toFixed(2)}
+                      </span>
                     </div>
 
-                    <span className="font-heading font-extrabold text-base text-primary">
-                      S/ {ped.total.toFixed(2)}
-                    </span>
-                  </div>
-
-                  <div className="liquid-glass p-3 rounded-2xl border border-white/60 flex items-center justify-between text-xs text-text-secondary">
-                    <div className="flex items-center gap-1.5">
-                      <IconLocation className="w-3.5 h-3.5 text-primary" />
-                      <span>{ped.torre} · {ped.piso}</span>
+                    <div className="liquid-glass p-3 rounded-2xl border border-white/60 flex items-center justify-between text-xs text-text-secondary">
+                      <div className="flex items-center gap-1.5">
+                        <IconLocation className="w-3.5 h-3.5 text-primary" />
+                        <span>{ped.torre} · {ped.piso}</span>
+                      </div>
+                      <span className="text-text-muted text-[11px]">{ped.fecha}</span>
                     </div>
-                    <span className="text-text-muted text-[11px]">{ped.fecha}</span>
-                  </div>
 
-                  <div className="flex items-center justify-end gap-2 pt-1 border-t border-border/40">
-                    <a
-                      href={`https://wa.me/${ped.whatsapp}?text=${encodeURIComponent(
-                        `¡Hola ${ped.vendedorNombre}! Quisiera repetir el pedido que te hice anteriormente.`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 liquid-glass-crimson hover:brightness-110 text-white text-xs font-heading font-bold rounded-full transition-all flex items-center gap-1.5 shadow-xs text-decoration-none"
-                    >
-                      <IconWhatsApp className="w-3.5 h-3.5 text-white" />
-                      <span>Repedir por WhatsApp</span>
-                    </a>
+                    {ped.whatsapp && (
+                      <div className="flex items-center justify-end gap-2 pt-1 border-t border-border/40">
+                        <a
+                          href={`https://wa.me/${ped.whatsapp}?text=${encodeURIComponent(
+                            `¡Hola ${ped.vendedorNombre || 'compañero'}! Quisiera coordinar un nuevo pedido en el campus.`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 liquid-glass-crimson hover:brightness-110 text-white text-xs font-heading font-bold rounded-full transition-all flex items-center gap-1.5 shadow-xs text-decoration-none"
+                        >
+                          <IconWhatsApp className="w-3.5 h-3.5 text-white" />
+                          <span>Repedir por WhatsApp</span>
+                        </a>
+                      </div>
+                    )}
                   </div>
+                ))}
+              </div>
+            ) : (
+              <div className="liquid-glass-card rounded-3xl p-10 border border-white/80 text-center space-y-3 max-w-md mx-auto shadow-xs">
+                <div className="w-12 h-12 rounded-full liquid-glass flex items-center justify-center text-text-muted mx-auto">
+                  <span className="material-symbols-outlined text-2xl text-text-muted">receipt_long</span>
                 </div>
-              ))}
-            </div>
+                <h3 className="font-heading font-bold text-base text-text-main">
+                  Aún no tienes pedidos registrados
+                </h3>
+                <p className="text-xs text-text-secondary leading-relaxed">
+                  Coordina tus compras por WhatsApp desde la ficha de cada emprendimiento para realizar tus pedidos en el campus.
+                </p>
+                <Link
+                  to="/"
+                  className="inline-block px-5 py-2.5 rounded-full liquid-glass-crimson text-white text-xs font-heading font-bold shadow-xs text-decoration-none hover:brightness-110 transition-all"
+                >
+                  Explorar Emprendimientos
+                </Link>
+              </div>
+            )}
           </section>
         )}
 
         {/* TAB 3: MIS RESEÑAS */}
         {activeTab === 'resenas' && (
           <section className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {misResenas.map((res) => (
-                <div
-                  key={res.id}
-                  className="liquid-glass-card rounded-3xl p-5 border border-white/80 shadow-xs space-y-3"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-heading font-bold text-sm text-text-main">
-                        {res.tiendaNombre}
-                      </h3>
-                      <span className="text-[11px] text-text-muted">{res.fecha}</span>
+            {misResenas.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {misResenas.map((res) => (
+                  <div
+                    key={res.id}
+                    className="liquid-glass-card rounded-3xl p-5 border border-white/80 shadow-xs space-y-3"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-heading font-bold text-sm text-text-main">
+                          {res.tiendaNombre}
+                        </h3>
+                        <span className="text-[11px] text-text-muted">{res.fecha}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-amber-500 font-heading font-bold text-xs liquid-glass-badge px-2.5 py-0.5 rounded-full border border-amber-200">
+                        <IconStar className="w-3.5 h-3.5 text-amber-500" />
+                        <span>{res.calificacion}.0</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1 text-amber-500 font-heading font-bold text-xs liquid-glass-badge px-2.5 py-0.5 rounded-full border border-amber-200">
-                      <IconStar className="w-3.5 h-3.5 text-amber-500" />
-                      <span>{res.calificacion}.0</span>
+
+                    <p className="text-xs text-text-secondary leading-relaxed liquid-glass p-3 rounded-2xl border border-white/60">
+                      "{res.comentario}"
+                    </p>
+
+                    <div className="flex items-center gap-1.5 text-[11px] text-emerald-700 font-heading font-bold">
+                      <IconVerified className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Reseña verificada con carné UTP</span>
                     </div>
                   </div>
-
-                  <p className="text-xs text-text-secondary leading-relaxed liquid-glass p-3 rounded-2xl border border-white/60">
-                    "{res.comentario}"
-                  </p>
-
-                  <div className="flex items-center gap-1.5 text-[11px] text-emerald-700 font-heading font-bold">
-                    <IconVerified className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Reseña verificada con carné UTP</span>
-                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="liquid-glass-card rounded-3xl p-10 border border-white/80 text-center space-y-3 max-w-md mx-auto shadow-xs">
+                <div className="w-12 h-12 rounded-full liquid-glass flex items-center justify-center text-text-muted mx-auto">
+                  <span className="material-symbols-outlined text-2xl text-text-muted">reviews</span>
                 </div>
-              ))}
-            </div>
+                <h3 className="font-heading font-bold text-base text-text-main">
+                  Aún no has escrito ninguna reseña
+                </h3>
+                <p className="text-xs text-text-secondary leading-relaxed">
+                  Apoya a tus compañeros calificando sus productos y atención luego de recibir tus pedidos en el campus.
+                </p>
+                <Link
+                  to="/"
+                  className="inline-block px-5 py-2.5 rounded-full liquid-glass-crimson text-white text-xs font-heading font-bold shadow-xs text-decoration-none hover:brightness-110 transition-all"
+                >
+                  Ver Tiendas en Campus
+                </Link>
+              </div>
+            )}
           </section>
         )}
       </main>

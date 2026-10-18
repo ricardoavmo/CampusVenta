@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getEmprendimientos } from '../services/api';
 import {
@@ -56,9 +56,9 @@ export default function Home() {
   const [favoritesIds, setFavoritesIds] = useState(() => {
     try {
       const saved = localStorage.getItem('campusventa_favoritos');
-      return saved ? JSON.parse(saved) : [1, 2];
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return [1, 2];
+      return [];
     }
   });
   const [toastMessage, setToastMessage] = useState(null);
@@ -89,23 +89,35 @@ export default function Home() {
   };
 
   const getProductWhatsAppUrl = (prod) => {
-    const rawPhone = prod.whatsapp || prod.telefono || '972341311';
+    const rawPhone = prod.whatsapp || prod.telefono || '';
     let cleanNumber = rawPhone.replace(/\D/g, '');
     if (cleanNumber.length === 9) {
       cleanNumber = '51' + cleanNumber;
     }
-    const texto = `¡Hola ${prod.vendedorNombre || prod.tiendaNombre}! Vi tu producto "${prod.nombre}" en CampusVenta UTP. Deseo pedirlo (S/ ${Number(prod.precio).toFixed(2)}). ¿Estás en ${prod.torre} ${prod.piso} para coordinar la entrega?`;
-    return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(texto)}`;
+    const texto = `¡Hola ${prod.vendedorNombre || prod.tiendaNombre || 'compañero'}! Vi tu producto "${prod.nombre}" en CampusVenta UTP. Deseo pedirlo (S/ ${Number(prod.precio).toFixed(2)}). ¿Estás en ${prod.torre || 'el campus'} ${prod.piso || ''} para coordinar la entrega?`;
+    return cleanNumber ? `https://wa.me/${cleanNumber}?text=${encodeURIComponent(texto)}` : '#';
   };
 
+  // Sincronización de Búsqueda con Parámetros URL (?search=...)
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlInitialSearch = searchParams.get('search') || '';
+
   // Filtros
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(urlInitialSearch);
   const [selectedCategoria, setSelectedCategoria] = useState('TODOS');
   const [selectedTorre, setSelectedTorre] = useState('Todas las zonas');
   const [onlyDisponibles, setOnlyDisponibles] = useState(false);
   const [filtroRapido5Min, setFiltroRapido5Min] = useState(false);
   const [filtroMaxPrecio, setFiltroMaxPrecio] = useState(25);
   const [showMobileFilterModal, setShowMobileFilterModal] = useState(false);
+
+  // Sincronizar si cambia el query param en la URL
+  useEffect(() => {
+    const q = searchParams.get('search');
+    if (q !== null && q !== searchTerm) {
+      setSearchTerm(q);
+    }
+  }, [searchParams]);
 
   // Modal de Vista Previa de Perfil del Vendedor
   const [selectedSellerProfile, setSelectedSellerProfile] = useState(null);
@@ -117,23 +129,29 @@ export default function Home() {
       e.stopPropagation();
     }
     const nombre = emp.vendedorNombre || emp.nombre;
-    const cleanUser = nombre.toLowerCase().replace(/\s+/g, '.');
+    const redes = [];
+    if (emp.telefono || emp.whatsapp) {
+      redes.push({ id: '1', plataforma: 'whatsapp', handle: emp.telefono || emp.whatsapp, visible: true });
+    }
+    if (emp.instagram) {
+      redes.push({ id: '2', plataforma: 'instagram', handle: emp.instagram, visible: true });
+    }
+    if (emp.tiktok) {
+      redes.push({ id: '3', plataforma: 'tiktok', handle: emp.tiktok, visible: true });
+    }
+
     setSelectedSellerProfile({
       nombre: nombre,
       avatar: emp.avatarUrl,
       rol: 'vendedor',
-      carrera: emp.vendedorCarrera || 'Ing. Sistemas',
-      ciclo: emp.vendedorCiclo || '6to Ciclo',
-      bio: emp.descripcion || `Emprendimiento oficial en campus UTP Piura. Encuéntranos en ${emp.torre} - ${emp.piso}.`,
-      torreHabitual: emp.torre || 'Torre A',
+      carrera: emp.carrera || emp.vendedorCarrera || 'Comunidad UTP',
+      ciclo: emp.ciclo || emp.vendedorCiclo || 'Campus Piura',
+      bio: emp.descripcion || `Emprendimiento en campus UTP Piura. Encuéntranos en ${emp.torre || 'el campus'} - ${emp.piso || ''}.`,
+      torreHabitual: emp.torre || 'Campus UTP',
       piso: emp.piso || '',
       emprendimientoId: emp.id,
       tiendaNombre: emp.nombre,
-      redesSociales: [
-        { id: '1', plataforma: 'whatsapp', handle: emp.telefono || '972341311', visible: true },
-        { id: '2', plataforma: 'instagram', handle: cleanUser, visible: true },
-        { id: '3', plataforma: 'tiktok', handle: `${cleanUser}_utp`, visible: true },
-      ],
+      redesSociales: redes,
     });
     setShowSellerModal(true);
   };
@@ -145,49 +163,24 @@ export default function Home() {
     if (onlyDisponibles) count++;
     if (filtroRapido5Min) count++;
     if (filtroMaxPrecio < 25) count++;
+    if (searchTerm.trim()) count++;
     return count;
-  }, [selectedCategoria, selectedTorre, onlyDisponibles, filtroRapido5Min, filtroMaxPrecio]);
+  }, [selectedCategoria, selectedTorre, onlyDisponibles, filtroRapido5Min, filtroMaxPrecio, searchTerm]);
 
   const fetchEmprendimientos = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getEmprendimientos();
-      let combined = Array.isArray(data) ? [...data] : [];
-
-      // Sincronizar con puestos locales registrados por el usuario
-      try {
-        const saved = localStorage.getItem('campusventa_mis_puestos');
-        if (saved) {
-          const localList = JSON.parse(saved);
-          if (Array.isArray(localList)) {
-            localList.forEach((lp) => {
-              const existingIdx = combined.findIndex((e) => String(e.id) === String(lp.id));
-              if (existingIdx >= 0) {
-                combined[existingIdx] = { ...combined[existingIdx], ...lp };
-              } else {
-                combined.unshift(lp);
-              }
-            });
-          }
-        }
-      } catch {}
-
-      setEmprendimientos(combined);
+      const data = await getEmprendimientos({
+        search: searchTerm.trim() || undefined,
+        categoria: selectedCategoria !== 'TODOS' ? selectedCategoria : undefined,
+        disponible: onlyDisponibles ? true : undefined,
+      });
+      setEmprendimientos(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error('Error al cargar emprendimientos:', err);
-      try {
-        const saved = localStorage.getItem('campusventa_mis_puestos');
-        if (saved) {
-          setEmprendimientos(JSON.parse(saved));
-          setLoading(false);
-          return;
-        }
-      } catch {}
-      setError(
-        err.response?.data?.message ||
-        'No pudimos conectar con el servidor de CampusVenta. Verifica que el backend esté en ejecución.'
-      );
+      console.error('[CampusVenta] Error al obtener datos del backend:', err);
+      setEmprendimientos([]);
+      setError('No se pudo conectar con el servidor.');
     } finally {
       setLoading(false);
     }
@@ -197,13 +190,36 @@ export default function Home() {
     fetchEmprendimientos();
   }, [selectedCategoria, onlyDisponibles]);
 
+  const handleSearchChange = (val) => {
+    setSearchTerm(val);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (val && val.trim()) {
+        next.set('search', val.trim());
+      } else {
+        next.delete('search');
+      }
+      return next;
+    }, { replace: true });
+  };
+
   const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    fetchEmprendimientos();
+    if (e) e.preventDefault();
+    if (searchTerm.trim()) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('search', searchTerm.trim());
+        return next;
+      }, { replace: true });
+    }
+    const feedEl = document.getElementById('productos-feed');
+    if (feedEl) {
+      feedEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const handleResetFilters = () => {
-    setSearchTerm('');
+    handleSearchChange('');
     setSelectedCategoria('TODOS');
     setSelectedTorre('Todas las zonas');
     setOnlyDisponibles(false);
@@ -214,7 +230,8 @@ export default function Home() {
   // Extraer todos los productos aplanados con los datos de su respectiva tienda
   const allProducts = useMemo(() => {
     const list = [];
-    emprendimientos.forEach((emp) => {
+    const storesSource = Array.isArray(emprendimientos) ? emprendimientos : [];
+    storesSource.forEach((emp) => {
       // Combinar productos del backend con productos creados localmente
       let storeProds = Array.isArray(emp.productos) ? [...emp.productos] : [];
       try {
@@ -245,7 +262,7 @@ export default function Home() {
             nombre: prod.nombre,
             descripcion: prod.descripcion || emp.descripcion,
             precio: Number(prod.precio) || Number(emp.precioDesde) || 0,
-            imagenUrl: prod.imagenUrl || emp.imagenUrl || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&auto=format&fit=crop&q=80',
+            imagenUrl: prod.imagenUrl || emp.imagenUrl || null,
             badge: prod.badge || fallbackBadge,
             stock: prod.stock,
             categoria: (prod.categoria || emp.categoria || 'COMIDA').toUpperCase(),
@@ -273,7 +290,7 @@ export default function Home() {
           nombre: emp.nombre,
           descripcion: emp.descripcion,
           precio: Number(emp.precioDesde) || 4.5,
-          imagenUrl: emp.imagenUrl || 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&auto=format&fit=crop&q=80',
+          imagenUrl: emp.imagenUrl || null,
           badge: emp.calificacion >= 4.8 ? 'Más vendido' : 'Top Ventas',
           stock: null,
           categoria: (emp.categoria || 'COMIDA').toUpperCase(),
@@ -342,15 +359,54 @@ export default function Home() {
         return false;
       }
 
-      // 6. Filtro Búsqueda
-      if (searchTerm.trim()) {
-        const query = searchTerm.toLowerCase();
-        const matchesProd = (prod.nombre || '').toLowerCase().includes(query);
-        const matchesDesc = (prod.descripcion || '').toLowerCase().includes(query);
-        const matchesStore = (prod.tiendaNombre || '').toLowerCase().includes(query);
-        const matchesVendor = (prod.vendedorNombre || '').toLowerCase().includes(query);
-        const matchesCat = (prod.categoria || '').toLowerCase().includes(query);
-        if (!matchesProd && !matchesDesc && !matchesStore && !matchesVendor && !matchesCat) {
+      // 6. Filtro Búsqueda Inteligente Multi-término con sinónimos (sin sensibilidad a tildes o mayúsculas)
+      if (searchTerm && searchTerm.trim()) {
+        const normalize = (str) =>
+          (str || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim();
+
+        const queryNorm = normalize(searchTerm);
+        const tokens = queryNorm.split(/\s+/).filter(Boolean);
+
+        const targetString = normalize(
+          `${prod.nombre || ''} ${prod.descripcion || ''} ${prod.tiendaNombre || ''} ${prod.vendedorNombre || ''} ${prod.categoria || ''} ${prod.torre || ''} ${prod.piso || ''} ${prod.referencia || ''} ${prod.badge || ''}`
+        );
+
+        const SYNONYMS = {
+          burger: ['hamburguesa', 'sandwich', 'pan', 'bajon', 'carne'],
+          burgers: ['hamburguesa', 'sandwich', 'pan', 'bajon', 'carne'],
+          hamburguesa: ['burger', 'sandwich', 'bajon'],
+          sandwich: ['pan', 'triple', 'pollo', 'bajon', 'empanada'],
+          empanada: ['empanadas', 'carne', 'bajon'],
+          empanadas: ['empanada', 'carne', 'bajon'],
+          postre: ['dulce', 'brownie', 'torta', 'galleta', 'alfajor', 'chocolate'],
+          postres: ['dulce', 'brownie', 'torta', 'galleta', 'alfajor', 'chocolate'],
+          dulce: ['postre', 'brownie', 'alfajor', 'chocolate', 'chocobomba'],
+          dulces: ['postre', 'brownie', 'alfajor', 'chocolate', 'chocobomba'],
+          snack: ['comida', 'bajon', 'salchipapa', 'empanada', 'sandwich'],
+          snacks: ['comida', 'bajon', 'salchipapa', 'empanada', 'sandwich'],
+          bajon: ['comida', 'sandwich', 'salchipapa', 'hamburguesa', 'empanada'],
+          bajones: ['comida', 'sandwich', 'salchipapa', 'hamburguesa', 'empanada'],
+          stickers: ['sticker', 'vinil', 'merch', 'accesorio', 'tech'],
+          sticker: ['stickers', 'vinil', 'merch', 'accesorio', 'tech'],
+          cable: ['cables', 'cargador', 'usb', 'tipo c', 'nylon'],
+          cables: ['cable', 'cargador', 'usb', 'tipo c', 'nylon'],
+          apuntes: ['apunte', 'formulario', 'calculo', 'fisica', 'guia', 'tutoria'],
+          tutoria: ['tutorias', 'clase', 'asesoria', 'calculo', 'fisica'],
+          tutorias: ['tutoria', 'clase', 'asesoria', 'calculo', 'fisica'],
+        };
+
+        const allTokensMatch = tokens.every((token) => {
+          if (targetString.includes(token)) return true;
+          const syns = SYNONYMS[token];
+          if (syns && syns.some((syn) => targetString.includes(syn))) return true;
+          return false;
+        });
+
+        if (!allTokensMatch) {
           return false;
         }
       }
@@ -386,7 +442,7 @@ export default function Home() {
       {/* 1. TOP HEADER LIQUID GLASS */}
       <header className="sticky top-0 z-40 liquid-glass border-b border-white/60 shadow-sm transition-all duration-300">
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3">
-          {/* Brand Logo & Campus Tag */}
+          {/* Brand Logo */}
           <div className="flex items-center gap-2.5 shrink-0">
             <Link to="/" className="flex items-center gap-2 text-decoration-none group">
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl liquid-glass-crimson flex items-center justify-center text-white shadow-sm transition-transform duration-300 group-hover:scale-105">
@@ -396,33 +452,43 @@ export default function Home() {
                 Campus<span className="text-secondary">Venta</span>
               </span>
             </Link>
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass text-primary font-heading font-bold text-xs uppercase tracking-wider border border-primary/20 shadow-xs">
-              <IconSchool className="w-3.5 h-3.5 text-primary" />
-              <span>UTP Sede Piura</span>
-            </span>
           </div>
 
           {/* Center Search Bar & Separated Location Dropdown */}
-          <div className="hidden lg:flex items-center flex-1 max-w-xl mx-4 gap-2.5">
+          <div className="hidden lg:flex items-center flex-1 max-w-2xl xl:max-w-3xl mx-4 gap-2.5">
             {/* Standalone Search Bar */}
-            <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center liquid-glass rounded-full px-4 py-2 border border-white/80 shadow-xs transition-all focus-within:ring-2 focus-within:ring-primary/20">
-              <IconSearch className="w-4 h-4 text-text-muted mr-2 shrink-0" />
+            <form onSubmit={handleSearchSubmit} className="flex-1 min-w-0 flex items-center liquid-glass rounded-full pl-3.5 pr-1.5 py-1.5 border border-white/80 shadow-xs transition-all focus-within:ring-2 focus-within:ring-primary/20 gap-2">
+              <button
+                type="button"
+                onClick={handleSearchSubmit}
+                className="text-text-muted hover:text-primary shrink-0 transition-colors cursor-pointer flex items-center justify-center"
+                title="Buscar"
+              >
+                <IconSearch className="w-4 h-4" />
+              </button>
               <input
                 type="text"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="¿Qué se te antoja o necesitas hoy en campus?"
-                className="w-full bg-transparent border-none outline-none font-body text-xs sm:text-sm text-text-main placeholder:text-text-muted"
+                onChange={(e) => handleSearchChange(e.target.value)}
+                placeholder="Buscar brownies, bajones, stickers, apuntes..."
+                className="min-w-0 flex-1 bg-transparent border-none outline-none font-body text-xs sm:text-sm text-text-main placeholder:text-text-muted truncate"
               />
               {searchTerm && (
                 <button
                   type="button"
-                  onClick={() => { setSearchTerm(''); fetchEmprendimientos(); }}
-                  className="p-0.5 text-text-muted hover:text-text-main"
+                  onClick={() => handleSearchChange('')}
+                  className="p-1 text-text-muted hover:text-text-main transition-colors shrink-0"
+                  title="Borrar búsqueda"
                 >
                   <IconClose className="w-3.5 h-3.5" />
                 </button>
               )}
+              <button
+                type="submit"
+                className="px-4 py-1.5 rounded-full liquid-glass-crimson text-white font-heading font-bold text-xs hover:brightness-110 transition-all shrink-0 active:scale-95 shadow-xs whitespace-nowrap"
+              >
+                Buscar
+              </button>
             </form>
 
             {/* Standalone Location Filter Pill */}
@@ -496,24 +562,38 @@ export default function Home() {
 
         {/* Mobile Search Bar */}
         <div className="lg:hidden px-4 pb-3 pt-1">
-          <form onSubmit={handleSearchSubmit} className="w-full flex items-center liquid-glass rounded-2xl px-3.5 py-2 border border-white/80 shadow-xs">
-            <IconSearch className="w-4 h-4 text-text-muted mr-2 shrink-0" />
+          <form onSubmit={handleSearchSubmit} className="w-full flex items-center liquid-glass rounded-2xl pl-3.5 pr-1.5 py-1.5 border border-white/80 shadow-xs gap-2">
+            <button
+              type="button"
+              onClick={handleSearchSubmit}
+              className="text-text-muted hover:text-primary shrink-0 cursor-pointer flex items-center justify-center"
+              title="Buscar"
+            >
+              <IconSearch className="w-4 h-4" />
+            </button>
             <input
               type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar brownies, empanadas, accesorios..."
-              className="w-full bg-transparent border-none outline-none font-body text-xs text-text-main placeholder:text-text-muted"
+              onChange={(e) => handleSearchChange(e.target.value)}
+              placeholder="Buscar en campus..."
+              className="min-w-0 flex-1 bg-transparent border-none outline-none font-body text-xs text-text-main placeholder:text-text-muted truncate"
             />
             {searchTerm && (
               <button
                 type="button"
-                onClick={() => { setSearchTerm(''); fetchEmprendimientos(); }}
-                className="p-1 text-text-muted hover:text-text-main"
+                onClick={() => handleSearchChange('')}
+                className="p-1 text-text-muted hover:text-text-main shrink-0"
+                title="Borrar búsqueda"
               >
                 <IconClose className="w-3.5 h-3.5" />
               </button>
             )}
+            <button
+              type="submit"
+              className="px-3.5 py-1.5 rounded-xl liquid-glass-crimson text-white font-heading font-bold text-xs shrink-0 active:scale-95 shadow-xs whitespace-nowrap"
+            >
+              Buscar
+            </button>
           </form>
         </div>
       </header>
@@ -548,6 +628,35 @@ export default function Home() {
                 Postres caseros, bajones calientes y apuntes entregados directamente en mano entre clases.
               </p>
             </div>
+
+            {/* Quick popular search tags */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-border/40">
+              <span className="text-[11px] font-heading font-bold text-text-muted mr-1 flex items-center gap-1">
+                <span className="material-symbols-outlined text-sm text-primary">local_fire_department</span>
+                <span>Buscar rápido:</span>
+              </span>
+              {['Brownie', 'Burger', 'Stickers', 'Empanadas', 'Cálculo', 'Alfajor', 'Sandwich'].map((tag) => {
+                const isSelected = searchTerm && searchTerm.toLowerCase().includes(tag.toLowerCase());
+                return (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => {
+                      handleSearchChange(tag);
+                      const feedEl = document.getElementById('productos-feed');
+                      if (feedEl) feedEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    className={`text-[11px] font-heading font-semibold px-2.5 py-0.5 rounded-full border transition-all active:scale-95 ${
+                      isSelected
+                        ? 'liquid-glass-crimson text-white border-transparent shadow-xs'
+                        : 'liquid-glass text-text-secondary hover:text-text-main hover:border-primary/40 border-white/70'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
@@ -557,7 +666,7 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mb-2.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
               <h2 className="font-heading text-sm sm:text-base font-bold text-text-main">
                 Activos Ahora en Campus · Más Vendidos
               </h2>
@@ -586,11 +695,17 @@ export default function Home() {
               >
                 <div className="flex items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <img
-                      src={prod.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
-                      alt={prod.tiendaNombre}
-                      className="w-8 h-8 rounded-full object-cover shrink-0 ring-1 ring-primary/20"
-                    />
+                    {prod.avatarUrl ? (
+                      <img
+                        src={prod.avatarUrl}
+                        alt={prod.tiendaNombre}
+                        className="w-8 h-8 rounded-full object-cover shrink-0 ring-1 ring-primary/20"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-heading font-extrabold text-xs flex items-center justify-center shrink-0">
+                        {prod.tiendaNombre ? prod.tiendaNombre.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                    )}
                     <div className="min-w-0 flex-1">
                       <p className="font-heading text-xs font-bold text-text-main truncate group-hover:text-primary transition-colors">
                         {prod.tiendaNombre}
@@ -607,12 +722,18 @@ export default function Home() {
                   </span>
                 </div>
 
-                <div className="mt-2 flex items-center gap-2.5 bg-white/50 p-2 rounded-xl border border-white/60">
-                  <img
-                    src={prod.imagenUrl}
-                    alt={prod.nombre}
-                    className="w-10 h-10 rounded-lg object-cover shrink-0"
-                  />
+                <div className="mt-2 flex items-center gap-2.5 bg-white/50 dark:bg-white/5 p-2 rounded-xl border border-white/60 dark:border-white/10">
+                  {prod.imagenUrl ? (
+                    <img
+                      src={prod.imagenUrl}
+                      alt={prod.nombre}
+                      className="w-10 h-10 rounded-lg object-cover shrink-0"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined text-lg">local_mall</span>
+                    </div>
+                  )}
                   <div className="min-w-0 flex-1">
                     <p className="font-heading text-xs font-bold text-text-main truncate">
                       {prod.nombre}
@@ -758,22 +879,22 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Campus Testimonial Widget */}
+            {/* Campus Info Widget */}
             <div className="liquid-glass-card rounded-3xl p-4 border border-white/80 shadow-xs space-y-2.5">
               <div className="flex items-center gap-2 font-heading text-xs font-bold text-text-main">
                 <IconSparkles className="w-4 h-4 text-amber-500" />
-                <span>Experiencias en Campus Piura</span>
+                <span>Comunidad UTP Piura</span>
               </div>
               <div className="liquid-glass p-3 rounded-xl border border-white/60 space-y-1">
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-bold text-text-main">Carlos M. (Ing. Sistemas)</span>
-                  <span className="text-amber-500 font-bold flex items-center gap-0.5">
-                    <IconStar className="w-3 h-3 text-amber-500" />
-                    <span>5.0</span>
+                  <span className="font-bold text-primary">Entregas en campus</span>
+                  <span className="text-emerald-600 font-bold flex items-center gap-0.5">
+                    <IconCheck className="w-3 h-3 text-emerald-600" />
+                    <span>Verificado</span>
                   </span>
                 </div>
                 <p className="text-xs text-text-secondary leading-relaxed">
-                  "Los brownies me salvaron durante el parcial de Cálculo en Torre B. Entregaron al aula en 3 min."
+                  Coordina tus entregas directamente en Torre A, Torre B o Canchas en recesos y cambios de clase.
                 </p>
               </div>
             </div>
@@ -849,19 +970,49 @@ export default function Home() {
               })}
             </div>
 
-            {/* Feed Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-border/60">
-              <div>
-                <h2 className="font-heading text-xl sm:text-2xl font-bold text-text-main">
-                  Productos y Bajones en el campus
-                </h2>
-                <p className="text-xs text-text-secondary mt-0.5">
-                  Toca cualquier producto para ver su puesto o pulsa "Ver catálogo completo" para explorar todo lo que ofrece la tienda.
-                </p>
+            {/* Feed Header con ancla de scroll y feedback de búsqueda */}
+            <div id="productos-feed" className="scroll-mt-24 space-y-3 pb-2 border-b border-border/60">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h2 className="font-heading text-xl sm:text-2xl font-bold text-text-main flex items-center gap-2">
+                    <span>Productos y Bajones en el campus</span>
+                    {searchTerm.trim() && (
+                      <span className="text-xs px-2.5 py-0.5 rounded-full liquid-glass-crimson text-white font-heading font-bold shadow-xs">
+                        Búsqueda activa
+                      </span>
+                    )}
+                  </h2>
+                  <p className="text-xs text-text-secondary mt-0.5">
+                    Toca cualquier producto para ver su puesto o pulsa "Ver catálogo completo" para explorar todo lo que ofrece la tienda.
+                  </p>
+                </div>
+                <span className="text-xs text-text-muted font-bold font-heading shrink-0">
+                  {filteredProducts.length} {filteredProducts.length === 1 ? 'producto disponible' : 'productos disponibles'}
+                </span>
               </div>
-              <span className="text-xs text-text-muted font-bold font-heading">
-                {filteredProducts.length} productos disponibles
-              </span>
+
+              {/* Banner de búsqueda activa con feedback instantáneo y botón de limpiar */}
+              {searchTerm && searchTerm.trim() && (
+                <div className="flex items-center justify-between gap-2 p-2.5 px-3.5 rounded-2xl liquid-glass border border-primary/30 bg-primary/5 shadow-xs animate-scale-up">
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <span className="material-symbols-outlined text-primary text-base shrink-0">search</span>
+                    <span className="text-xs font-heading font-semibold text-text-main truncate">
+                      Resultados para <span className="font-bold text-primary">"{searchTerm.trim()}"</span>
+                      <span className="ml-1.5 text-text-muted font-normal">
+                        ({filteredProducts.length} {filteredProducts.length === 1 ? 'coincidencia' : 'coincidencias'})
+                      </span>
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleSearchChange('')}
+                    className="inline-flex items-center gap-1 text-[11px] font-heading font-bold text-primary hover:underline shrink-0 p-1"
+                  >
+                    <IconClose className="w-3.5 h-3.5" />
+                    <span>Quitar búsqueda</span>
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* ESTADO 1: CARGANDO */}
@@ -903,9 +1054,24 @@ export default function Home() {
             {!loading && !error && filteredProducts.length === 0 && (
               <div className="liquid-glass-card rounded-3xl p-10 border border-white/80 shadow-sm text-center max-w-lg mx-auto space-y-4">
                 <div className="w-14 h-14 rounded-full liquid-glass text-text-muted mx-auto flex items-center justify-center">
-                  <IconFastfood className="w-7 h-7 text-primary" />
+                  <IconSearch className="w-7 h-7 text-primary" />
                 </div>
-                {hasActiveFilters ? (
+                {searchTerm ? (
+                  <>
+                    <h3 className="font-heading text-lg font-bold text-text-main">
+                      No encontramos nada con "{searchTerm}"
+                    </h3>
+                    <p className="text-xs text-text-secondary max-w-sm mx-auto">
+                      Prueba con términos como <span className="font-bold text-primary">brownie</span>, <span className="font-bold text-primary">burger</span>, <span className="font-bold text-primary">stickers</span>, <span className="font-bold text-primary">apuntes</span> o prueba seleccionando otra zona.
+                    </p>
+                    <button
+                      onClick={() => handleSearchChange('')}
+                      className="px-5 py-2 rounded-full liquid-glass-crimson text-white font-heading font-bold text-xs shadow-xs"
+                    >
+                      Ver todos los productos
+                    </button>
+                  </>
+                ) : hasActiveFilters ? (
                   <>
                     <h3 className="font-heading text-lg font-bold text-text-main">
                       No hay productos con esos filtros
@@ -954,11 +1120,18 @@ export default function Home() {
                       <div>
                         {/* Card Image Cover with Overlays */}
                         <div className="relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
-                          <img
-                            src={prod.imagenUrl}
-                            alt={prod.nombre}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
+                          {prod.imagenUrl ? (
+                            <img
+                              src={prod.imagenUrl}
+                              alt={prod.nombre}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 text-slate-400 group-hover:scale-105 transition-transform duration-300">
+                              <span className="material-symbols-outlined text-4xl mb-1 text-primary/60">storefront</span>
+                              <span className="text-[11px] font-heading font-bold text-slate-500 dark:text-slate-400">CampusVenta UTP</span>
+                            </div>
+                          )}
 
                           {/* Top Left: Badge Más Vendido / Top Ventas / etc. (En reemplazo del precio) */}
                           <div className="absolute top-2.5 left-2.5 z-20">

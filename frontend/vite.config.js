@@ -7,17 +7,43 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'pwa-192x192.svg', 'pwa-512x512.svg'],
+      devOptions: {
+        enabled: true,
+        type: 'module',
+        suppressWarnings: true
+      },
+      includeAssets: ['favicon.svg', 'pwa-192x192.png', 'pwa-512x512.png', 'pwa-192x192.svg', 'pwa-512x512.svg'],
       manifest: {
+        id: '/',
         name: 'CampusVenta | UTP Sede Piura',
         short_name: 'CampusVenta',
         description: 'Marketplace y geolocalización de emprendimientos estudiantiles UTP',
         theme_color: '#A6192E',
         background_color: '#F8FAFC',
         display: 'standalone',
+        display_override: ['standalone', 'window-controls-overlay'],
         orientation: 'portrait-primary',
+        scope: '/',
         start_url: '/',
         icons: [
+          {
+            src: '/pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/pwa-maskable-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
+          },
           {
             src: '/pwa-192x192.svg',
             sizes: '192x192',
@@ -29,12 +55,6 @@ export default defineConfig({
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'any'
-          },
-          {
-            src: '/pwa-512x512.svg',
-            sizes: '512x512',
-            type: 'image/svg+xml',
-            purpose: 'maskable'
           }
         ]
       }
@@ -42,7 +62,13 @@ export default defineConfig({
   ],
   server: {
     port: 5173,
-    host: true
+    host: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      }
+    }
   }
 });
 

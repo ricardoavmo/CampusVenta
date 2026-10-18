@@ -1,8 +1,8 @@
 # CampusVenta – Plataforma Web para Gestión y Visibilidad de Emprendimientos Estudiantiles
 Una solución integral para la geolocalización interna, catálogo en vivo y coordinación de compras entre estudiantes de la Universidad Tecnológica del Perú (UTP Sede Piura).
 
-![Java](https://img.shields.io/badge/Java%2017-ED8B00?style=flat&logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot%203.3-6DB33F?style=flat&logo=springboot&logoColor=white)
+![Java](https://img.shields.io/badge/Java%2021-ED8B00?style=flat&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot%203.4-6DB33F?style=flat&logo=springboot&logoColor=white)
 ![React](https://img.shields.io/badge/React%2018-20232A?style=flat&logo=react&logoColor=61DAFB)
 ![Vite](https://img.shields.io/badge/Vite%205-646CFF?style=flat&logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
@@ -26,7 +26,7 @@ En la comunidad universitaria de la **UTP Sede Piura**, numerosos estudiantes im
 
 ## 🎯 Alcance de esta fase (APF1)
 - **SÍ INCLUYE:**
-  - Desarrollo del backend con API REST en Java 17 y Spring Boot 3.3.
+  - Desarrollo del backend con API REST en Java 21 y Spring Boot 3.4.
   - Persistencia de datos relacionales en PostgreSQL mediante Spring Data JPA y Hibernate.
   - Frontend moderno y responsivo con React 18, Vite y Tailwind CSS adaptado a la identidad visual de UTP.
   - Marketplace en vivo con carrusel infinito, buscador predictivo y filtros combinados por categoría y ubicación física (Torre A, Torre B, Biblioteca, Canchas).
@@ -55,7 +55,7 @@ En la comunidad universitaria de la **UTP Sede Piura**, numerosos estudiantes im
 
 ```text
 📁 CampusVenta/
-├── 📁 backend/                                 # API REST Spring Boot (Java 17)
+├── 📁 backend/                                 # API REST Spring Boot (Java 21)
 │   ├── 📁 src/main/java/pe/edu/utp/campusventa/
 │   │   ├── 📁 config/                          # DataInitializer y configuración CORS
 │   │   ├── 📁 controller/                      # Controladores REST expuestos
@@ -122,7 +122,7 @@ El sistema se compone de 4 entidades y tipos principales relacionados:
 ## 🚀 Cómo Ejecutar el Proyecto
 
 ### Prerrequisitos
-- **Java JDK 17** o superior.
+- **Java JDK 21** o superior.
 - **Node.js 18+** y gestor de paquetes `npm`.
 - Servidor **PostgreSQL** en ejecución en el puerto `5432` con la base de datos `campusventa_db` creada.
 
@@ -182,6 +182,8 @@ cd backend
 | :--- | :---: | :--- |
 | **Paola Elvira Mijahuanga Pingo** | U23227640 | Gerente General / Fundadora – Planificación estratégica y viabilidad |
 ---
+
+*esto es una prueba*
 
 *Proyecto desarrollado para la asignatura de **Herramientas de Desarrollo** · Universidad Tecnológica del Perú (UTP) · Sede Piura · Ciclo 2026.*
 *Versión final resuelta: se combinó el cambio de MAIN y DEVELOP para solucionar el conflicto en la nube.*

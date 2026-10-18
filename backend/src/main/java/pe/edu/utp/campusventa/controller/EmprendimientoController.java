@@ -6,7 +6,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import pe.edu.utp.campusventa.dto.ProductoDTO;
 import pe.edu.utp.campusventa.dto.ResenaCreateDTO;
 import pe.edu.utp.campusventa.exception.ResourceNotFoundException;
@@ -14,9 +16,13 @@ import pe.edu.utp.campusventa.model.Categoria;
 import pe.edu.utp.campusventa.model.Emprendimiento;
 import pe.edu.utp.campusventa.model.Producto;
 import pe.edu.utp.campusventa.model.Resena;
+import pe.edu.utp.campusventa.model.Rol;
+import pe.edu.utp.campusventa.model.Usuario;
 import pe.edu.utp.campusventa.repository.EmprendimientoRepository;
 import pe.edu.utp.campusventa.repository.ProductoRepository;
 import pe.edu.utp.campusventa.repository.ResenaRepository;
+import pe.edu.utp.campusventa.repository.UsuarioRepository;
+import pe.edu.utp.campusventa.security.UserPrincipal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +36,17 @@ public class EmprendimientoController {
     private final EmprendimientoRepository emprendimientoRepository;
     private final ResenaRepository resenaRepository;
     private final ProductoRepository productoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public EmprendimientoController(
             EmprendimientoRepository emprendimientoRepository,
             ResenaRepository resenaRepository,
-            ProductoRepository productoRepository) {
+            ProductoRepository productoRepository,
+            UsuarioRepository usuarioRepository) {
         this.emprendimientoRepository = emprendimientoRepository;
         this.resenaRepository = resenaRepository;
         this.productoRepository = productoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @GetMapping
@@ -48,6 +57,9 @@ public class EmprendimientoController {
 
         Specification<Emprendimiento> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            // Solo mostrar puestos activos (no eliminados lógicamente)
+            predicates.add(cb.isTrue(root.get("activo")));
 
             if (categoria != null) {
                 predicates.add(cb.equal(root.get("categoria"), categoria));
@@ -72,7 +84,7 @@ public class EmprendimientoController {
     // Endpoint desarrollado por Ricardo
     @GetMapping("/activos")
     public ResponseEntity<List<Emprendimiento>> listarSoloActivos() {
-        List<Emprendimiento> lista = emprendimientoRepository.findAll();
+        List<Emprendimiento> lista = emprendimientoRepository.findByActivoTrue();
         return ResponseEntity.ok(lista);
     }
 
@@ -91,8 +103,43 @@ public class EmprendimientoController {
         return ResponseEntity.ok(emprendimiento);
     }
 
+    @GetMapping("/mis-emprendimientos")
+    public ResponseEntity<List<Emprendimiento>> listarMisEmprendimientos(
+            @AuthenticationPrincipal UserPrincipal currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<Emprendimiento> misPuestos = emprendimientoRepository.findByPropietarioIdAndActivoTrue(currentUser.getId());
+        return ResponseEntity.ok(misPuestos);
+    }
+
     @PostMapping
-    public ResponseEntity<Emprendimiento> crear(@Valid @RequestBody Emprendimiento nuevo) {
+    @Transactional
+    public ResponseEntity<Emprendimiento> crear(
+            @Valid @RequestBody Emprendimiento nuevo,
+            @AuthenticationPrincipal UserPrincipal currentUser) {
+        if (currentUser != null) {
+            Usuario u = usuarioRepository.findById(currentUser.getId()).orElse(null);
+            if (u != null) {
+                nuevo.setPropietario(u);
+                if (nuevo.getVendedorNombre() == null || nuevo.getVendedorNombre().isBlank()) {
+                    nuevo.setVendedorNombre(u.getNombre());
+                }
+                if (nuevo.getCarreraCiclo() == null || nuevo.getCarreraCiclo().isBlank()) {
+                    String info = (u.getCiclo() != null ? u.getCiclo() + " " : "") + (u.getCarrera() != null ? u.getCarrera() : "");
+                    if (!info.isBlank()) {
+                        nuevo.setCarreraCiclo(info.trim());
+                    }
+                }
+                if (nuevo.getWhatsapp() == null || nuevo.getWhatsapp().isBlank()) {
+                    nuevo.setWhatsapp(u.getTelefono() != null ? u.getTelefono() : "51999999999");
+                }
+                if (u.getRol() == Rol.COMPRADOR) {
+                    u.setRol(Rol.VENDEDOR);
+                    usuarioRepository.save(u);
+                }
+            }
+        }
         Emprendimiento guardado = emprendimientoRepository.save(nuevo);
         return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
     }
@@ -226,14 +273,33 @@ public class EmprendimientoController {
         return ResponseEntity.ok(guardado);
     }
 
-    // Eliminar emprendimiento completo junto con sus productos y reseñas
+    // Eliminar emprendimiento (Borrado Lógico / Soft Delete: cambia de estado sin borrar de BD)
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<Void> eliminarEmprendimiento(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarEmprendimiento(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserPrincipal currentUser) {
         Emprendimiento emp = emprendimientoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Emprendimiento no encontrado con id: " + id));
 
-        emprendimientoRepository.delete(emp);
+        // Verificar propiedad si no es admin
+        if (currentUser != null && emp.getPropietario() != null && !emp.getPropietario().getId().equals(currentUser.getId()) && currentUser.getUsuario().getRol() != Rol.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para dar de baja este emprendimiento");
+        }
+
+        emp.setActivo(false);
+        emp.setDisponible(false);
+        emprendimientoRepository.save(emp);
+
+        Usuario prop = emp.getPropietario();
+        if (prop != null) {
+            List<Emprendimiento> restantes = emprendimientoRepository.findByPropietarioIdAndActivoTrue(prop.getId());
+            if (restantes.isEmpty() && prop.getRol() == Rol.VENDEDOR) {
+                prop.setRol(Rol.COMPRADOR);
+                usuarioRepository.save(prop);
+            }
+        }
+
         return ResponseEntity.noContent().build();
     }
 }

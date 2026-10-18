@@ -1,5 +1,6 @@
 package pe.edu.utp.campusventa.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -33,7 +34,12 @@ public class Emprendimiento {
     private Categoria categoria;
 
     @Column(nullable = false)
-    private boolean disponible;
+    @Builder.Default
+    private boolean disponible = true;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean activo = true;
 
     @Column(length = 50)
     private String torre;
@@ -54,10 +60,10 @@ public class Emprendimiento {
     @Column(length = 15)
     private String whatsapp;
 
-    @Column(name = "imagen_url", length = 500)
+    @Column(name = "imagen_url", columnDefinition = "TEXT")
     private String imagenUrl;
 
-    @Column(name = "avatar_url", length = 500)
+    @Column(name = "avatar_url", columnDefinition = "TEXT")
     private String avatarUrl;
 
     @Column(name = "vendedor_nombre", length = 100)
@@ -77,6 +83,11 @@ public class Emprendimiento {
 
     @Column(name = "horario_atencion", length = 100)
     private String horarioAtencion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
+    @JsonBackReference("usuario-emprendimientos")
+    private Usuario propietario;
 
     @OneToMany(mappedBy = "emprendimiento", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
