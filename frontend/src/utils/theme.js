@@ -28,6 +28,11 @@ export function applyTheme(tema, { persist = true } = {}) {
   root.classList.toggle('dark', isDark);
   root.style.colorScheme = isDark ? 'dark' : 'light';
 
+  if (document.body) {
+    document.body.classList.toggle('dark', isDark);
+    document.body.style.backgroundColor = isDark ? '#0B0F19' : '#F4F5F9';
+  }
+
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', isDark ? THEME_COLORS.dark : THEME_COLORS.light);
 }
