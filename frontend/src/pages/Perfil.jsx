@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { eliminarEmprendimiento } from '../services/api';
 import ProfilePreviewModal, { PLATFORMS_CONFIG } from '../components/ProfilePreviewModal';
+import { applyTheme, getStoredTheme } from '../utils/theme';
 import {
   IconStore,
   IconSchool,
@@ -229,7 +230,7 @@ export default function Perfil() {
 
   // Estados de configuración de preferencias
   const [tema, setTema] = useState(() => {
-    return localStorage.getItem('campusventa_theme') || 'claro';
+    return getStoredTheme();
   });
   const [notifBajones, setNotifBajones] = useState(true);
   const [sonidoHaptico, setSonidoHaptico] = useState(true);
@@ -276,19 +277,7 @@ export default function Perfil() {
 
   const aplicarTema = (nuevoTema) => {
     setTema(nuevoTema);
-    localStorage.setItem('campusventa_theme', nuevoTema);
-
-    if (nuevoTema === 'oscuro') {
-      document.documentElement.classList.add('dark');
-    } else if (nuevoTema === 'claro') {
-      document.documentElement.classList.remove('dark');
-    } else {
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    }
+    applyTheme(nuevoTema);
     showToast(`Tema cambiado a: ${nuevoTema === 'oscuro' ? 'Oscuro OLED' : nuevoTema === 'claro' ? 'Claro Cristal' : 'Automático'}`);
   };
 
@@ -302,8 +291,13 @@ export default function Perfil() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 3 * 1024 * 1024) {
-      showToast('La imagen supera el límite de 3MB. Selecciona una más ligera.');
+    if (!file.type.startsWith('image/')) {
+      showToast('Por favor selecciona un archivo de imagen válido (JPG, PNG, WebP).');
+      return;
+    }
+
+    if (file.size > 4 * 1024 * 1024) {
+      showToast('La foto supera el límite de 4MB. Selecciona una más ligera.');
       return;
     }
 
@@ -311,7 +305,10 @@ export default function Perfil() {
     reader.onload = (uploadEvent) => {
       const base64 = uploadEvent.target.result;
       setFormData((prev) => ({ ...prev, avatar: base64 }));
-      showToast('Nueva foto cargada. Guarda los cambios para aplicarla.');
+      if (user) {
+        login({ ...user, avatar: base64 });
+      }
+      showToast('¡Foto de perfil actualizada desde tu dispositivo!');
     };
     reader.readAsDataURL(file);
   };
@@ -319,6 +316,9 @@ export default function Perfil() {
   // Eliminar foto de perfil
   const handleRemovePhoto = () => {
     setFormData((prev) => ({ ...prev, avatar: null }));
+    if (user) {
+      login({ ...user, avatar: null });
+    }
     showToast('Foto de perfil eliminada.');
   };
 
@@ -575,7 +575,7 @@ export default function Perfil() {
                 </div>
               )}
 
-              {/* Input file oculto para subida directa */}
+              {/* Input file oculto para subida directa desde dispositivo */}
               <input
                 id="hero-avatar-file-input"
                 type="file"
@@ -588,7 +588,7 @@ export default function Perfil() {
               <label
                 htmlFor="hero-avatar-file-input"
                 className="absolute -bottom-2 -right-2 w-9 h-9 rounded-2xl liquid-glass-crimson text-white flex items-center justify-center cursor-pointer shadow-md hover:brightness-110 active:scale-95 transition-all border border-white"
-                title="Subir foto de perfil"
+                title="Subir foto desde tu dispositivo (galería o cámara)"
               >
                 <IconPhoto className="w-4 h-4" />
               </label>
@@ -710,7 +710,7 @@ export default function Perfil() {
                     className="px-4 py-2 rounded-full liquid-glass border border-primary/30 text-primary text-xs font-heading font-bold hover:bg-white transition-all cursor-pointer shadow-xs active:scale-95 flex items-center gap-1.5"
                   >
                     <IconPhoto className="w-3.5 h-3.5" />
-                    <span>{formData.avatar ? 'Cambiar Foto' : 'Subir Foto'}</span>
+                    <span>{formData.avatar ? 'Cambiar Foto desde Dispositivo' : 'Subir Foto desde Dispositivo'}</span>
                     <input
                       id="edit-avatar-file-input"
                       type="file"
@@ -1507,18 +1507,29 @@ export default function Perfil() {
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 leading-tight my-1">
-                    Esta imagen identificará a tu puesto en el catálogo (tu foto de perfil personal como estudiante se mantiene separada).
+                    Esta imagen identificará a tu puesto en el catálogo. Súbela directamente desde tu celular o PC (tu foto personal de estudiante se mantiene separada).
                   </p>
-                  <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-xs font-heading font-bold text-slate-700 shadow-2xs active:scale-95 transition-all">
-                    <IconPhoto className="w-3.5 h-3.5 text-[#BA122D]" />
-                    <span>{storeFormData.avatarUrl ? 'Cambiar Foto de Tienda' : 'Subir Foto de Tienda'}</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleStoreFormAvatarChange}
-                      className="hidden"
-                    />
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-xs font-heading font-bold text-slate-700 shadow-2xs active:scale-95 transition-all">
+                      <IconPhoto className="w-3.5 h-3.5 text-[#BA122D]" />
+                      <span>{storeFormData.avatarUrl ? 'Cambiar Foto desde Dispositivo' : 'Subir Foto desde Dispositivo'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleStoreFormAvatarChange}
+                        className="hidden"
+                      />
+                    </label>
+                    {storeFormData.avatarUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setStoreFormData((prev) => ({ ...prev, avatarUrl: '' }))}
+                        className="text-[11px] text-red-600 hover:underline font-heading font-semibold"
+                      >
+                        Quitar
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 

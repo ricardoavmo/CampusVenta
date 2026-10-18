@@ -54,10 +54,10 @@ public class Emprendimiento {
     @Column(length = 15)
     private String whatsapp;
 
-    @Column(name = "imagen_url", length = 500)
+    @Column(name = "imagen_url", columnDefinition = "TEXT")
     private String imagenUrl;
 
-    @Column(name = "avatar_url", length = 500)
+    @Column(name = "avatar_url", columnDefinition = "TEXT")
     private String avatarUrl;
 
     @Column(name = "vendedor_nombre", length = 100)

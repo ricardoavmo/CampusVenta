@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import pe.edu.utp.campusventa.model.Categoria;
 import pe.edu.utp.campusventa.model.Emprendimiento;
 import pe.edu.utp.campusventa.repository.EmprendimientoRepository;
+import pe.edu.utp.campusventa.repository.ProductoRepository;
 import pe.edu.utp.campusventa.repository.ResenaRepository;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -38,6 +39,9 @@ class EmprendimientoControllerTest {
 
     @MockBean
     private ResenaRepository resenaRepository;
+
+    @MockBean
+    private ProductoRepository productoRepository;
 
     @Test
     @DisplayName("GET /api/emprendimientos debe responder 200 y contener elementos")

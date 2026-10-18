@@ -3,12 +3,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { IconArrowBack, IconCheck, IconTrash } from '../components/Icons';
+import { applyTheme, getStoredTheme } from '../utils/theme';
 
 export default function Configuracion() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [tema, setTema] = useState(() => localStorage.getItem('campusventa_tema') || 'claro');
+  const [tema, setTema] = useState(() => getStoredTheme());
   const [notifBajones, setNotifBajones] = useState(true);
   const [sonidoHaptico, setSonidoHaptico] = useState(true);
   const [ahorroDatos, setAhorroDatos] = useState(false);
@@ -21,19 +22,7 @@ export default function Configuracion() {
 
   const aplicarTema = (nuevoTema) => {
     setTema(nuevoTema);
-    localStorage.setItem('campusventa_tema', nuevoTema);
-    const root = document.documentElement;
-    if (nuevoTema === 'oscuro') {
-      root.classList.add('dark');
-    } else if (nuevoTema === 'claro') {
-      root.classList.remove('dark');
-    } else {
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
-      }
-    }
+    applyTheme(nuevoTema);
     showToast(`Tema ${nuevoTema} aplicado`);
   };
 

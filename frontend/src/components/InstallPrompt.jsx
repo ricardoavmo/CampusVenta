@@ -13,6 +13,7 @@ export default function InstallPrompt() {
     const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
     setIsStandalone(!!standalone);
     if (standalone) {
+      setShowPrompt(false);
       return;
     }
 
@@ -21,13 +22,24 @@ export default function InstallPrompt() {
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
     setIsIOS(isIosDevice);
 
+    const isDismissed = localStorage.getItem('pwa_prompt_dismissed') === 'true' || sessionStorage.getItem('pwa_prompt_closed') === 'true';
+
+    if (isIosDevice && !isDismissed) {
+      setShowPrompt(true);
+    }
+
     const handler = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      const dismissed = localStorage.getItem('pwa_prompt_dismissed');
-      if (!dismissed) {
+      if (!isDismissed) {
         setShowPrompt(true);
       }
+    };
+
+    const installedHandler = () => {
+      setShowPrompt(false);
+      localStorage.setItem('pwa_prompt_dismissed', 'true');
+      sessionStorage.setItem('pwa_prompt_closed', 'true');
     };
 
     const externalTrigger = () => {
@@ -38,7 +50,7 @@ export default function InstallPrompt() {
         deferredPrompt.userChoice.then(({ outcome }) => {
           if (outcome === 'accepted') {
             setShowPrompt(false);
-            setDeferredPrompt(null);
+            localStorage.setItem('pwa_prompt_dismissed', 'true');
           }
         });
       } else {
@@ -47,13 +59,15 @@ export default function InstallPrompt() {
     };
 
     window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', installedHandler);
     window.addEventListener('trigger-pwa-install', externalTrigger);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('appinstalled', installedHandler);
       window.removeEventListener('trigger-pwa-install', externalTrigger);
     };
-  }, [deferredPrompt]);
+  }, []);
 
   const handleInstallClick = async () => {
     if (isIOS) {
@@ -66,17 +80,23 @@ export default function InstallPrompt() {
       return;
     }
 
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      setShowPrompt(false);
-      setDeferredPrompt(null);
+    try {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setShowPrompt(false);
+        localStorage.setItem('pwa_prompt_dismissed', 'true');
+        sessionStorage.setItem('pwa_prompt_closed', 'true');
+      }
+    } catch {
+      setShowGenericModal(true);
     }
   };
 
   const handleDismiss = () => {
     setShowPrompt(false);
     localStorage.setItem('pwa_prompt_dismissed', 'true');
+    sessionStorage.setItem('pwa_prompt_closed', 'true');
   };
 
   if (isStandalone) return null;

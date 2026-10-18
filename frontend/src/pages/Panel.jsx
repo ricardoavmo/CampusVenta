@@ -214,6 +214,7 @@ export default function Panel() {
     disponible: true,
   });
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
+  const [isDraggingPhoto, setIsDraggingPhoto] = useState(false);
   // Modal para editar datos generales del puesto (foto, nombre, descripción, whatsapp, etc.)
   const [showEditStoreModal, setShowEditStoreModal] = useState(false);
   const [storeEditForm, setStoreEditForm] = useState({
@@ -490,10 +491,12 @@ export default function Panel() {
     }
   };
 
-  const handleImageFileChange = (e) => {
-    const file = e.target.files?.[0];
+  const processImageFile = (file) => {
     if (!file) return;
-
+    if (!file.type.startsWith('image/')) {
+      showToast('Por favor selecciona un archivo de imagen válido (JPG, PNG, WebP).');
+      return;
+    }
     if (file.size > 4 * 1024 * 1024) {
       showToast('La foto debe ser menor a 4MB.');
       return;
@@ -504,9 +507,20 @@ export default function Panel() {
     reader.onloadend = () => {
       setProdForm((prev) => ({ ...prev, imagenUrl: reader.result }));
       setImageUploadLoading(false);
-      showToast('Foto cargada correctamente.');
+      showToast('Foto cargada desde tu dispositivo con éxito.');
+    };
+    reader.onerror = () => {
+      setImageUploadLoading(false);
+      showToast('Error al leer la foto seleccionada.');
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleImageFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processImageFile(file);
+    }
   };
 
   const openNewProductModal = () => {
@@ -1306,17 +1320,40 @@ export default function Panel() {
             </div>
 
             <form onSubmit={handleSaveProduct} className="flex flex-col gap-3.5">
-              {/* 1. SECCIÓN DE FOTO DEL PRODUCTO */}
+              {/* 1. SECCIÓN DE FOTO DEL PRODUCTO - SOLO SUBIDA DESDE DISPOSITIVO */}
               <div className="space-y-2">
-                <label className="text-xs font-heading font-bold text-slate-800 flex items-center justify-between">
+                <label className="text-xs font-heading font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between">
                   <span>Foto del producto:</span>
-                  <span className="text-[10px] text-slate-400 font-normal">Galería, cámara o enlace</span>
+                  <span className="text-[10px] text-slate-500 font-medium">Subir foto desde dispositivo (galería o cámara)</span>
                 </label>
 
-                {/* Preview Box & Upload Trigger */}
-                <div className="flex items-center gap-3">
-                  <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden shrink-0">
-                    {prodForm.imagenUrl ? (
+                {/* Dropzone & Preview Box */}
+                <div
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDraggingPhoto(true);
+                  }}
+                  onDragLeave={() => setIsDraggingPhoto(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDraggingPhoto(false);
+                    const file = e.dataTransfer.files?.[0];
+                    if (file) processImageFile(file);
+                  }}
+                  className={`relative p-3.5 rounded-2xl border-2 border-dashed transition-all flex flex-col sm:flex-row items-center gap-4 ${
+                    isDraggingPhoto
+                      ? 'border-[#BA122D] bg-red-50/20'
+                      : 'border-slate-200 dark:border-white/10 bg-slate-50/60 dark:bg-white/[0.02]'
+                  }`}
+                >
+                  {/* Thumbnail Preview */}
+                  <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white dark:bg-black/40 border border-slate-200 dark:border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-2xs">
+                    {imageUploadLoading ? (
+                      <div className="flex flex-col items-center justify-center text-[#BA122D] gap-1.5 p-2 text-center animate-pulse">
+                        <div className="w-5 h-5 border-2 border-[#BA122D] border-t-transparent rounded-full animate-spin"></div>
+                        <span className="text-[10px] font-bold">Cargando...</span>
+                      </div>
+                    ) : prodForm.imagenUrl ? (
                       <img
                         src={prodForm.imagenUrl}
                         alt="Preview"
@@ -1324,43 +1361,45 @@ export default function Panel() {
                       />
                     ) : (
                       <div className="flex flex-col items-center justify-center text-slate-400 gap-1 p-2 text-center">
-                        <IconPhoto className="w-6 h-6 text-slate-400" />
-                        <span className="text-[9px] font-bold">Sin foto</span>
+                        <IconPhoto className="w-8 h-8 text-slate-400" />
+                        <span className="text-[10px] font-bold">Sin foto</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="flex-1 space-y-2">
-                    {/* File Upload Button */}
-                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 text-xs font-heading font-bold cursor-pointer transition-all shadow-xs">
-                      <IconPhoto className="w-3.5 h-3.5 text-[#BA122D]" />
-                      <span>{prodForm.imagenUrl ? 'Cambiar foto de dispositivo' : 'Subir foto (celular / PC)'}</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageFileChange}
-                        className="hidden"
-                      />
-                    </label>
+                  {/* Actions & Instructions */}
+                  <div className="flex-1 w-full flex flex-col justify-center gap-2 text-center sm:text-left">
+                    <div>
+                      <p className="text-xs font-heading font-bold text-slate-800 dark:text-slate-200">
+                        {prodForm.imagenUrl ? 'Foto cargada desde tu dispositivo' : 'Elige una foto desde tu celular o PC'}
+                      </p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Formatos JPG, PNG, WebP hasta 4MB. Puedes arrastrar la imagen aquí o pulsar el botón.
+                      </p>
+                    </div>
 
-                    {prodForm.imagenUrl && (
-                      <button
-                        type="button"
-                        onClick={() => setProdForm((prev) => ({ ...prev, imagenUrl: '' }))}
-                        className="text-[11px] text-red-600 hover:underline block font-heading font-semibold"
-                      >
-                        Quitar foto
-                      </button>
-                    )}
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+                      <label className="cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary text-white hover:bg-primary-hover active:scale-95 text-xs font-heading font-bold shadow-xs transition-all">
+                        <IconPhoto className="w-4 h-4" />
+                        <span>{prodForm.imagenUrl ? 'Cambiar foto de dispositivo' : 'Subir foto (celular / PC)'}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageFileChange}
+                          className="hidden"
+                        />
+                      </label>
 
-                    {/* Direct URL Input */}
-                    <input
-                      type="url"
-                      value={prodForm.imagenUrl && typeof prodForm.imagenUrl === 'string' && prodForm.imagenUrl.startsWith('data:') ? '' : (prodForm.imagenUrl || '')}
-                      onChange={(e) => setProdForm({ ...prodForm, imagenUrl: e.target.value })}
-                      placeholder="O pega enlace de foto (https://...)"
-                      className="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 focus:bg-white focus:border-[#BA122D] text-xs text-slate-800 rounded-xl outline-none placeholder:text-slate-400 transition-all"
-                    />
+                      {prodForm.imagenUrl && (
+                        <button
+                          type="button"
+                          onClick={() => setProdForm((prev) => ({ ...prev, imagenUrl: '' }))}
+                          className="px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 text-xs font-heading font-bold transition-all border border-red-200"
+                        >
+                          Quitar foto
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1590,22 +1629,33 @@ export default function Panel() {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <label className="font-heading font-bold text-xs text-slate-800 block">
+                  <label className="font-heading font-bold text-xs text-slate-800 dark:text-slate-100 block">
                     Foto o Logo del Puesto
                   </label>
                   <p className="text-[11px] text-slate-500 mb-2">
-                    Formatos JPG, PNG o WebP hasta 4MB.
+                    Sube una foto directamente desde tu celular o computadora (máx. 4MB).
                   </p>
-                  <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-xs font-heading font-bold text-slate-800 shadow-2xs active:scale-95 transition-all">
-                    <IconPhoto className="w-3.5 h-3.5 text-[#BA122D]" />
-                    <span>Subir Nueva Foto</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleStoreAvatarChange}
-                      className="hidden"
-                    />
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-700 border border-slate-200 dark:border-white/10 text-xs font-heading font-bold text-slate-800 dark:text-slate-100 shadow-2xs active:scale-95 transition-all">
+                      <IconPhoto className="w-3.5 h-3.5 text-[#BA122D]" />
+                      <span>{storeEditForm.avatarUrl ? 'Cambiar Foto desde Dispositivo' : 'Subir Foto desde Dispositivo'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleStoreAvatarChange}
+                        className="hidden"
+                      />
+                    </label>
+                    {storeEditForm.avatarUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setStoreEditForm((prev) => ({ ...prev, avatarUrl: '' }))}
+                        className="text-[11px] text-red-600 hover:underline font-heading font-semibold"
+                      >
+                        Quitar
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 

@@ -32,7 +32,7 @@ export default function Navbar({ onSearch, showSearch = false, initialSearch = '
   return (
     <header className="sticky top-0 z-40 liquid-glass border-b border-white/60 shadow-sm">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3">
-        {/* Brand Logo & Campus Tag */}
+        {/* Brand Logo */}
         <div className="flex items-center gap-2.5 shrink-0">
           <Link to="/" className="flex items-center gap-2 text-decoration-none group">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl liquid-glass-crimson flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
@@ -42,10 +42,6 @@ export default function Navbar({ onSearch, showSearch = false, initialSearch = '
               Campus<span className="text-secondary">Venta</span>
             </span>
           </Link>
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass text-primary font-heading font-bold text-xs uppercase tracking-wider border border-primary/20 shadow-xs">
-            <IconSchool className="w-3.5 h-3.5 text-primary" />
-            <span>UTP Sede Piura</span>
-          </span>
         </div>
 
         {/* Center Navigation Links (Desktop) */}

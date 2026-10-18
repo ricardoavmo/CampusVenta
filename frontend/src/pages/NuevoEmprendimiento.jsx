@@ -62,6 +62,10 @@ export default function NuevoEmprendimiento() {
   const handleStorePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setError('Por favor selecciona un archivo de imagen válido (JPG, PNG, WebP).');
+      return;
+    }
     if (file.size > 4 * 1024 * 1024) {
       setError('La foto de la tienda debe ser menor a 4MB.');
       return;
@@ -69,6 +73,8 @@ export default function NuevoEmprendimiento() {
     const reader = new FileReader();
     reader.onloadend = () => {
       setAvatarUrl(reader.result);
+      setImagenUrl(reader.result);
+      setError(null);
     };
     reader.readAsDataURL(file);
   };
@@ -240,17 +246,31 @@ export default function NuevoEmprendimiento() {
                   Foto o Logo del Puesto
                 </span>
                 <p className="text-[11px] text-text-muted my-1">
-                  Esta imagen identificará tu tienda en el campus. Tu foto de perfil como estudiante permanece separada.
+                  Esta imagen identificará tu tienda en el campus. Súbela directamente desde tu teléfono o computadora (galería o cámara).
                 </p>
-                <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-text-main hover:bg-slate-50 border border-border text-xs font-heading font-bold shadow-2xs active:scale-95 transition-all">
-                  <span>Subir Foto del Puesto</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleStorePhotoChange}
-                    className="hidden"
-                  />
-                </label>
+                <div className="flex items-center gap-2">
+                  <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-text-main hover:bg-slate-50 border border-border text-xs font-heading font-bold shadow-2xs active:scale-95 transition-all">
+                    <span>Elegir Foto del Dispositivo</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleStorePhotoChange}
+                      className="hidden"
+                    />
+                  </label>
+                  {avatarUrl && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAvatarUrl('');
+                        setImagenUrl('');
+                      }}
+                      className="text-xs text-red-500 hover:underline font-heading font-semibold"
+                    >
+                      Quitar
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 

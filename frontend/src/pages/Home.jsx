@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getEmprendimientos } from '../services/api';
+import { DEFAULT_EMPRENDIMIENTOS } from '../utils/seedData';
 import {
   IconBolt,
   IconVerified,
@@ -98,14 +99,26 @@ export default function Home() {
     return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(texto)}`;
   };
 
+  // Sincronización de Búsqueda con Parámetros URL (?search=...)
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlInitialSearch = searchParams.get('search') || '';
+
   // Filtros
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(urlInitialSearch);
   const [selectedCategoria, setSelectedCategoria] = useState('TODOS');
   const [selectedTorre, setSelectedTorre] = useState('Todas las zonas');
   const [onlyDisponibles, setOnlyDisponibles] = useState(false);
   const [filtroRapido5Min, setFiltroRapido5Min] = useState(false);
   const [filtroMaxPrecio, setFiltroMaxPrecio] = useState(25);
   const [showMobileFilterModal, setShowMobileFilterModal] = useState(false);
+
+  // Sincronizar si cambia el query param en la URL
+  useEffect(() => {
+    const q = searchParams.get('search');
+    if (q !== null && q !== searchTerm) {
+      setSearchTerm(q);
+    }
+  }, [searchParams]);
 
   // Modal de Vista Previa de Perfil del Vendedor
   const [selectedSellerProfile, setSelectedSellerProfile] = useState(null);
@@ -145,15 +158,16 @@ export default function Home() {
     if (onlyDisponibles) count++;
     if (filtroRapido5Min) count++;
     if (filtroMaxPrecio < 25) count++;
+    if (searchTerm.trim()) count++;
     return count;
-  }, [selectedCategoria, selectedTorre, onlyDisponibles, filtroRapido5Min, filtroMaxPrecio]);
+  }, [selectedCategoria, selectedTorre, onlyDisponibles, filtroRapido5Min, filtroMaxPrecio, searchTerm]);
 
   const fetchEmprendimientos = async () => {
     try {
       setLoading(true);
       setError(null);
       const data = await getEmprendimientos();
-      let combined = Array.isArray(data) ? [...data] : [];
+      let combined = Array.isArray(data) && data.length > 0 ? [...data] : [...DEFAULT_EMPRENDIMIENTOS];
 
       // Sincronizar con puestos locales registrados por el usuario
       try {
@@ -175,19 +189,20 @@ export default function Home() {
 
       setEmprendimientos(combined);
     } catch (err) {
-      console.error('Error al cargar emprendimientos:', err);
+      console.warn('Backend fetch warning, combinando con datos de respaldo de campus:', err);
       try {
         const saved = localStorage.getItem('campusventa_mis_puestos');
-        if (saved) {
-          setEmprendimientos(JSON.parse(saved));
-          setLoading(false);
-          return;
-        }
-      } catch {}
-      setError(
-        err.response?.data?.message ||
-        'No pudimos conectar con el servidor de CampusVenta. Verifica que el backend esté en ejecución.'
-      );
+        const userStores = saved ? JSON.parse(saved) : [];
+        const merged = [...userStores];
+        DEFAULT_EMPRENDIMIENTOS.forEach((de) => {
+          if (!merged.some((m) => String(m.id) === String(de.id))) {
+            merged.push(de);
+          }
+        });
+        setEmprendimientos(merged);
+      } catch {
+        setEmprendimientos(DEFAULT_EMPRENDIMIENTOS);
+      }
     } finally {
       setLoading(false);
     }
@@ -197,13 +212,36 @@ export default function Home() {
     fetchEmprendimientos();
   }, [selectedCategoria, onlyDisponibles]);
 
+  const handleSearchChange = (val) => {
+    setSearchTerm(val);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (val && val.trim()) {
+        next.set('search', val.trim());
+      } else {
+        next.delete('search');
+      }
+      return next;
+    }, { replace: true });
+  };
+
   const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    fetchEmprendimientos();
+    if (e) e.preventDefault();
+    if (searchTerm.trim()) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('search', searchTerm.trim());
+        return next;
+      }, { replace: true });
+    }
+    const feedEl = document.getElementById('productos-feed');
+    if (feedEl) {
+      feedEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const handleResetFilters = () => {
-    setSearchTerm('');
+    handleSearchChange('');
     setSelectedCategoria('TODOS');
     setSelectedTorre('Todas las zonas');
     setOnlyDisponibles(false);
@@ -214,7 +252,10 @@ export default function Home() {
   // Extraer todos los productos aplanados con los datos de su respectiva tienda
   const allProducts = useMemo(() => {
     const list = [];
-    emprendimientos.forEach((emp) => {
+    const storesSource = Array.isArray(emprendimientos) && emprendimientos.length > 0
+      ? emprendimientos
+      : DEFAULT_EMPRENDIMIENTOS;
+    storesSource.forEach((emp) => {
       // Combinar productos del backend con productos creados localmente
       let storeProds = Array.isArray(emp.productos) ? [...emp.productos] : [];
       try {
@@ -342,15 +383,54 @@ export default function Home() {
         return false;
       }
 
-      // 6. Filtro Búsqueda
-      if (searchTerm.trim()) {
-        const query = searchTerm.toLowerCase();
-        const matchesProd = (prod.nombre || '').toLowerCase().includes(query);
-        const matchesDesc = (prod.descripcion || '').toLowerCase().includes(query);
-        const matchesStore = (prod.tiendaNombre || '').toLowerCase().includes(query);
-        const matchesVendor = (prod.vendedorNombre || '').toLowerCase().includes(query);
-        const matchesCat = (prod.categoria || '').toLowerCase().includes(query);
-        if (!matchesProd && !matchesDesc && !matchesStore && !matchesVendor && !matchesCat) {
+      // 6. Filtro Búsqueda Inteligente Multi-término con sinónimos (sin sensibilidad a tildes o mayúsculas)
+      if (searchTerm && searchTerm.trim()) {
+        const normalize = (str) =>
+          (str || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim();
+
+        const queryNorm = normalize(searchTerm);
+        const tokens = queryNorm.split(/\s+/).filter(Boolean);
+
+        const targetString = normalize(
+          `${prod.nombre || ''} ${prod.descripcion || ''} ${prod.tiendaNombre || ''} ${prod.vendedorNombre || ''} ${prod.categoria || ''} ${prod.torre || ''} ${prod.piso || ''} ${prod.referencia || ''} ${prod.badge || ''}`
+        );
+
+        const SYNONYMS = {
+          burger: ['hamburguesa', 'sandwich', 'pan', 'bajon', 'carne'],
+          burgers: ['hamburguesa', 'sandwich', 'pan', 'bajon', 'carne'],
+          hamburguesa: ['burger', 'sandwich', 'bajon'],
+          sandwich: ['pan', 'triple', 'pollo', 'bajon', 'empanada'],
+          empanada: ['empanadas', 'carne', 'bajon'],
+          empanadas: ['empanada', 'carne', 'bajon'],
+          postre: ['dulce', 'brownie', 'torta', 'galleta', 'alfajor', 'chocolate'],
+          postres: ['dulce', 'brownie', 'torta', 'galleta', 'alfajor', 'chocolate'],
+          dulce: ['postre', 'brownie', 'alfajor', 'chocolate', 'chocobomba'],
+          dulces: ['postre', 'brownie', 'alfajor', 'chocolate', 'chocobomba'],
+          snack: ['comida', 'bajon', 'salchipapa', 'empanada', 'sandwich'],
+          snacks: ['comida', 'bajon', 'salchipapa', 'empanada', 'sandwich'],
+          bajon: ['comida', 'sandwich', 'salchipapa', 'hamburguesa', 'empanada'],
+          bajones: ['comida', 'sandwich', 'salchipapa', 'hamburguesa', 'empanada'],
+          stickers: ['sticker', 'vinil', 'merch', 'accesorio', 'tech'],
+          sticker: ['stickers', 'vinil', 'merch', 'accesorio', 'tech'],
+          cable: ['cables', 'cargador', 'usb', 'tipo c', 'nylon'],
+          cables: ['cable', 'cargador', 'usb', 'tipo c', 'nylon'],
+          apuntes: ['apunte', 'formulario', 'calculo', 'fisica', 'guia', 'tutoria'],
+          tutoria: ['tutorias', 'clase', 'asesoria', 'calculo', 'fisica'],
+          tutorias: ['tutoria', 'clase', 'asesoria', 'calculo', 'fisica'],
+        };
+
+        const allTokensMatch = tokens.every((token) => {
+          if (targetString.includes(token)) return true;
+          const syns = SYNONYMS[token];
+          if (syns && syns.some((syn) => targetString.includes(syn))) return true;
+          return false;
+        });
+
+        if (!allTokensMatch) {
           return false;
         }
       }
@@ -386,7 +466,7 @@ export default function Home() {
       {/* 1. TOP HEADER LIQUID GLASS */}
       <header className="sticky top-0 z-40 liquid-glass border-b border-white/60 shadow-sm transition-all duration-300">
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3">
-          {/* Brand Logo & Campus Tag */}
+          {/* Brand Logo */}
           <div className="flex items-center gap-2.5 shrink-0">
             <Link to="/" className="flex items-center gap-2 text-decoration-none group">
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl liquid-glass-crimson flex items-center justify-center text-white shadow-sm transition-transform duration-300 group-hover:scale-105">
@@ -396,33 +476,43 @@ export default function Home() {
                 Campus<span className="text-secondary">Venta</span>
               </span>
             </Link>
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass text-primary font-heading font-bold text-xs uppercase tracking-wider border border-primary/20 shadow-xs">
-              <IconSchool className="w-3.5 h-3.5 text-primary" />
-              <span>UTP Sede Piura</span>
-            </span>
           </div>
 
           {/* Center Search Bar & Separated Location Dropdown */}
-          <div className="hidden lg:flex items-center flex-1 max-w-xl mx-4 gap-2.5">
+          <div className="hidden lg:flex items-center flex-1 max-w-2xl xl:max-w-3xl mx-4 gap-2.5">
             {/* Standalone Search Bar */}
-            <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center liquid-glass rounded-full px-4 py-2 border border-white/80 shadow-xs transition-all focus-within:ring-2 focus-within:ring-primary/20">
-              <IconSearch className="w-4 h-4 text-text-muted mr-2 shrink-0" />
+            <form onSubmit={handleSearchSubmit} className="flex-1 min-w-0 flex items-center liquid-glass rounded-full pl-3.5 pr-1.5 py-1.5 border border-white/80 shadow-xs transition-all focus-within:ring-2 focus-within:ring-primary/20 gap-2">
+              <button
+                type="button"
+                onClick={handleSearchSubmit}
+                className="text-text-muted hover:text-primary shrink-0 transition-colors cursor-pointer flex items-center justify-center"
+                title="Buscar"
+              >
+                <IconSearch className="w-4 h-4" />
+              </button>
               <input
                 type="text"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="¿Qué se te antoja o necesitas hoy en campus?"
-                className="w-full bg-transparent border-none outline-none font-body text-xs sm:text-sm text-text-main placeholder:text-text-muted"
+                onChange={(e) => handleSearchChange(e.target.value)}
+                placeholder="Buscar brownies, bajones, stickers, apuntes..."
+                className="min-w-0 flex-1 bg-transparent border-none outline-none font-body text-xs sm:text-sm text-text-main placeholder:text-text-muted truncate"
               />
               {searchTerm && (
                 <button
                   type="button"
-                  onClick={() => { setSearchTerm(''); fetchEmprendimientos(); }}
-                  className="p-0.5 text-text-muted hover:text-text-main"
+                  onClick={() => handleSearchChange('')}
+                  className="p-1 text-text-muted hover:text-text-main transition-colors shrink-0"
+                  title="Borrar búsqueda"
                 >
                   <IconClose className="w-3.5 h-3.5" />
                 </button>
               )}
+              <button
+                type="submit"
+                className="px-4 py-1.5 rounded-full liquid-glass-crimson text-white font-heading font-bold text-xs hover:brightness-110 transition-all shrink-0 active:scale-95 shadow-xs whitespace-nowrap"
+              >
+                Buscar
+              </button>
             </form>
 
             {/* Standalone Location Filter Pill */}
@@ -496,24 +586,38 @@ export default function Home() {
 
         {/* Mobile Search Bar */}
         <div className="lg:hidden px-4 pb-3 pt-1">
-          <form onSubmit={handleSearchSubmit} className="w-full flex items-center liquid-glass rounded-2xl px-3.5 py-2 border border-white/80 shadow-xs">
-            <IconSearch className="w-4 h-4 text-text-muted mr-2 shrink-0" />
+          <form onSubmit={handleSearchSubmit} className="w-full flex items-center liquid-glass rounded-2xl pl-3.5 pr-1.5 py-1.5 border border-white/80 shadow-xs gap-2">
+            <button
+              type="button"
+              onClick={handleSearchSubmit}
+              className="text-text-muted hover:text-primary shrink-0 cursor-pointer flex items-center justify-center"
+              title="Buscar"
+            >
+              <IconSearch className="w-4 h-4" />
+            </button>
             <input
               type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar brownies, empanadas, accesorios..."
-              className="w-full bg-transparent border-none outline-none font-body text-xs text-text-main placeholder:text-text-muted"
+              onChange={(e) => handleSearchChange(e.target.value)}
+              placeholder="Buscar en campus..."
+              className="min-w-0 flex-1 bg-transparent border-none outline-none font-body text-xs text-text-main placeholder:text-text-muted truncate"
             />
             {searchTerm && (
               <button
                 type="button"
-                onClick={() => { setSearchTerm(''); fetchEmprendimientos(); }}
-                className="p-1 text-text-muted hover:text-text-main"
+                onClick={() => handleSearchChange('')}
+                className="p-1 text-text-muted hover:text-text-main shrink-0"
+                title="Borrar búsqueda"
               >
                 <IconClose className="w-3.5 h-3.5" />
               </button>
             )}
+            <button
+              type="submit"
+              className="px-3.5 py-1.5 rounded-xl liquid-glass-crimson text-white font-heading font-bold text-xs shrink-0 active:scale-95 shadow-xs whitespace-nowrap"
+            >
+              Buscar
+            </button>
           </form>
         </div>
       </header>
@@ -548,6 +652,35 @@ export default function Home() {
                 Postres caseros, bajones calientes y apuntes entregados directamente en mano entre clases.
               </p>
             </div>
+
+            {/* Quick popular search tags */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-border/40">
+              <span className="text-[11px] font-heading font-bold text-text-muted mr-1 flex items-center gap-1">
+                <span className="material-symbols-outlined text-sm text-primary">local_fire_department</span>
+                <span>Buscar rápido:</span>
+              </span>
+              {['Brownie', 'Burger', 'Stickers', 'Empanadas', 'Cálculo', 'Alfajor', 'Sandwich'].map((tag) => {
+                const isSelected = searchTerm && searchTerm.toLowerCase().includes(tag.toLowerCase());
+                return (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => {
+                      handleSearchChange(tag);
+                      const feedEl = document.getElementById('productos-feed');
+                      if (feedEl) feedEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    className={`text-[11px] font-heading font-semibold px-2.5 py-0.5 rounded-full border transition-all active:scale-95 ${
+                      isSelected
+                        ? 'liquid-glass-crimson text-white border-transparent shadow-xs'
+                        : 'liquid-glass text-text-secondary hover:text-text-main hover:border-primary/40 border-white/70'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
@@ -557,7 +690,7 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mb-2.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
               <h2 className="font-heading text-sm sm:text-base font-bold text-text-main">
                 Activos Ahora en Campus · Más Vendidos
               </h2>
@@ -849,19 +982,49 @@ export default function Home() {
               })}
             </div>
 
-            {/* Feed Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-border/60">
-              <div>
-                <h2 className="font-heading text-xl sm:text-2xl font-bold text-text-main">
-                  Productos y Bajones en el campus
-                </h2>
-                <p className="text-xs text-text-secondary mt-0.5">
-                  Toca cualquier producto para ver su puesto o pulsa "Ver catálogo completo" para explorar todo lo que ofrece la tienda.
-                </p>
+            {/* Feed Header con ancla de scroll y feedback de búsqueda */}
+            <div id="productos-feed" className="scroll-mt-24 space-y-3 pb-2 border-b border-border/60">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h2 className="font-heading text-xl sm:text-2xl font-bold text-text-main flex items-center gap-2">
+                    <span>Productos y Bajones en el campus</span>
+                    {searchTerm.trim() && (
+                      <span className="text-xs px-2.5 py-0.5 rounded-full liquid-glass-crimson text-white font-heading font-bold shadow-xs">
+                        Búsqueda activa
+                      </span>
+                    )}
+                  </h2>
+                  <p className="text-xs text-text-secondary mt-0.5">
+                    Toca cualquier producto para ver su puesto o pulsa "Ver catálogo completo" para explorar todo lo que ofrece la tienda.
+                  </p>
+                </div>
+                <span className="text-xs text-text-muted font-bold font-heading shrink-0">
+                  {filteredProducts.length} {filteredProducts.length === 1 ? 'producto disponible' : 'productos disponibles'}
+                </span>
               </div>
-              <span className="text-xs text-text-muted font-bold font-heading">
-                {filteredProducts.length} productos disponibles
-              </span>
+
+              {/* Banner de búsqueda activa con feedback instantáneo y botón de limpiar */}
+              {searchTerm && searchTerm.trim() && (
+                <div className="flex items-center justify-between gap-2 p-2.5 px-3.5 rounded-2xl liquid-glass border border-primary/30 bg-primary/5 shadow-xs animate-scale-up">
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <span className="material-symbols-outlined text-primary text-base shrink-0">search</span>
+                    <span className="text-xs font-heading font-semibold text-text-main truncate">
+                      Resultados para <span className="font-bold text-primary">"{searchTerm.trim()}"</span>
+                      <span className="ml-1.5 text-text-muted font-normal">
+                        ({filteredProducts.length} {filteredProducts.length === 1 ? 'coincidencia' : 'coincidencias'})
+                      </span>
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleSearchChange('')}
+                    className="inline-flex items-center gap-1 text-[11px] font-heading font-bold text-primary hover:underline shrink-0 p-1"
+                  >
+                    <IconClose className="w-3.5 h-3.5" />
+                    <span>Quitar búsqueda</span>
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* ESTADO 1: CARGANDO */}
@@ -903,9 +1066,24 @@ export default function Home() {
             {!loading && !error && filteredProducts.length === 0 && (
               <div className="liquid-glass-card rounded-3xl p-10 border border-white/80 shadow-sm text-center max-w-lg mx-auto space-y-4">
                 <div className="w-14 h-14 rounded-full liquid-glass text-text-muted mx-auto flex items-center justify-center">
-                  <IconFastfood className="w-7 h-7 text-primary" />
+                  <IconSearch className="w-7 h-7 text-primary" />
                 </div>
-                {hasActiveFilters ? (
+                {searchTerm ? (
+                  <>
+                    <h3 className="font-heading text-lg font-bold text-text-main">
+                      No encontramos nada con "{searchTerm}"
+                    </h3>
+                    <p className="text-xs text-text-secondary max-w-sm mx-auto">
+                      Prueba con términos como <span className="font-bold text-primary">brownie</span>, <span className="font-bold text-primary">burger</span>, <span className="font-bold text-primary">stickers</span>, <span className="font-bold text-primary">apuntes</span> o prueba seleccionando otra zona.
+                    </p>
+                    <button
+                      onClick={() => handleSearchChange('')}
+                      className="px-5 py-2 rounded-full liquid-glass-crimson text-white font-heading font-bold text-xs shadow-xs"
+                    >
+                      Ver todos los productos
+                    </button>
+                  </>
+                ) : hasActiveFilters ? (
                   <>
                     <h3 className="font-heading text-lg font-bold text-text-main">
                       No hay productos con esos filtros
