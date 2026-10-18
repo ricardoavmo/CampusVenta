@@ -38,20 +38,11 @@ export default function Ficha() {
   // Determinar si el usuario logueado es el vendedor dueño de este emprendimiento
   const isOwner = Boolean(
     user &&
-    user.rol === 'vendedor' &&
+    user.rol?.toLowerCase() === 'vendedor' &&
     emprendimiento && (
-      String(user.emprendimientoId) === String(emprendimiento.id) ||
-      (user.tiendaNombre && user.tiendaNombre === emprendimiento.nombre) ||
-      (() => {
-        try {
-          const saved = localStorage.getItem('campusventa_mis_puestos');
-          if (saved) {
-            const puestos = JSON.parse(saved);
-            return puestos.some((p) => String(p.id) === String(emprendimiento.id));
-          }
-        } catch {}
-        return false;
-      })()
+      (emprendimiento.propietarioId && String(user.id) === String(emprendimiento.propietarioId)) ||
+      (user.emprendimientoId && String(user.emprendimientoId) === String(emprendimiento.id)) ||
+      (user.tiendaNombre && user.tiendaNombre === emprendimiento.nombre)
     )
   );
 
