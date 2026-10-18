@@ -148,17 +148,29 @@ public class EmprendimientoController {
     @Transactional
     public ResponseEntity<Resena> agregarResena(
             @PathVariable Long id,
-            @Valid @RequestBody ResenaCreateDTO dto) {
+            @Valid @RequestBody ResenaCreateDTO dto,
+            @AuthenticationPrincipal UserPrincipal currentUser) {
         Emprendimiento emprendimiento = emprendimientoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Emprendimiento no encontrado con id: " + id));
 
+        Usuario autor = null;
+        if (currentUser != null) {
+            autor = usuarioRepository.findById(currentUser.getId()).orElse(null);
+        }
+
+        String nombreEstudiante = autor != null ? autor.getNombre() : (dto.getEstudianteNombre() != null ? dto.getEstudianteNombre().trim() : "Estudiante UTP");
+        String carreraCiclo = autor != null && autor.getCarrera() != null
+                ? autor.getCarrera() + (autor.getCiclo() != null ? " - " + autor.getCiclo() : "")
+                : (dto.getCarreraCiclo() != null ? dto.getCarreraCiclo().trim() : "Comunidad UTP");
+
         Resena resena = Resena.builder()
-                .estudianteNombre(dto.getEstudianteNombre().trim())
-                .carreraCiclo(dto.getCarreraCiclo() != null ? dto.getCarreraCiclo().trim() : "Comunidad UTP")
+                .estudianteNombre(nombreEstudiante)
+                .carreraCiclo(carreraCiclo)
                 .calificacion(dto.getCalificacion())
                 .comentario(dto.getComentario().trim())
                 .verificado(true)
                 .emprendimiento(emprendimiento)
+                .usuario(autor)
                 .build();
 
         Resena guardada = resenaRepository.save(resena);

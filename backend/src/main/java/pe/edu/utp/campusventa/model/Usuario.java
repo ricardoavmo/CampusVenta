@@ -87,4 +87,9 @@ public class Usuario {
     @JsonManagedReference("usuario-emprendimientos")
     @Builder.Default
     private List<Emprendimiento> emprendimientos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("usuario-resena")
+    @Builder.Default
+    private List<Resena> resenas = new ArrayList<>();
 }

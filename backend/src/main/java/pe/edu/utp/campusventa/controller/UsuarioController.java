@@ -17,9 +17,13 @@ import pe.edu.utp.campusventa.security.UserPrincipal;
 public class UsuarioController {
 
     private final UsuarioRepository usuarioRepository;
+    private final pe.edu.utp.campusventa.repository.ResenaRepository resenaRepository;
 
-    public UsuarioController(UsuarioRepository usuarioRepository) {
+    public UsuarioController(
+            UsuarioRepository usuarioRepository,
+            pe.edu.utp.campusventa.repository.ResenaRepository resenaRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.resenaRepository = resenaRepository;
     }
 
     @GetMapping("/me")
@@ -31,6 +35,17 @@ public class UsuarioController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
         return ResponseEntity.ok(UsuarioResponseDTO.fromEntity(usuario));
+    }
+
+    @GetMapping("/me/resenas")
+    public ResponseEntity<java.util.List<pe.edu.utp.campusventa.model.Resena>> getMisResenas(
+            @AuthenticationPrincipal UserPrincipal principal) {
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No autenticado");
+        }
+        java.util.List<pe.edu.utp.campusventa.model.Resena> misResenas =
+                resenaRepository.findByUsuarioIdOrderByFechaCreacionDesc(principal.getId());
+        return ResponseEntity.ok(misResenas);
     }
 
     @PutMapping("/me")

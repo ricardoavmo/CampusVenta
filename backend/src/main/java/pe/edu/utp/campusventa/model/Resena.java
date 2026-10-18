@@ -52,4 +52,24 @@ public class Resena {
     @JoinColumn(name = "emprendimiento_id", nullable = false)
     @JsonBackReference
     private Emprendimiento emprendimiento;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
+    @JsonBackReference(value = "usuario-resena")
+    private Usuario usuario;
+
+    @Transient
+    public Long getUsuarioId() {
+        return usuario != null ? usuario.getId() : null;
+    }
+
+    @Transient
+    public Long getEmprendimientoId() {
+        return emprendimiento != null ? emprendimiento.getId() : null;
+    }
+
+    @Transient
+    public String getEmprendimientoNombre() {
+        return emprendimiento != null ? emprendimiento.getNombre() : null;
+    }
 }
