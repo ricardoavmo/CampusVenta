@@ -1,0 +1,436 @@
+{
+  "info": {
+    "name": "CampusVenta API - UTP Piura (36 Endpoints)",
+    "description": "Colección completa y exhaustiva de pruebas para la API REST de CampusVenta en Spring Boot 3.4 y PostgreSQL, cubriendo los 36 endpoints del sistema.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token_comprador",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token_vendedor",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token_admin",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Autenticación (4)",
+      "item": [
+        {
+          "name": "POST /api/auth/registro",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Estudiante Comprador UTP\",\n  \"email\": \"comprador@utp.edu.pe\",\n  \"password\": \"Password123!\",\n  \"codigo\": \"U23247001\",\n  \"rol\": \"COMPRADOR\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/registro", "host": ["{{base_url}}"], "path": ["api", "auth", "registro"] }
+          }
+        },
+        {
+          "name": "POST /api/auth/login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identificador\": \"comprador@utp.edu.pe\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "POST /api/auth/login-admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identificador\": \"admin@utp.edu.pe\",\n  \"password\": \"Admin2026!\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/login-admin", "host": ["{{base_url}}"], "path": ["api", "auth", "login-admin"] }
+          }
+        },
+        {
+          "name": "GET /api/auth/me",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_comprador}}" }],
+            "url": { "raw": "{{base_url}}/api/auth/me", "host": ["{{base_url}}"], "path": ["api", "auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Usuarios (6)",
+      "item": [
+        {
+          "name": "GET /api/usuarios/me (Ver mi perfil)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_comprador}}" }],
+            "url": { "raw": "{{base_url}}/api/usuarios/me", "host": ["{{base_url}}"], "path": ["api", "usuarios", "me"] }
+          }
+        },
+        {
+          "name": "PUT /api/usuarios/me (Actualizar perfil)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_comprador}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ricardo Avila M.\",\n  \"carrera\": \"Ingeniería de Sistemas\",\n  \"ciclo\": \"VII\",\n  \"telefono\": \"51987654321\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/usuarios/me", "host": ["{{base_url}}"], "path": ["api", "usuarios", "me"] }
+          }
+        },
+        {
+          "name": "DELETE /api/usuarios/me (Baja lógica)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_comprador}}" }],
+            "url": { "raw": "{{base_url}}/api/usuarios/me", "host": ["{{base_url}}"], "path": ["api", "usuarios", "me"] }
+          }
+        },
+        {
+          "name": "GET /api/usuarios/me/resenas (Mis reseñas publicadas)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_comprador}}" }],
+            "url": { "raw": "{{base_url}}/api/usuarios/me/resenas", "host": ["{{base_url}}"], "path": ["api", "usuarios", "me", "resenas"] }
+          }
+        },
+        {
+          "name": "GET /api/usuarios/me/favoritos (Listar IDs de favoritos)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_comprador}}" }],
+            "url": { "raw": "{{base_url}}/api/usuarios/me/favoritos", "host": ["{{base_url}}"], "path": ["api", "usuarios", "me", "favoritos"] }
+          }
+        },
+        {
+          "name": "POST /api/usuarios/me/favoritos/{id} (Alternar favorito)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_comprador}}" }],
+            "url": { "raw": "{{base_url}}/api/usuarios/me/favoritos/1", "host": ["{{base_url}}"], "path": ["api", "usuarios", "me", "favoritos", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Emprendimientos (13)",
+      "item": [
+        {
+          "name": "GET /api/emprendimientos (Catálogo público)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/emprendimientos", "host": ["{{base_url}}"], "path": ["api", "emprendimientos"] }
+          }
+        },
+        {
+          "name": "GET /api/emprendimientos/{id} (Ficha de detalle)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/emprendimientos/1", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "1"] }
+          }
+        },
+        {
+          "name": "GET /api/emprendimientos/activos (Puestos disponibles)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/emprendimientos/activos", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "activos"] }
+          }
+        },
+        {
+          "name": "GET /api/emprendimientos/top (Ranking mejor valorados)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/emprendimientos/top", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "top"] }
+          }
+        },
+        {
+          "name": "GET /api/emprendimientos/mis-emprendimientos (Puestos del vendedor)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_vendedor}}" }],
+            "url": { "raw": "{{base_url}}/api/emprendimientos/mis-emprendimientos", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "mis-emprendimientos"] }
+          }
+        },
+        {
+          "name": "POST /api/emprendimientos (Crear emprendimiento)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_vendedor}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Chifles y Snacks Piuranos\",\n  \"descripcion\": \"Chifles artesanales y bocaditos norteños\",\n  \"categoria\": \"COMIDA\",\n  \"torre\": \"Torre A\",\n  \"piso\": \"Piso 3\",\n  \"whatsapp\": \"51987654321\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/emprendimientos", "host": ["{{base_url}}"], "path": ["api", "emprendimientos"] }
+          }
+        },
+        {
+          "name": "PUT /api/emprendimientos/{id} (Actualizar puesto)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_vendedor}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Chifles Piuranos Gourmet\",\n  \"descripcion\": \"Chifles artesanales con cecina y chicharrón\",\n  \"categoria\": \"COMIDA\",\n  \"torre\": \"Torre A\",\n  \"piso\": \"Piso 4\",\n  \"whatsapp\": \"51987654321\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/emprendimientos/1", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "1"] }
+          }
+        },
+        {
+          "name": "DELETE /api/emprendimientos/{id} (Eliminar puesto)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_vendedor}}" }],
+            "url": { "raw": "{{base_url}}/api/emprendimientos/1", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "1"] }
+          }
+        },
+        {
+          "name": "PATCH /api/emprendimientos/{id}/disponibilidad (Conmutar radar)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_vendedor}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"disponible\": true\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/emprendimientos/1/disponibilidad", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "1", "disponibilidad"] }
+          }
+        },
+        {
+          "name": "POST /api/emprendimientos/{id}/productos (Añadir producto)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_vendedor}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Chifles Salados 100g\",\n  \"descripcion\": \"Plátano verde frito con sal de mar\",\n  \"precio\": 3.50,\n  \"disponible\": true,\n  \"stock\": 15\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/emprendimientos/1/productos", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "1", "productos"] }
+          }
+        },
+        {
+          "name": "PUT /api/emprendimientos/{id}/productos/{prodId} (Editar producto)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_vendedor}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Chifles Salados 100g\",\n  \"descripcion\": \"Plátano verde frito con sal de mar\",\n  \"precio\": 4.00,\n  \"disponible\": true,\n  \"stock\": 20\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/emprendimientos/1/productos/1", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "1", "productos", "1"] }
+          }
+        },
+        {
+          "name": "DELETE /api/emprendimientos/{id}/productos/{prodId} (Borrar producto)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_vendedor}}" }],
+            "url": { "raw": "{{base_url}}/api/emprendimientos/1/productos/1", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "1", "productos", "1"] }
+          }
+        },
+        {
+          "name": "POST /api/emprendimientos/{id}/resenas (Publicar reseña)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_comprador}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estudianteNombre\": \"Ricardo Avila\",\n  \"carreraCiclo\": \"Ingeniería de Sistemas - VI\",\n  \"calificacion\": 5,\n  \"comentario\": \"Excelente atención y entrega muy puntual en Torre A.\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/emprendimientos/1/resenas", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "1", "resenas"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Pedidos (5)",
+      "item": [
+        {
+          "name": "POST /api/pedidos (Crear pedido con precio de BD)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_comprador}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emprendimientoId\": 1,\n  \"productoNombre\": \"Chifles Salados 100g\",\n  \"cantidad\": 2,\n  \"puntoEntrega\": \"Torre A - Piso 2\",\n  \"notas\": \"Pago con Yape en mano\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/pedidos", "host": ["{{base_url}}"], "path": ["api", "pedidos"] }
+          }
+        },
+        {
+          "name": "GET /api/pedidos/mis-pedidos (Historial del comprador)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_comprador}}" }],
+            "url": { "raw": "{{base_url}}/api/pedidos/mis-pedidos", "host": ["{{base_url}}"], "path": ["api", "pedidos", "mis-pedidos"] }
+          }
+        },
+        {
+          "name": "GET /api/pedidos/vendedor/{id} (Pedidos para el vendedor)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_vendedor}}" }],
+            "url": { "raw": "{{base_url}}/api/pedidos/vendedor/1", "host": ["{{base_url}}"], "path": ["api", "pedidos", "vendedor", "1"] }
+          }
+        },
+        {
+          "name": "PATCH /api/pedidos/{id}/estado (Avanzar o cancelar)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_vendedor}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"EN_CAMINO\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/pedidos/1/estado", "host": ["{{base_url}}"], "path": ["api", "pedidos", "1", "estado"] }
+          }
+        },
+        {
+          "name": "GET /api/pedidos/{id} (Detalle autorizado del pedido)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_comprador}}" }],
+            "url": { "raw": "{{base_url}}/api/pedidos/1", "host": ["{{base_url}}"], "path": ["api", "pedidos", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Administración (8)",
+      "item": [
+        {
+          "name": "GET /api/admin/metricas (KPIs globales)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/admin/metricas", "host": ["{{base_url}}"], "path": ["api", "admin", "metricas"] }
+          }
+        },
+        {
+          "name": "GET /api/admin/usuarios (Directorio de cuentas)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/admin/usuarios", "host": ["{{base_url}}"], "path": ["api", "admin", "usuarios"] }
+          }
+        },
+        {
+          "name": "PATCH /api/admin/usuarios/{id}/rol (Asignar rol)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rol\": \"VENDEDOR\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/admin/usuarios/1/rol", "host": ["{{base_url}}"], "path": ["api", "admin", "usuarios", "1", "rol"] }
+          }
+        },
+        {
+          "name": "PATCH /api/admin/usuarios/{id}/estado (Activar / suspender)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": false\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/admin/usuarios/1/estado", "host": ["{{base_url}}"], "path": ["api", "admin", "usuarios", "1", "estado"] }
+          }
+        },
+        {
+          "name": "GET /api/admin/emprendimientos (Supervisión de puestos)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/admin/emprendimientos", "host": ["{{base_url}}"], "path": ["api", "admin", "emprendimientos"] }
+          }
+        },
+        {
+          "name": "PATCH /api/admin/emprendimientos/{id}/estado (Habilitar / deshabilitar)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"disponible\": false\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/admin/emprendimientos/1/estado", "host": ["{{base_url}}"], "path": ["api", "admin", "emprendimientos", "1", "estado"] }
+          }
+        },
+        {
+          "name": "DELETE /api/admin/resenas/{id} (Moderar reseña)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/admin/resenas/1", "host": ["{{base_url}}"], "path": ["api", "admin", "resenas", "1"] }
+          }
+        },
+        {
+          "name": "GET /api/admin/logs (Registro de auditoría)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/admin/logs", "host": ["{{base_url}}"], "path": ["api", "admin", "logs"] }
+          }
+        }
+      ]
+    }
+  ]
+}

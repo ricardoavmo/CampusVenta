@@ -181,28 +181,27 @@ cd backend
 | Integrante | Código UTP | Rol en el Proyecto |
 | :--- | :---: | :--- |
 | **Paola Elvira Mijahuanga Pingo** | U23227640 | Gerente General / Product Owner – Planificación estratégica y viabilidad |
-| **Angel Ancajima Juárez** | U23247043 | Tech Lead / Scrum Master – Arquitectura técnica y facilitación Scrumban |
-| **Ricardo Avila Montalbán** | U23247043 | Backend Developer – API REST Spring Boot, Spring Security JWT y PostgreSQL |
-| **Toom Josué Vilela Carmen** | U22214589 | Frontend Developer – SPA en React, Tailwind CSS y experiencia de usuario |
+| **Angel Junior Ancajima Juárez** | U23231284 | Tech Lead / Scrum Master – Arquitectura técnica y facilitación Scrumban |
+| **Ricardo Emanuel Avila Montalbán** | U23247043 | Backend Lead – API REST Spring Boot, Spring Security JWT y PostgreSQL |
+| **Toom Josué Vilela Carmen** | U22214589 | Frontend Lead – SPA en React, Tailwind CSS y experiencia de usuario |
 | **Kelvin Cienfuegos Morales** | U20210045 | QA Engineer – Aseguramiento de calidad, pruebas unitarias y validación funcional |
 
 ---
 
 ## 🏛️ Decisiones de Arquitectura y Estado de Datos
 
-Para transparencia técnica y auditoría del avance:
+Para transparencia técnica y auditoría del avance (36 endpoints en total):
 
 1. **Persistencia Real en PostgreSQL:**
-   - **Usuarios y Seguridad:** Registro, login, emisión de JWT y perfil (`/api/usuarios/me`) con roles `COMPRADOR`, `VENDEDOR` y `ADMIN`, además de baja lógica (`DELETE /api/usuarios/me`).
-   - **Emprendimientos y Catálogo:** Puestos geolocalizados por torre y piso, asociados formalmente al estudiante propietario. Productos y stock en vivo persistidos en base de datos.
-   - **Reseñas:** Asociadas directamente a la entidad `Usuario` y al `Emprendimiento`. La publicación (`POST /api/emprendimientos/{id}/resenas`) está protegida por JWT y se ofrece el endpoint `GET /api/usuarios/me/resenas` para auditar las reseñas propias.
-   - **Panel Administrativo:** 8 endpoints en `/api/admin/*` con métricas globales, gestión de roles y control de estado de usuarios y tiendas.
+   - **Usuarios y Seguridad (4 + 6 endpoints):** Registro, login, emisión de JWT y perfil (`/api/usuarios/me`) con roles `COMPRADOR`, `VENDEDOR` y `ADMIN`, baja lógica (`DELETE /api/usuarios/me`) y consulta de reseñas propias.
+   - **Emprendimientos y Catálogo (13 endpoints):** Puestos geolocalizados por torre y piso vinculados al propietario. Gestión de catálogo de productos, disponibilidad en tiempo real y publicación de reseñas con control de acceso.
+   - **Módulo de Pedidos y Favoritos (5 endpoints + relación ManyToMany):** Entidad `Pedido` con código correlativo (`ORD-XXXXXX`), estados (`PENDIENTE`, `EN_CAMINO`, `ENTREGADO`, `CANCELADO`), validación de transiciones, cálculo de precios exclusivo en servidor y favoritos persistidos en la tabla `usuarios_favoritos`.
+   - **Panel Administrativo (8 endpoints):** Métricas globales (`/api/admin/metricas`), directorio y cambio de roles, activación/suspensión de cuentas y puestos, y moderación de contenido.
 
-2. **Preferencias Locales y Coordinación en Campus:**
-   - **Pedidos por WhatsApp:** Los pedidos se coordinan de forma directa y presencial entre estudiantes mediante chat de WhatsApp durante los recesos (la entidad y módulo de transacciones avanzadas está planificada en el backlog).
-   - **Favoritos:** Marcadores de acceso rápido almacenados en el navegador para disponibilidad instantánea.
+2. **Preferencias Locales de Interfaz:**
    - **Puesto activo y Modo Oscuro:** Preferencias visuales del dispositivo (OLED / Claro) y navegación del panel multitienda.
-   - **Credenciales JWT:** Token almacenado en el cliente para inyección en interceptores Axios.
+   - **Aviso de instalación PWA:** Estado de instalación local de la aplicación progresiva.
+   - **Credenciales JWT:** Token en almacenamiento seguro del cliente para inyección en interceptores Axios.
 
 ---
 

@@ -445,6 +445,24 @@ class PedidoControllerTest {
     }
 
     @Test
+    @DisplayName("GET /api/pedidos/vendedor/{id} permite al ADMIN ver pedidos de un puesto sin dueño")
+    void testListarPedidosVendedor_SinDuenoPermitidoParaAdmin() throws Exception {
+        principal = adminPrincipal;
+
+        Emprendimiento empSinDueno = Emprendimiento.builder()
+                .id(20L)
+                .nombre("Puesto Sin Dueño")
+                .propietario(null)
+                .build();
+
+        when(emprendimientoRepository.findById(20L)).thenReturn(Optional.of(empSinDueno));
+        when(pedidoRepository.findByEmprendimientoIdOrderByFechaCreacionDesc(20L)).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/pedidos/vendedor/20"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     @DisplayName("GET /api/pedidos/999 devuelve 404 si el pedido no existe")
     void testPedidoNoEncontrado() throws Exception {
         when(pedidoRepository.findById(999L)).thenReturn(Optional.empty());
