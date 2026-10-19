@@ -11,6 +11,7 @@ UID:cv-sprint-planning-20261019@campusventa.utp.edu.pe
 DTSTAMP:20261019T010000Z
 DTSTART;TZID=America/Lima:20261019T080000
 DTEND;TZID=America/Lima:20261019T084500
+RRULE:FREQ=WEEKLY;COUNT=4
 SUMMARY:🎯 Sprint Planning (45 min) - CampusVenta
 DESCRIPTION:Planificación del Sprint: definición del objetivo del sprint (Sprint Goal), refinamiento del backlog según DoR y estimación con el equipo.
 LOCATION:Discord / Sala Virtual UTP
@@ -34,6 +35,7 @@ UID:cv-sprint-review-20261024@campusventa.utp.edu.pe
 DTSTAMP:20261019T010000Z
 DTSTART;TZID=America/Lima:20261024T180000
 DTEND;TZID=America/Lima:20261024T184500
+RRULE:FREQ=WEEKLY;COUNT=4
 SUMMARY:🚀 Sprint Review (45 min) - CampusVenta
 DESCRIPTION:Demostración en vivo del software funcional terminado conforme al Definition of Done (DoD). Revisión con Product Owner y stakeholders.
 LOCATION:Discord / Sala de Presentaciones
@@ -45,6 +47,7 @@ UID:cv-sprint-retro-20261025@campusventa.utp.edu.pe
 DTSTAMP:20261019T010000Z
 DTSTART;TZID=America/Lima:20261025T190000
 DTEND;TZID=America/Lima:20261025T193000
+RRULE:FREQ=WEEKLY;COUNT=4
 SUMMARY:💡 Sprint Retrospective (30 min) - CampusVenta
 DESCRIPTION:Espacio de mejora continua del equipo: análisis de procesos, dinámicas de trabajo, qué funcionó bien y compromisos para el siguiente ciclo.
 LOCATION:Discord / Sala de Equipo
