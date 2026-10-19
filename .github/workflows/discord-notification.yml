@@ -7,6 +7,9 @@ on:
     types: [ opened, closed, reopened ]
     branches: [ main, develop ]
 
+permissions:
+  contents: read
+
 jobs:
   notify-discord:
     runs-on: ubuntu-latest
@@ -15,59 +18,68 @@ jobs:
         if: github.event_name == 'push'
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          AUTHOR: ${{ github.event.head_commit.author.name }}
+          REF: ${{ github.ref_name }}
+          URL: ${{ github.event.head_commit.url }}
         run: |
           if [ -z "$DISCORD_WEBHOOK" ]; then
             echo "DISCORD_WEBHOOK_URL no configurado en los Secretos del repositorio. Saltando notificación."
             exit 0
           fi
-          COMMIT_MSG=$(echo "${{ github.event.head_commit.message }}" | head -n 1)
-          AUTHOR="${{ github.event.head_commit.author.name }}"
-          REF="${{ github.ref_name }}"
-          URL="${{ github.event.head_commit.url }}"
           
-          JSON_PAYLOAD=$(cat <<EOF
-          {
-            "username": "GitHub - CampusVenta",
-            "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-            "embeds": [
-              {
-                "title": "🔨 Nuevo Push en $REF",
-                "description": "**$COMMIT_MSG**\n\nAutor: \`$AUTHOR\`\nRama: \`$REF\`",
-                "url": "$URL",
-                "color": 3066993,
-                "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-              }
-            ]
-          }
-          EOF
-          )
-          
+          FIRST_LINE=$(printf '%s\n' "$COMMIT_MSG" | head -n 1)
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          DESC=$(printf "**%s**\n\nAutor: \`%s\`\nRama: \`%s\`" "$FIRST_LINE" "$AUTHOR" "$REF")
+          TITLE=$(printf "🔨 Nuevo Push en %s" "$REF")
+
+          JSON_PAYLOAD=$(jq -n \
+            --arg title "$TITLE" \
+            --arg desc "$DESC" \
+            --arg url "$URL" \
+            --arg ts "$TIMESTAMP" \
+            '{
+              username: "GitHub - CampusVenta",
+              avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+              embeds: [
+                {
+                  title: $title,
+                  description: $desc,
+                  url: $url,
+                  color: 3066993,
+                  timestamp: $ts
+                }
+              ]
+            }')
+
           curl -H "Content-Type: application/json" -X POST -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK"
 
       - name: Notify Pull Request to Discord
         if: github.event_name == 'pull_request'
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_ACTION: ${{ github.event.action }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_MERGED: ${{ github.event.pull_request.merged }}
+          BASE: ${{ github.event.pull_request.base.ref }}
+          HEAD: ${{ github.event.pull_request.head.ref }}
         run: |
           if [ -z "$DISCORD_WEBHOOK" ]; then
             echo "DISCORD_WEBHOOK_URL no configurado en los Secretos del repositorio. Saltando notificación."
             exit 0
           fi
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_URL="${{ github.event.pull_request.html_url }}"
-          PR_ACTION="${{ github.event.action }}"
-          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
-          BASE="${{ github.event.pull_request.base.ref }}"
-          HEAD="${{ github.event.pull_request.head.ref }}"
-          
+
           COLOR=3447003
           TITLE_PREFIX="📬 Pull Request Actualizado"
-          
+
           if [ "$PR_ACTION" = "opened" ]; then
             TITLE_PREFIX="🚀 Nuevo Pull Request Abierto"
             COLOR=15105570
           elif [ "$PR_ACTION" = "closed" ]; then
-            if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+            if [ "$PR_MERGED" = "true" ]; then
               TITLE_PREFIX="🎉 Pull Request Fusionado Exitosamente"
               COLOR=3066993
             else
@@ -75,22 +87,29 @@ jobs:
               COLOR=15158332
             fi
           fi
-          
-          JSON_PAYLOAD=$(cat <<EOF
-          {
-            "username": "GitHub - CampusVenta",
-            "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-            "embeds": [
-              {
-                "title": "$TITLE_PREFIX (#${{ github.event.pull_request.number }})",
-                "description": "**$PR_TITLE**\n\nAutor: \`$PR_AUTHOR\`\nRamas: \`$HEAD\` ➔ \`$BASE\`\nEstado: \`$PR_ACTION\`",
-                "url": "$PR_URL",
-                "color": $COLOR,
-                "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-              }
-            ]
-          }
-          EOF
-          )
-          
+
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          FULL_TITLE=$(printf "%s (#%s)" "$TITLE_PREFIX" "$PR_NUMBER")
+          DESC=$(printf "**%s**\n\nAutor: \`%s\`\nRamas: \`%s\` ➔ \`%s\`\nEstado: \`%s\`" "$PR_TITLE" "$PR_AUTHOR" "$HEAD" "$BASE" "$PR_ACTION")
+
+          JSON_PAYLOAD=$(jq -n \
+            --arg title "$FULL_TITLE" \
+            --arg desc "$DESC" \
+            --arg url "$PR_URL" \
+            --argjson color "$COLOR" \
+            --arg ts "$TIMESTAMP" \
+            '{
+              username: "GitHub - CampusVenta",
+              avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+              embeds: [
+                {
+                  title: $title,
+                  description: $desc,
+                  url: $url,
+                  color: $color,
+                  timestamp: $ts
+                }
+              ]
+            }')
+
           curl -H "Content-Type: application/json" -X POST -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK"

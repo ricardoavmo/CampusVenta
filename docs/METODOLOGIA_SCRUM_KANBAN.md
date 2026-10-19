@@ -13,9 +13,9 @@ Para el desarrollo de **CampusVenta**, se adopta un modelo híbrido **Scrumban**
 | Integrante | Rol Metodológico | Responsabilidades Principales |
 | :--- | :--- | :--- |
 | **Paola Elvira Mijahuanga Pingo** | **Product Owner (PO)** | Visión del producto, priorización del Backlog, validación del valor de negocio, gestión de stakeholders y criterios de aceptación. |
-| **Angel Junior Ancajima Juárez** | **Scrum Master (SM) / Tech Lead** | Facilitación de ceremonias, remoción de impedimentos, cumplimiento de DoR/DoD y arquitectura técnica. |
-| **Ricardo Emanuel Avila Montalbán** | **Backend Lead** | Desarrollo de API REST Spring Boot, capa de seguridad JWT, persistencia JPA en PostgreSQL y configuración de repositorio/CI. |
-| **Toom Josué Vilela Carmen** | **Frontend Lead** | Diseño de interfaces en Figma, desarrollo SPA React + Vite + Tailwind CSS y diseño responsivo. |
+| **Angel Ancajima Juárez** | **Scrum Master (SM) / Tech Lead** | Facilitación de ceremonias, remoción de impedimentos, cumplimiento de DoR/DoD y arquitectura técnica. |
+| **Ricardo Avila Montalbán** | **Backend Developer** | Desarrollo de API REST Spring Boot, capa de seguridad JWT, persistencia JPA en PostgreSQL y configuración de repositorio/CI. |
+| **Toom Josué Vilela Carmen** | **Frontend Developer** | Diseño de interfaces en Figma, desarrollo SPA React + Vite + Tailwind CSS y diseño responsivo. |
 | **Kelvin Cienfuegos Morales** | **QA Engineer** | Pruebas unitarias, pruebas de integración, colecciones de Postman, validación de criterios de aceptación y auditoría de pantallas. |
 
 ---
@@ -23,16 +23,16 @@ Para el desarrollo de **CampusVenta**, se adopta un modelo híbrido **Scrumban**
 ### 3. Ceremonias del Sprint (Ciclo de 2 Semanas)
 
 1. **Sprint Planning (Planificación del Sprint):**
-   * **Frecuencia:** Inicio de cada Sprint (Lunes 08:30 - 10:00, hora de Perú - `America/Lima`).
+   * **Frecuencia:** Inicio de cada Sprint (Lunes 08:00 - 08:45, hora de Perú - `America/Lima`, 45 min).
    * **Objetivo:** Definir el Sprint Goal, seleccionar historias del Product Backlog que cumplan con la DoR y estimar el esfuerzo en puntos de historia.
 2. **Daily Standup (Sincronización Diaria):**
-   * **Frecuencia:** Lunes a Viernes (09:00 - 09:15, hora de Perú - `America/Lima`, 15 min vía Discord).
+   * **Frecuencia:** Lunes a Viernes (09:00, hora de Perú - `America/Lima`, asíncrono en Discord).
    * **Preguntas clave:** ¿Qué completé ayer? ¿Qué completaré hoy? ¿Qué impedimentos bloquean mi avance?
 3. **Sprint Review (Demostración de Incremento):**
-   * **Frecuencia:** Fin de cada Sprint (Viernes 16:00 - 17:00, hora de Perú - `America/Lima`).
+   * **Frecuencia:** Sábados (18:00 - 18:45, hora de Perú - `America/Lima`, 45 min).
    * **Objetivo:** Demostración en vivo del software funcional al Product Owner y stakeholders, validando criterios de aceptación.
 4. **Sprint Retrospective (Retrospectiva del Equipo):**
-   * **Frecuencia:** Inmediatamente posterior al Sprint Review (Viernes 17:00 - 18:00, hora de Perú - `America/Lima`).
+   * **Frecuencia:** Domingos (19:00 - 19:30, hora de Perú - `America/Lima`, 30 min).
    * **Objetivo:** Analizar qué funcionó bien, qué debe mejorar y definir acuerdos de mejora continua accionables para el siguiente sprint.
 
 ---

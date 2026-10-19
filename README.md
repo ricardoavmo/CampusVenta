@@ -181,9 +181,9 @@ cd backend
 | Integrante | Código UTP | Rol en el Proyecto |
 | :--- | :---: | :--- |
 | **Paola Elvira Mijahuanga Pingo** | U23227640 | Gerente General / Product Owner – Planificación estratégica y viabilidad |
-| **Angel Junior Ancajima Juárez** | U23231284 | Tech Lead / Scrum Master – Arquitectura técnica y facilitación Scrumban |
-| **Ricardo Emanuel Avila Montalbán** | U23247043 | Backend Lead – API REST Spring Boot, Spring Security JWT y PostgreSQL |
-| **Toom Josué Vilela Carmen** | U22214589 | Frontend Lead – SPA en React, Tailwind CSS y experiencia de usuario |
+| **Angel Ancajima Juárez** | pendiente de confirmar | Tech Lead / Scrum Master – Arquitectura técnica y facilitación Scrumban |
+| **Ricardo Avila Montalbán** | U23247043 | Backend Developer – API REST Spring Boot, Spring Security JWT y PostgreSQL |
+| **Toom Josué Vilela Carmen** | U22214589 | Frontend Developer – SPA en React, Tailwind CSS y experiencia de usuario |
 | **Kelvin Cienfuegos Morales** | U20210045 | QA Engineer – Aseguramiento de calidad, pruebas unitarias y validación funcional |
 
 ---

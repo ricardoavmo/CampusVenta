@@ -55,7 +55,7 @@
           }
         },
         {
-          "name": "POST /api/auth/login-admin",
+          "name": "POST /api/auth/admin/login (Login administrativo)",
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
@@ -63,7 +63,7 @@
               "mode": "raw",
               "raw": "{\n  \"identificador\": \"admin@utp.edu.pe\",\n  \"password\": \"Admin2026!\"\n}"
             },
-            "url": { "raw": "{{base_url}}/api/auth/login-admin", "host": ["{{base_url}}"], "path": ["api", "auth", "login-admin"] }
+            "url": { "raw": "{{base_url}}/api/auth/admin/login", "host": ["{{base_url}}"], "path": ["api", "auth", "admin", "login"] }
           }
         },
         {
@@ -191,16 +191,16 @@
           }
         },
         {
-          "name": "PUT /api/emprendimientos/{id} (Actualizar puesto)",
+          "name": "PATCH /api/emprendimientos/{id} (Actualizar puesto)",
           "request": {
-            "method": "PUT",
+            "method": "PATCH",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{token_vendedor}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Chifles Piuranos Gourmet\",\n  \"descripcion\": \"Chifles artesanales con cecina y chicharrón\",\n  \"categoria\": \"COMIDA\",\n  \"torre\": \"Torre A\",\n  \"piso\": \"Piso 4\",\n  \"whatsapp\": \"51987654321\"\n}"
+              "raw": "{\n  \"nombre\": \"Chifles Piuranos Gourmet\",\n  \"descripcion\": \"Chifles artesanales con cecina y chicharrón\",\n  \"torre\": \"Torre A\",\n  \"piso\": \"Piso 4\",\n  \"whatsapp\": \"51987654321\",\n  \"disponible\": true\n}"
             },
             "url": { "raw": "{{base_url}}/api/emprendimientos/1", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "1"] }
           }
@@ -214,18 +214,10 @@
           }
         },
         {
-          "name": "PATCH /api/emprendimientos/{id}/disponibilidad (Conmutar radar)",
+          "name": "GET /api/emprendimientos/{id}/productos (Listar productos del puesto)",
           "request": {
-            "method": "PATCH",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token_vendedor}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"disponible\": true\n}"
-            },
-            "url": { "raw": "{{base_url}}/api/emprendimientos/1/disponibilidad", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "1", "disponibilidad"] }
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/emprendimientos/1/productos", "host": ["{{base_url}}"], "path": ["api", "emprendimientos", "1", "productos"] }
           }
         },
         {

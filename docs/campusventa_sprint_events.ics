@@ -9,10 +9,10 @@ X-WR-TIMEZONE:America/Lima
 BEGIN:VEVENT
 UID:cv-sprint-planning-20261019@campusventa.utp.edu.pe
 DTSTAMP:20261019T010000Z
-DTSTART;TZID=America/Lima:20261019T083000
-DTEND;TZID=America/Lima:20261019T100000
-SUMMARY:🎯 Sprint Planning - CampusVenta
-DESCRIPTION:Definición del objetivo del sprint (Sprint Goal), refinamiento del backlog según DoR y estimación de puntos de historia con el equipo.
+DTSTART;TZID=America/Lima:20261019T080000
+DTEND;TZID=America/Lima:20261019T084500
+SUMMARY:🎯 Sprint Planning (45 min) - CampusVenta
+DESCRIPTION:Planificación del Sprint: definición del objetivo del sprint (Sprint Goal), refinamiento del backlog según DoR y estimación con el equipo.
 LOCATION:Discord / Sala Virtual UTP
 STATUS:CONFIRMED
 END:VEVENT
@@ -23,29 +23,29 @@ DTSTAMP:20261019T010000Z
 DTSTART;TZID=America/Lima:20261019T090000
 DTEND;TZID=America/Lima:20261019T091500
 RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;COUNT=20
-SUMMARY:☕ Daily Standup (15 min) - CampusVenta
-DESCRIPTION:Sincronización diaria del equipo de desarrollo: ¿Qué hice ayer? ¿Qué haré hoy? ¿Hay algún impedimento o bloqueo?
-LOCATION:Discord / Canal de Voz Diario
+SUMMARY:☕ Daily Standup (Asíncrono Discord) - CampusVenta
+DESCRIPTION:Sincronización diaria asíncrona del equipo de desarrollo en Discord: ¿Qué hice ayer? ¿Qué haré hoy? ¿Hay algún impedimento o bloqueo?
+LOCATION:Discord / Canal de Texto #daily-standup
 STATUS:CONFIRMED
 END:VEVENT
 
 BEGIN:VEVENT
-UID:cv-sprint-review-20261030@campusventa.utp.edu.pe
+UID:cv-sprint-review-20261024@campusventa.utp.edu.pe
 DTSTAMP:20261019T010000Z
-DTSTART;TZID=America/Lima:20261030T160000
-DTEND;TZID=America/Lima:20261030T170000
-SUMMARY:🚀 Sprint Review (Demostración de Incremento) - CampusVenta
-DESCRIPTION:Demostración del software funcional terminado conforme al Definition of Done (DoD). Revisión con Product Owner y stakeholders.
+DTSTART;TZID=America/Lima:20261024T180000
+DTEND;TZID=America/Lima:20261024T184500
+SUMMARY:🚀 Sprint Review (45 min) - CampusVenta
+DESCRIPTION:Demostración en vivo del software funcional terminado conforme al Definition of Done (DoD). Revisión con Product Owner y stakeholders.
 LOCATION:Discord / Sala de Presentaciones
 STATUS:CONFIRMED
 END:VEVENT
 
 BEGIN:VEVENT
-UID:cv-sprint-retro-20261030@campusventa.utp.edu.pe
+UID:cv-sprint-retro-20261025@campusventa.utp.edu.pe
 DTSTAMP:20261019T010000Z
-DTSTART;TZID=America/Lima:20261030T170000
-DTEND;TZID=America/Lima:20261030T180000
-SUMMARY:💡 Sprint Retrospective - CampusVenta
+DTSTART;TZID=America/Lima:20261025T190000
+DTEND;TZID=America/Lima:20261025T193000
+SUMMARY:💡 Sprint Retrospective (30 min) - CampusVenta
 DESCRIPTION:Espacio de mejora continua del equipo: análisis de procesos, dinámicas de trabajo, qué funcionó bien y compromisos para el siguiente ciclo.
 LOCATION:Discord / Sala de Equipo
 STATUS:CONFIRMED
