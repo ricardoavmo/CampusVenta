@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   getEmprendimientoById,
   crearResena,
@@ -28,6 +28,7 @@ import { useAuth } from '../context/AuthContext';
 
 export default function Ficha() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { id } = useParams();
   const [emprendimiento, setEmprendimiento] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -291,15 +292,22 @@ export default function Ficha() {
 
   // Crear pedido real en PostgreSQL y abrir WhatsApp para coordinar en el campus
   const handlePedirProducto = async (producto) => {
+    if (!user) {
+      showToast('Debes iniciar sesión con tu cuenta UTP para registrar tu pedido');
+      setTimeout(() => {
+        navigate('/login?redirect=' + encodeURIComponent(window.location.pathname));
+      }, 1200);
+      return;
+    }
+
     const qty = quantities[producto.id] || 1;
-    const precioUnit = Number(producto.precio || 0);
 
     try {
       const nuevoPedido = {
         emprendimientoId: Number(emprendimiento.id),
+        productoId: producto.id ? Number(producto.id) : null,
         productoNombre: producto.nombre,
         cantidad: qty,
-        precioUnitario: precioUnit,
         puntoEntrega: `${emprendimiento.torre || 'Campus UTP'} - ${emprendimiento.piso || 'Campus Piura'}`,
         notas: `Coordinación vía WhatsApp por ${user?.nombre || 'Comprador UTP'}`
       };
