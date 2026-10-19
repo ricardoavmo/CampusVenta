@@ -23,16 +23,16 @@ Para el desarrollo de **CampusVenta**, se adopta un modelo híbrido **Scrumban**
 ### 3. Ceremonias del Sprint (Ciclo de 2 Semanas)
 
 1. **Sprint Planning (Planificación del Sprint):**
-   * **Frecuencia:** Inicio de cada Sprint (Lunes 08:30 - 10:00 COT).
+   * **Frecuencia:** Inicio de cada Sprint (Lunes 08:30 - 10:00, hora de Perú - `America/Lima`).
    * **Objetivo:** Definir el Sprint Goal, seleccionar historias del Product Backlog que cumplan con la DoR y estimar el esfuerzo en puntos de historia.
 2. **Daily Standup (Sincronización Diaria):**
-   * **Frecuencia:** Lunes a Viernes (09:00 - 09:15 COT, 15 min vía Discord).
+   * **Frecuencia:** Lunes a Viernes (09:00 - 09:15, hora de Perú - `America/Lima`, 15 min vía Discord).
    * **Preguntas clave:** ¿Qué completé ayer? ¿Qué completaré hoy? ¿Qué impedimentos bloquean mi avance?
 3. **Sprint Review (Demostración de Incremento):**
-   * **Frecuencia:** Fin de cada Sprint (Viernes 16:00 - 17:00 COT).
+   * **Frecuencia:** Fin de cada Sprint (Viernes 16:00 - 17:00, hora de Perú - `America/Lima`).
    * **Objetivo:** Demostración en vivo del software funcional al Product Owner y stakeholders, validando criterios de aceptación.
 4. **Sprint Retrospective (Retrospectiva del Equipo):**
-   * **Frecuencia:** Inmediatamente posterior al Sprint Review (Viernes 17:00 - 18:00 COT).
+   * **Frecuencia:** Inmediatamente posterior al Sprint Review (Viernes 17:00 - 18:00, hora de Perú - `America/Lima`).
    * **Objetivo:** Analizar qué funcionó bien, qué debe mejorar y definir acuerdos de mejora continua accionables para el siguiente sprint.
 
 ---
@@ -49,7 +49,7 @@ Una tarjeta o historia de usuario solo puede moverse al **Sprint Backlog** si cu
 ---
 
 ### 5. Definition of Done (DoD) – Definición de Terminado
-Una tarea o tarjeta solo puede moverse a la columna **"Hecho" (Done)** cuando:
+Una tarea o tarjeta solo puede moverse a la columna **"Hecho"** cuando:
 - [x] Código desarrollado conforme a estándares del proyecto y en su rama de feature (`feature/*`).
 - [x] Todas las pruebas unitarias pasan sin errores (`mvnw test` o `npm test`).
 - [x] Build de producción exitoso sin fallos de compilación (`npm run build`).
@@ -62,12 +62,36 @@ Una tarea o tarjeta solo puede moverse a la columna **"Hecho" (Done)** cuando:
 
 ### 6. Políticas Kanban y Límites de Trabajo en Progreso (WIP Limits)
 
-El tablero de Trello se organiza en las siguientes columnas con sus límites:
+Conforme a lo establecido en la sección II.9 del informe técnico, el tablero de Trello se organiza en las siguientes listas con sus respectivos límites:
 
-| Columna | WIP Limit | Política de Operación |
+| Lista en Trello | WIP Limit | Política de Operación |
 | :--- | :---: | :--- |
-| **📋 Product Backlog** | ∞ | Historias ordenadas por valor de negocio por el PO. |
-| **🎯 Sprint Backlog** | 8 | Tareas comprometidas para el sprint actual que cumplen DoR. |
-| **⚙️ En Proceso (In Progress)** | **3** | Máximo 3 tareas simultáneas en desarrollo en todo el equipo para evitar cuellos de botella y dispersión de foco. |
-| **🔍 En Revisión / QA** | **2** | Máximo 2 tareas esperando code review o validación de pruebas. |
-| **✅ Hecho (Done)** | ∞ | Tareas que cumplen al 100% la Definition of Done con evidencia verificable. |
+| **Product Backlog** | ∞ | Historias ordenadas por valor de negocio por el PO. |
+| **Sprint Backlog** | 8 | Tareas comprometidas para el sprint actual que cumplen DoR. |
+| **En proceso** | **6** | Máximo 2 tarjetas por persona y 6 en total para el equipo simultáneamente. |
+| **En revisión** | **4** | Máximo 4 tarjetas en revisión de código o validación de pruebas QA. |
+| **Hecho** | ∞ | Tareas que cumplen al 100% la Definition of Done con evidencia verificable. |
+
+---
+
+### 7. Reglas de Automatización de Butler (Trello + GitHub Power-Up)
+
+Para sincronizar el flujo de trabajo entre GitHub y Trello sin intervención manual y respetando las listas exactas del tablero:
+
+1. **Flujo de Apertura de Pull Request:**
+   ```text
+   when a pull request is attached to a card, move the card to the top of list "En revisión"
+   ```
+2. **Flujo de Fusión de Pull Request (Merge):**
+   ```text
+   when a pull request is merged on a card, move the card to the list "Hecho" and mark the due date as complete
+   ```
+3. **Control de Límite WIP en Desarrollo ("En proceso" > 6):**
+   ```text
+   when a card is added to list "En proceso" and the number of cards in list "En proceso" is greater than 6, post comment "⚠️ Atención: Se ha superado el WIP Limit en proceso (máximo 6 tareas simultáneas para el equipo)."
+   ```
+4. **Control de Límite WIP en Revisión ("En revisión" > 4):**
+   ```text
+   when a card is added to list "En revisión" and the number of cards in list "En revisión" is greater than 4, post comment "⚠️ Atención: Se ha superado el WIP Limit en revisión (máximo 4 tareas en revisión)."
+   ```
+

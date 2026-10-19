@@ -400,7 +400,7 @@
           }
         },
         {
-          "name": "PATCH /api/admin/emprendimientos/{id}/estado (Habilitar / deshabilitar)",
+          "name": "PATCH /api/admin/emprendimientos/{id}/disponibilidad (Conmutar radar)",
           "request": {
             "method": "PATCH",
             "header": [
@@ -409,25 +409,32 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"disponible\": false\n}"
+              "raw": "{\n  \"disponible\": true\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/admin/emprendimientos/1/disponibilidad", "host": ["{{base_url}}"], "path": ["api", "admin", "emprendimientos", "1", "disponibilidad"] }
+          }
+        },
+        {
+          "name": "PATCH /api/admin/emprendimientos/{id}/estado (Activar / pausar puesto)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": false\n}"
             },
             "url": { "raw": "{{base_url}}/api/admin/emprendimientos/1/estado", "host": ["{{base_url}}"], "path": ["api", "admin", "emprendimientos", "1", "estado"] }
           }
         },
         {
-          "name": "DELETE /api/admin/resenas/{id} (Moderar reseña)",
+          "name": "DELETE /api/admin/emprendimientos/{id} (Baja lógica por moderación)",
           "request": {
             "method": "DELETE",
             "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
-            "url": { "raw": "{{base_url}}/api/admin/resenas/1", "host": ["{{base_url}}"], "path": ["api", "admin", "resenas", "1"] }
-          }
-        },
-        {
-          "name": "GET /api/admin/logs (Registro de auditoría)",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
-            "url": { "raw": "{{base_url}}/api/admin/logs", "host": ["{{base_url}}"], "path": ["api", "admin", "logs"] }
+            "url": { "raw": "{{base_url}}/api/admin/emprendimientos/1", "host": ["{{base_url}}"], "path": ["api", "admin", "emprendimientos", "1"] }
           }
         }
       ]
